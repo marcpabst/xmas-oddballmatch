@@ -102,8 +102,8 @@ def get_evokeds(epochslist, conditions, grandaverage = False):
         return out
 
 def get_mean_amplitude(evoked, window = None):
-    windowasindex = diff.time_as_index(peakwindow)
-    return np.mean( diff.data[:, peakwindowasindex[0]:peakwindowasindex[1]] )
+    windowasindex = diff.time_as_index(window)
+    return np.mean( diff.data[:, windowasindex[0]:windowasindex[1]] )
 #%% Expecting a pronounced MMN here
 fig1 = mne.viz.plot_compare_evokeds(
     {
@@ -177,7 +177,7 @@ diff = get_evokeds(epochslist, ["random/deviant", "random/standard"], grandavera
 peak = diff.pick(picks="FZ").get_peak(tmin = .1, tmax = .2)[1]
 peakwindow = (peak-0.025, peak+0.025)
 
-meanamplitude = get_mean_amplitude(diff, windowpeakwindow)
+meanamplitude = get_mean_amplitude(diff, window=peakwindow)
 
 
 # %%
@@ -192,8 +192,21 @@ avgfunc = partial(get_mean_amplitude, window = peakwindow)
 
 rows = []
 for condition in conditions:
-    evoked = get_evokeds(epochslist, condition)
-    rows.append({"Id": evoked.info["id"], "MeanAmplitude":evoked.avgfunc(evoked)})
+    evokeds = get_evokeds(epochslist, condition)
+    [rows.append({"Id": evoked.info["id"], "MeanAmplitude":avgfunc(evoked)}) for evoked in evokeds]
+
+
+# %% ICA playground
+
+def run_ica(raw, method, fit_params=None):
+    ica = ICA(n_components=20, method=method, fit_params=fit_params,
+              random_state=0)
+    t0 = time()
+    ica.fit(raw, picks=picks)
+    fit_time = time() - t0
+    title = ('ICA decomposition using %s (took %.1fs)' % (method, fit_time))
+    ica.plot_components(title=title)
+
 
 
 # %%
