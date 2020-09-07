@@ -45,9 +45,11 @@ def process_subject(
     """
     
     # Read file from disk
-    raw = mne.io.read_raw_bdf(os.path.join(rootpath, filename), preload = True)
+    raw = mne.io.read_raw_bdf(os.path.join(rootpath, filename), exclude = ["EXG8"], preload = True)
     # Add ID to raw instance
     raw.info["id"] = id
+    # Rename channels to match MNE's montage
+    raw = raw.rename_channels({"FZ":"Fz", "PZ":"Pz", "OZ":"Oz", "CZ":"Cz", "FP2":"Fp2"})
     # Re-reference to nose channel
     raw = raw.set_eeg_reference(["Nose"])
     # Remap channel types for EOG
@@ -56,7 +58,7 @@ def process_subject(
     raw = mne.set_bipolar_reference(raw, "SO2", "IO2", "vEOG")
     raw = mne.set_bipolar_reference(raw, "LO1", "LO2", "hEOG")
     # Pick subset of channels to speed-up processing
-    raw = raw.pick(["FZ", "vEOG", "hEOG", "Status"])
+    raw = raw.pick(["Fz", "vEOG", "hEOG", "Status"])
 
     # Extract events
     events = mne.find_events(raw, shortest_event=1)
@@ -102,8 +104,8 @@ def get_evokeds(epochslist, conditions, grandaverage = False):
         return out
 
 def get_mean_amplitude(evoked, window = None):
-    windowasindex = diff.time_as_index(window)
-    return np.mean( diff.data[:, windowasindex[0]:windowasindex[1]] )
+    windowasindex = evoked.time_as_index(window)
+    return np.mean( evoked.data[:, windowasindex[0]:windowasindex[1]] )
 #%% Expecting a pronounced MMN here
 fig1 = mne.viz.plot_compare_evokeds(
     {
@@ -174,7 +176,7 @@ fig3 = mne.viz.plot_compare_evokeds(
  
 # %% Find peak and find a window (±25ms) 
 diff = get_evokeds(epochslist, ["random/deviant", "random/standard"], grandaverage=True)
-peak = diff.pick(picks="FZ").get_peak(tmin = .1, tmax = .2)[1]
+peak = diff.pick(picks="Fz").get_peak(tmin = .1, tmax = .2)[1]
 peakwindow = (peak-0.025, peak+0.025)
 
 meanamplitude = get_mean_amplitude(diff, window=peakwindow)
@@ -191,22 +193,20 @@ conditions = {
 avgfunc = partial(get_mean_amplitude, window = peakwindow)
 
 rows = []
-for condition in conditions:
+for key, condition in conditions.items():
+    print(condition)
     evokeds = get_evokeds(epochslist, condition)
-    [rows.append({"Id": evoked.info["id"], "MeanAmplitude":avgfunc(evoked)}) for evoked in evokeds]
+    [rows.append({"Id": evoked.info["id"], "Predictability":key[0], "Deviance":key[1], "MeanAmplitude":avgfunc(evoked)}) for evoked in evokeds]
+
+#%%
+data = pandas.DataFrame(rows)
+anova = statsmodels.stats.anova.AnovaRM(data,"MeanAmplitude","Id", within = ["Predictability", "Deviance"])
+results = anova.fit()
 
 
-# %% ICA playground
 
-def run_ica(raw, method, fit_params=None):
-    ica = ICA(n_components=20, method=method, fit_params=fit_params,
-              random_state=0)
-    t0 = time()
-    ica.fit(raw, picks=picks)
-    fit_time = time() - t0
-    title = ('ICA decomposition using %s (took %.1fs)' % (method, fit_time))
-    ica.plot_components(title=title)
+# %%
 
-
+run_ica(raw, "fastica", picks = "eeg")
 
 # %%
