@@ -1,0 +1,68 @@
+###########################################
+### Configuration file for EEG pipeline ###
+###########################################
+
+# Name of the pipeline
+pipeline_name: "pipeline01"
+
+## GENERAL ##
+njobs: -5 # Max. number of concurent jobs
+njobs2: 2 # Max. number of concurent jobs per participant
+
+# Ids for original files (will only be used for conversion)
+raw_ids: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
+# Path of original files (will only be used for conversion)
+raw_path: "/share/projects/mueller/Xmas_Oddballmatch/raw_biosemi/Xmas_{id:02d}.bdf"
+
+# Root path for BIDS files structure
+bids_root_path: "/home/pabst/data/xmasoddballmatch-bids"
+# Name of the task
+task_name: "xmasoddballmatch"
+
+# Power line frequenciy
+line_freq: 50.0
+
+# Seeding PRNGs
+random_state: 42
+
+# Events
+events_dict:
+  random/0/deviant: 102
+  random/1/standard: 111
+  random/0/standard: 101
+  random/2/standard: 121
+  random/3/standard: 131
+  random/4/standard: 141
+  random/5/deviant : 152
+  random/5/standard: 151
+  random/nopattern/standard: 1
+  random/nopattern/deviant: 2
+  predictable/1/standard: 11
+  predictable/2/standard: 21
+  predictable/3/standard: 31
+  predictable/4/standard: 41
+  predictable/5/standard: 51
+  predictable/5/deviant: 52
+  begin: 65790
+  end: 65536
+
+
+
+
+
+
+## ICA ##
+ica_diff_criterion: 100e-10
+
+## Filtering ##
+filter_method: firwin
+fir_window: hamming
+l_freq: 0.1
+h_freq: 30.0
+
+## EPOCHING ##
+epoch_window: !!python/tuple [-0.3, 0.3]
+baseline_winow: !!python/tuple [-0.3, 0.0]
+conditions_of_interest:
+  - random/deviant
+  - random/standard
