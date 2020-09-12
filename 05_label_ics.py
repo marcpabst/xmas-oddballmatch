@@ -37,11 +37,10 @@ def convert_ica_to_mat(id):
 
     # Create an EEGLAB EEG data structure
 
-    ica_mixing_matrix = np.linalg.pinv(ica.mixing_matrix_)
+    ica_unmixing_matrix = np.linalg.pinv(ica.mixing_matrix_)
     ica_pca_matrix = ica.pca_components_[:ica.n_components_]
 
-    icawinv = np.linalg.pinv(np.matmul(ica_mixing_matrix, ica_pca_matrix))  # the mixing matrix
-
+    icawinv = np.linalg.pinv(np.matmul(ica_unmixing_matrix, ica_pca_matrix))
     icasphere = ica_pca_matrix 
     icaweights = ica_mixing_matrix
 
