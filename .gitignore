@@ -133,3 +133,7 @@ dmypy.json
 
 # Mixed
 plots/
+
+
+# EEGLAB
+matlab/eeglab
