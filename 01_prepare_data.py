@@ -4,7 +4,6 @@ import mne
 from mne_bids import make_bids_basename, read_raw_bids, write_raw_bids
 from mne_bids.utils import get_entity_vals
 
-
 import argparse
 from joblib import Parallel, delayed
 
@@ -43,30 +42,10 @@ def prepare_data(id):
     # Write to file
     raw_filename = utils.get_derivative_file_name(
         config["bids_root_path"], id, config["pipeline_name"], ".fif", suffix="raw", processing="prepared")
-    raw.save(raw_filename, overwrite = True)
+    raw.save(raw_filename, overwrite=True)
     events_filename = utils.get_derivative_file_name(
         config["bids_root_path"], id, config["pipeline_name"], ".txt", suffix="eve", processing="prepared")
     mne.write_events(events_filename, events)
-
-    # Bipolarize EOG
-    raw = mne.set_bipolar_reference(raw, "SO2", "IO2", "vEOG")
-    raw = mne.set_bipolar_reference(raw, "LO1", "LO2", "hEOG")
-
-    # Re-reference
-    raw = raw.set_eeg_reference(["Nose"])
-
-    # Merge events REALY?
-    events = mne.merge_events(events, [41, 98], 41)
-    events = mne.merge_events(events, [52, 99], 52)
-
-    # Filter data
-    raw = raw.filter(l_freq = config["l_freq"], h_freq = config["h_freq"], fir_window = config["fir_window"])
-
-    
-    # Write to file
-    raw_filename = utils.get_derivative_file_name(
-        config["bids_root_path"], id, config["pipeline_name"], ".fif", suffix="raw", processing="filtered")
-    raw.save(raw_filename, overwrite = True)
 
 
 def main():

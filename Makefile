@@ -31,6 +31,7 @@ preprocess:
 	$(PYTHON) 02_perform_ica.py $(ARGS)
 	$(PYTHON) 03_filter_and_epoch.py $(ARGS)
 	$(PYTHON) 04_average_epochs.py $(ARGS)
+	$(PYTHON) 05_label_ics.py $(ARGS)
 
 report:
 	source env/bin/activate

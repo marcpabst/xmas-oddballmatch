@@ -11,7 +11,7 @@ from joblib import Parallel, delayed
 config = load_configuration()
 
 
-def prepare_data(id):
+def convert_to_bids(id):
     """
     Prepare data and convert into BIDS format.
     """
@@ -36,10 +36,10 @@ def main():
     args = parser.parse_args()
     if args.subjects:
         Parallel(n_jobs=config["njobs"], prefer="threads")(
-            delayed(prepare_data)(id) for id in args.subjects)
+            delayed(convert_to_bids)(id) for id in args.subjects)
     else:
         Parallel(n_jobs=config["njobs"], prefer="threads")(
-            delayed(prepare_data)(id) for id in config["raw_ids"])
+            delayed(convert_to_bids)(id) for id in config["raw_ids"])
 
 
 if __name__ == '__main__':

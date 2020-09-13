@@ -2,12 +2,15 @@
 ### Configuration file for EEG pipeline ###
 ###########################################
 
+## GENERAL ##
+
 # Name of the pipeline
 pipeline_name: "pipeline01"
 
-## GENERAL ##
 njobs: -5 # Max. number of concurent jobs
 njobs2: 2 # Max. number of concurent jobs per participant
+
+## CONVERSION ##
 
 # Ids for original files (will only be used for conversion)
 raw_ids: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
@@ -19,10 +22,12 @@ bids_root_path: "/home/pabst/data/xmasoddballmatch-bids"
 # Name of the task
 task_name: "xmasoddballmatch"
 
+## PREPROCESSING ##
+
 # Power line frequenciy
 line_freq: 50.0
 
-# Seeding PRNGs
+# Seed for PRNGs
 random_state: 42
 
 # Events
@@ -47,14 +52,14 @@ events_dict:
   end: 65536
 
 
-
-
-
-
 ## ICA ##
-ica_diff_criterion: 100e-10
+ica_l_freq: 1.
+ica_h_freq: null
+ica_filter_method: firwin
+ica_fir_window: hamming
+ica_diff_criterion: 100e-10 # Delta criterion for epoch rejection
 
-## Filtering ##
+## FILTERING ##
 filter_method: firwin
 fir_window: hamming
 l_freq: 0.1
@@ -66,3 +71,12 @@ baseline_winow: !!python/tuple [-0.3, 0.0]
 conditions_of_interest:
   - random/deviant
   - random/standard
+
+
+## VIZ ##
+main_colors:
+  - "#04658F"
+  - "#9E7F05"
+accent_colors:
+  - "#94CAE0"
+  - "#FFFFFF"

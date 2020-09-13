@@ -25,11 +25,10 @@ def make_report_subject(id):
 
     ica = mne.preprocessing.read_ica(ica_filename)
 
-    figures = ica.plot_components()
+    figures = ica.plot_components(cmap="rainbow")
 
     report.add_figs_to_section(
-        figures, captions = ["ICA componnts overview"] * len(figures) , section='ica')
-
+        figures, captions=["ICA componnts overview"] * len(figures), section='ica')
 
     # Report evoked
     ave_filename = utils.get_derivative_file_name(

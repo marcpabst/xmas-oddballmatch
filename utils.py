@@ -72,4 +72,3 @@ def get_derivative_file_name(bids_root_path, subject, pipeline_name, extension="
         makedirs(save_dir)
 
     return join(save_dir, bids_basename) + extension
-
