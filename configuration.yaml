@@ -7,8 +7,8 @@
 # Name of the pipeline
 pipeline_name: "pipeline01"
 
-njobs: -3 # Max. number of concurent jobs
-njobs2: 2 # Max. number of concurent jobs per participant
+njobs: 3 # Max. number of concurent jobs
+njobs2: 5 # Max. number of concurent jobs per participant
 
 ## CONVERSION ##
 
@@ -54,7 +54,8 @@ events_dict:
 
 ## ICA ##
 ica_l_freq: 2.5
-ica_h_freq: null
+ica_h_freq: 30.
+ica_downsample_freq: 250.
 ica_filter_method: firwin
 ica_fir_window: hamming
 ica_diff_criterion: 100e-10 # Delta criterion for epoch rejection

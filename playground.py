@@ -287,4 +287,25 @@ labels_confidence = labels.iloc[1].tolist()
 plotting.plot_ica_component_simple(ica, raw, 1, labels_names, labels_confidence)
 # %%
 import mne
+
+raw_filename = "/home/pabst/data/xmasoddballmatch-bids/derivatives/pipeline01/sub-001/sub-001_proc-prepared_raw.fif"
+events_filename = "/home/pabst/data/xmasoddballmatch-bids/derivatives/pipeline01/sub-001/sub-001_proc-prepared_eve.txt"
+raw = mne.io.read_raw_fif(raw_filename, preload=True)
+events = mne.read_events(events_filename)
+
+    
+ica_filename = "/home/pabst/data/xmasoddballmatch-bids/derivatives/pipeline01/sub-001/sub-001_ica.fif"
+ica = mne.preprocessing.read_ica(ica_filename)
+#%%
+from configuration import load_configuration
+config = load_configuration()
+# Epoch data
+epochs = mne.Epochs(raw, events, config["events_dict"],
+                    tmin=config["epoch_window"][0],
+                    tmax=config["epoch_window"][1],
+                    baseline=config["baseline_winow"],
+                    reject={"eog": 100e-4}, preload=True).pick(picks="eeg")
+            
+
+
 # %%

@@ -41,6 +41,10 @@ def label_ics(id):
         config["bids_root_path"], id, config["pipeline_name"], ".fif", suffix="ica")
     ica = mne.preprocessing.read_ica(ica_filename)
 
+    # Drop bad channels
+    bad_channels = list(set(epochs.info["ch_names"]) -  set(ica.info["ch_names"]))
+    epochs = epochs.drop_channels(bad_channels)
+
     # Create an EEGLAB EEG data structure
     ica_unmixing_matrix = np.linalg.pinv(ica.mixing_matrix_)
     ica_pca_matrix = ica.pca_components_[:ica.n_components_]
@@ -54,8 +58,8 @@ def label_ics(id):
     eeglab_EEG['icaweights'] = icaweights
     eeglab_EEG['icasphere'] = icasphere
     eeglab_EEG['icawinv'] = icawinv
-    eeglab_EEG["srate"] = raw.info["sfreq"]
-    eeglab_EEG["nbchan"] = raw.info["nchan"]
+    eeglab_EEG["srate"] = epochs.info["sfreq"]
+    eeglab_EEG["nbchan"] = epochs.info["nchan"]
     eeglab_EEG["times"] = epochs.times / 1000
     eeglab_EEG["trials"] = events.shape[0] - 1
     eeglab_EEG["xmin"] = 0
@@ -66,7 +70,7 @@ def label_ics(id):
     eeglab_EEG["event"] = []
     eeglab_EEG["icaact"] = []
     eeglab_EEG["chanlocs"] = [{"X": ch["loc"][1], "Y": -ch["loc"][0],
-                               "Z": ch["loc"][2], "labels": ch["ch_name"]} for ch in raw.info["chs"]]
+                               "Z": ch["loc"][2], "labels": ch["ch_name"]} for ch in epochs.info["chs"]]
 
     mat_filename = utils.get_derivative_file_name(
         config["bids_root_path"], id, config["pipeline_name"], ".mat", suffix="ica-matlab")
@@ -77,7 +81,7 @@ def label_ics(id):
 
     # Calling Matlab through shell
     process = subprocess.Popen(['matlab', '-nodisplay', '-batch',
-                                'addpath("matlab/", genpath("matlab/eeglab/")); label_ics("'+mat_filename+'", "'+csv_filename+'"); exit();']).wait()
+                                'addpath("matlab/", genpath("/usr/local/toolbox/eeglab")); label_ics("'+mat_filename+'", "'+csv_filename+'"); exit();']).wait()
 
 
 def main():

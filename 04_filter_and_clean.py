@@ -37,16 +37,10 @@ def filter_and_clean(id):
     # Re-reference
     raw = raw.set_eeg_reference(["Nose"])
 
-    # Merge events REALY?
-    events = mne.merge_events(events, [41, 98], 41)
-    events = mne.merge_events(events, [52, 99], 52)
-
     # Filter data
     raw = raw.filter(l_freq = config["l_freq"], h_freq = config["h_freq"], fir_window = config["fir_window"])
-
-    # Clean data
     
-    # Read ica, and labels from disk
+    # Read ICA and labels from disk
     ica_filename = utils.get_derivative_file_name(
         config["bids_root_path"], id, config["pipeline_name"], ".fif", suffix="ica")
     ica = mne.preprocessing.read_ica(ica_filename)
@@ -60,7 +54,12 @@ def filter_and_clean(id):
 
     # Apply ICA to data, but zeroing-out non-brain components
     raw = ica.apply(raw, exclude= exclude_idx)
-    
+
+    # Interpolate bad channels
+    bad_channels = list(set(raw.info["ch_names"]) -  set(ica.info["ch_names"]))
+    raw.info["bads"] = bad_channels
+    raw.interpolate_bads(reset_bads = True)
+
     # Write to file
     raw_filename = utils.get_derivative_file_name(
         config["bids_root_path"], id, config["pipeline_name"], ".fif", suffix="raw", processing="cleaned")

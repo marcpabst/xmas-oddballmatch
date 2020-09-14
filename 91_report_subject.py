@@ -91,11 +91,11 @@ def main():
 
     args = parser.parse_args()
     if args.subjects:
-        Parallel(n_jobs=config["njobs"], prefer="threads")(
+        Parallel(n_jobs=1, prefer="threads")(
             delayed(report_subject)(id) for id in args.subjects)
     else:
         ids = get_entity_vals(config["bids_root_path"], "sub")
-        Parallel(n_jobs=config["njobs"], prefer="threads")(
+        Parallel(n_jobs=1, prefer="threads")(
             delayed(report_subject)(id) for id in ids)
 
 

@@ -38,6 +38,7 @@ def prepare_data(id):
     # Load and apply standard 10-20 montage
     ten_twenty_montage = mne.channels.make_standard_montage('standard_1020')
     raw = raw.set_montage(ten_twenty_montage)
+    
 
     # Write to file
     raw_filename = utils.get_derivative_file_name(
