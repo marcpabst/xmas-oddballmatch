@@ -53,7 +53,7 @@ events_dict:
 
 
 ## ICA ##
-ica_l_freq: 1.
+ica_l_freq: 2.5
 ica_h_freq: null
 ica_filter_method: firwin
 ica_fir_window: hamming
@@ -75,8 +75,8 @@ conditions_of_interest:
 
 ## VIZ ##
 main_colors:
-  - "#04658F"
-  - "#9E7F05"
+  - "#024B79"
+  - "#BA5800"
 accent_colors:
-  - "#94CAE0"
-  - "#FFFFFF"
+  - "#43B7C2"
+  - "#FFAD48"

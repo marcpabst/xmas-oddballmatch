@@ -34,10 +34,10 @@ def perform_ica(id):
 
     # Remove line noise using ZapLine
     raw = utils.apply_zapline(
-        raw, config["line_freq"], picks=["eeg"], nremove=2)
+        raw, config["line_freq"], picks=["eeg"], nremove=3)
 
     # Filter
-    raw = raw.filter(l_freq=1., h_freq=None, fir_window="blackman")
+    raw = raw.filter(l_freq=config["ica_l_freq"], h_freq=config["ica_h_freq"], fir_window="blackman")
 
     # Plot
     #fig = mne.viz.plot_raw_psd(raw)

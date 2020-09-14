@@ -28,7 +28,7 @@ config = load_configuration()
 def label_ics(id):
     # Read raw file from disk
     raw_filename = utils.get_derivative_file_name(
-        config["bids_root_path"], id, config["pipeline_name"], ".fif", suffix="raw", processing="filtered")
+        config["bids_root_path"], id, config["pipeline_name"], ".fif", suffix="raw", processing="prepared")
     raw = mne.io.read_raw_fif(raw_filename, preload=True)
     raw = raw.pick(picks="eeg")
 

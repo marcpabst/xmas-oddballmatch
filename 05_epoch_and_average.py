@@ -15,7 +15,7 @@ import utils
 config = load_configuration()
 
 
-def average_epochs(id):
+def epoch_and_average(id):
 
     # Read file from disk
     raw_filename = utils.get_derivative_file_name(
@@ -52,11 +52,11 @@ def main():
     args = parser.parse_args()
     if args.subjects:
         Parallel(n_jobs=config["njobs"], prefer="threads")(
-            delayed(average_epochs)(id) for id in args.subjects)
+            delayed(epoch_and_average)(id) for id in args.subjects)
     else:
         ids = get_entity_vals(config["bids_root_path"], "sub")
         Parallel(n_jobs=config["njobs"], prefer="threads")(
-            delayed(average_epochs)(id) for id in ids)
+            delayed(epoch_and_average)(id) for id in ids)
 
 
 if __name__ == '__main__':

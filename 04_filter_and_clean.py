@@ -14,6 +14,8 @@ from joblib import Parallel, delayed
 
 from autoreject import Ransac, AutoReject
 
+import pandas as pd
+
 import utils
 
 config = load_configuration()
@@ -47,17 +49,17 @@ def filter_and_clean(id):
     # Read ica, and labels from disk
     ica_filename = utils.get_derivative_file_name(
         config["bids_root_path"], id, config["pipeline_name"], ".fif", suffix="ica")
-    ica = mne.preprocessing.read_ica(ica_filename) = mne.preprocessing.read_ica(ica_filename)
+    ica = mne.preprocessing.read_ica(ica_filename)
     csv_filename = utils.get_derivative_file_name(
         config["bids_root_path"], id, config["pipeline_name"], ".csv", suffix="ica-matlab")
     labels = pd.read_csv(csv_filename)
 
     labels_names = labels.idxmax(axis=1).tolist()
     labels_confidence = labels.max(axis=1).tolist()
-    exclude_idx = [i for i, name in enumerate(labels_names) if name != "Brain"]
+    exclude_idx = [i for i, name in enumerate(labels_names) if name != "Brain" and name != "Other"]
 
     # Apply ICA to data, but zeroing-out non-brain components
-    raw = ica.apply(raw, exclude= = exclude_idx)
+    raw = ica.apply(raw, exclude= exclude_idx)
     
     # Write to file
     raw_filename = utils.get_derivative_file_name(

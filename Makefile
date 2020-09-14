@@ -29,10 +29,11 @@ preprocess:
 	source env/bin/activate
 	$(PYTHON) 01_prepare_data.py $(ARGS)
 	$(PYTHON) 02_perform_ica.py $(ARGS)
-	$(PYTHON) 03_filter_and_epoch.py $(ARGS)
-	$(PYTHON) 04_average_epochs.py $(ARGS)
-	$(PYTHON) 05_label_ics.py $(ARGS)
+	$(PYTHON) 03_label_ics.py $(ARGS)
+	$(PYTHON) 04_filter_and_clean.py $(ARGS)
+	$(PYTHON) 05_epoch_and_average.py $(ARGS)
+
 
 report:
 	source env/bin/activate
-	$(PYTHON) 91_make_report_subject.py $(ARGS)
+	$(PYTHON) 91_report_subject.py $(ARGS)

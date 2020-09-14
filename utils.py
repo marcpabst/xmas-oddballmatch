@@ -72,3 +72,16 @@ def get_derivative_file_name(bids_root_path, subject, pipeline_name, extension="
         makedirs(save_dir)
 
     return join(save_dir, bids_basename) + extension
+
+def get_derivative_report_file_name(bids_root_path, subject, pipeline_name, extension=".html", make_dir = True, **kwargs):
+
+    derivivite_root_path = join(bids_root_path, "derivatives", pipeline_name) 
+    save_dir = join(derivivite_root_path)
+    bids_basename = make_bids_basename(subject=subject, **kwargs)
+
+    if make_dir and not exists(save_dir):
+        makedirs(save_dir)
+
+    return join(save_dir, bids_basename) + extension
+
+    

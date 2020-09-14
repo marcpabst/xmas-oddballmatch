@@ -1,14 +1,9 @@
 #%%
 import mne
 import matplotlib.pyplot as plt
-from os import path
-from functools import partial
-import numpy as np
-import pandas
 
-from reporting import Report
-import utils
-from autoreject import Ransac, AutoReject
+import plotting
+#%%
 
 #rootpath = "/mnt/c/Users/Marc/Documents/Xmas_Oddballmatch/raw_biosemi"
 rootpath = "/home/pabst/data/raw_biosemi"
@@ -277,8 +272,19 @@ results = anova.fit()
 
 
 
+
 # %%
+raw = mne.io.read_raw_fif("/home/pabst/data/xmasoddballmatch-bids/derivatives/pipeline01/sub-001/sub-001_proc-prepared_raw.fif")
+ica = mne.preprocessing.read_ica("/home/pabst/data/xmasoddballmatch-bids/derivatives/pipeline01/sub-001/sub-001_ica.fif")
+# %%
+import pandas as pd
 
-run_ica(raw, "fastica", picks = "eeg")
+csv_filename = "/home/pabst/data/xmasoddballmatch-bids/derivatives/pipeline01/sub-001/sub-001_ica-matlab.csv"
+labels = pd.read_csv(csv_filename)
 
+labels_names = labels.columns.tolist()
+labels_confidence = labels.iloc[1].tolist()
+plotting.plot_ica_component_simple(ica, raw, 1, labels_names, labels_confidence)
+# %%
+import mne
 # %%
