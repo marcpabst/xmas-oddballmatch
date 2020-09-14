@@ -12,8 +12,7 @@ help:
 	@echo "Please use \`make <target>\` where <target> is one of"
 	@echo "  setup         create virtual environment and install dependencies"
 	@echo "  preprocess    run preprocessing pipeline"
-	@echo "  statistics    generate statistics"
-	@echo "  all           run full pipeline"
+	@echo "  report    	   generate reports"
 
 setup:
 	$(PYTHON) -m venv env
