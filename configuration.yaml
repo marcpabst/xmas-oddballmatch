@@ -7,7 +7,7 @@
 # Name of the pipeline
 pipeline_name: "pipeline01"
 
-njobs: -5 # Max. number of concurent jobs
+njobs: -3 # Max. number of concurent jobs
 njobs2: 2 # Max. number of concurent jobs per participant
 
 ## CONVERSION ##
@@ -18,7 +18,7 @@ raw_ids: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
 raw_path: "/share/projects/mueller/Xmas_Oddballmatch/raw_biosemi/Xmas_{id:02d}.bdf"
 
 # Root path for BIDS files structure
-bids_root_path: "/home/pabst/data/xmasoddballmatch-bids"
+bids_root_path: "/share/tmpdata/pabst/xmasoddballmatch-bids"
 # Name of the task
 task_name: "xmasoddballmatch"
 

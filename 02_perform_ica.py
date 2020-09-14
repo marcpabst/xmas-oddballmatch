@@ -51,7 +51,7 @@ def perform_ica(id):
     # Identify bad channels using RANSAC
     ransac = Ransac(n_jobs=config["njobs2"], verbose='progressbar')
     ransac.fit(epochs)
-    raw.info['bads'] += ransac.bad_chs_
+    raw.info['bads'] = ransac.bad_chs_
     n_bad_channels = len(raw.info['bads'])
     n_all_channels = len(mne.channel_indices_by_type(raw.info)["eeg"])
 
