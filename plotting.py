@@ -30,7 +30,7 @@ class AnchoredVScaleBar(matplotlib.offsetbox.AnchoredOffsetbox):
                  **kwargs)
 
 
-def compare_evokeds(evoked_dict, colors1, colors2, picks = "data", ax = None):
+def compare_evokeds(evoked_dict, colors1, colors2, picks = "data", ax = None, shade = None):
 
     if ax == None:
         fig = plt.figure()
@@ -42,17 +42,19 @@ def compare_evokeds(evoked_dict, colors1, colors2, picks = "data", ax = None):
             _evoked_list = [evoked.pick_channels(picks) for evoked in evoked_list]
             grand_avg = mne.grand_average(_evoked_list)
         except TypeError:
-                grand_avg = evoked_list.pick_channels(picks)
+            grand_avg = evoked_list.pick_channels(picks)
 
         dat = grand_avg.data.T * 1000000
         times = grand_avg.times
 
         ax.plot(times, dat, zorder=1000, label=condition, clip_on=False, color = colors1[i] )
 
-        ob = AnchoredVScaleBar(size=.5, label="50 µV", loc=2, frameon=False,
-                       pad=0.6, sep=4) 
-        
-        ax.add_artist(ob)
+       
+
+    ob = AnchoredVScaleBar(size=.5, label="50 µV", loc=2, frameon=False,
+                    pad=0.6, sep=4) 
+    
+    ax.add_artist(ob)
     
 
     ax.set_xlabel('Time (s)')
@@ -69,8 +71,12 @@ def compare_evokeds(evoked_dict, colors1, colors2, picks = "data", ax = None):
     
 
     xticks = ax.xaxis.get_majorticklocs()
-    print(xticks)
     ax.spines['bottom'].set_bounds(xticks[0], xticks[-1])
+
+    if shade is not None:
+        for s in shade:
+            ax.axvspan(s[0], s[1], alpha=0.5, color='red')
+            
 
     
 

@@ -24,8 +24,8 @@ task_name: "xmasoddballmatch"
 
 ## PREPROCESSING ##
 
-# Power line frequenciy
-line_freq: 50.0
+# Power line frequenciy (null to skip ZapLine)
+line_freq: null
 
 # Seed for PRNGs
 random_state: 42
@@ -53,8 +53,8 @@ events_dict:
 
 
 ## ICA ##
-ica_l_freq: 2.5
-ica_h_freq: 30.
+ica_l_freq: 2.0
+ica_h_freq: 40.
 ica_downsample_freq: 250.
 ica_filter_method: firwin
 ica_fir_window: hamming
@@ -72,6 +72,10 @@ baseline_winow: !!python/tuple [-0.3, 0.0]
 conditions_of_interest:
   - random/deviant
   - random/standard
+  - predictable/4/standard
+  - predictable/5/deviant
+  - random/4/standard
+  - random/5/deviant
 
 
 ## VIZ ##

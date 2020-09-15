@@ -30,7 +30,7 @@ def label_ics(id):
     raw_filename = utils.get_derivative_file_name(
         config["bids_root_path"], id, config["pipeline_name"], ".fif", suffix="raw", processing="prepared")
     raw = mne.io.read_raw_fif(raw_filename, preload=True)
-    raw = raw.pick(picks="eeg")
+    raw = raw.pick(picks=["eeg", "eog"])
 
     events = mne.make_fixed_length_events(raw, duration=1.0)
     epochs = mne.Epochs(raw, events, tmin=0.0, tmax=1.0,
@@ -69,8 +69,9 @@ def label_ics(id):
     eeglab_EEG["setname"] = "Testset"
     eeglab_EEG["event"] = []
     eeglab_EEG["icaact"] = []
-    eeglab_EEG["chanlocs"] = [{"X": ch["loc"][1], "Y": -ch["loc"][0],
-                               "Z": ch["loc"][2], "labels": ch["ch_name"]} for ch in epochs.info["chs"]]
+    # eeglab_EEG["chanlocs"] = [{"X": ch["loc"][1], "Y": -ch["loc"][0],
+    #                            "Z": ch["loc"][2], "labels": ch["ch_name"]} for ch in epochs.info["chs"]]
+    eeglab_EEG["chanlocs"] = [{"labels": ch["ch_name"]} for ch in epochs.info["chs"]]
 
     mat_filename = utils.get_derivative_file_name(
         config["bids_root_path"], id, config["pipeline_name"], ".mat", suffix="ica-matlab")
@@ -81,7 +82,7 @@ def label_ics(id):
 
     # Calling Matlab through shell
     process = subprocess.Popen(['matlab', '-nodisplay', '-batch',
-                                'addpath("matlab/", genpath("/usr/local/toolbox/eeglab")); label_ics("'+mat_filename+'", "'+csv_filename+'"); exit();']).wait()
+                                'addpath("matlab/", genpath("matlab/eeglab")); label_ics("'+mat_filename+'", "'+csv_filename+'"); exit();']).wait()
 
 
 def main():

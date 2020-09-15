@@ -297,8 +297,7 @@ events = mne.read_events(events_filename)
 ica_filename = "/home/pabst/data/xmasoddballmatch-bids/derivatives/pipeline01/sub-001/sub-001_ica.fif"
 ica = mne.preprocessing.read_ica(ica_filename)
 #%%
-from configuration import load_configuration
-config = load_configuration()
+
 # Epoch data
 epochs = mne.Epochs(raw, events, config["events_dict"],
                     tmin=config["epoch_window"][0],
@@ -308,4 +307,30 @@ epochs = mne.Epochs(raw, events, config["events_dict"],
             
 
 
+# %%
+import mne
+from mne_bids.utils import get_entity_vals
+from configuration import load_configuration
+from os.path import join
+import utils
+config = load_configuration()
+# Get subjects ids
+ids = get_entity_vals(join(config["bids_root_path"], "derivatives"), "sub")
+
+# Read files from disk
+ave_filenames = [utils.get_derivative_file_name(
+    config["bids_root_path"], id, config["pipeline_name"], ".fif", suffix="ave") for id in ids]
+all_evokeds = [mne.read_evokeds(ave_filename) for ave_filename in ave_filenames]
+#%%
+# Report evoked
+evokeds_list_as_dict = {}
+evokeds_list_as_dict["random/deviant"] = []
+evokeds_list_as_dict["random/standard"] = []
+for evokeds_list in all_evokeds:
+    for evoked in evokeds_list:
+        evokeds_list_as_dict[evoked.comment].append(evoked)
+
+
+
+figure = mne.viz.plot_compare_evokeds(evokeds_list_as_dict, picks=["F3", "Fz", "F4", "FC1", "FC2"], combine = "mean")
 # %%

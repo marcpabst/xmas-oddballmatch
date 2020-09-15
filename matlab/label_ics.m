@@ -8,7 +8,7 @@ function label_ics(input, output)
     input.EEG.pnts = double(input.EEG.pnts);
     input.EEG.trials = double(input.EEG.trials);
 
-    input.EEG = pop_chanedit(input.EEG, 'convert', { 'xyz->polar' [] -1 1 });
+    input.EEG = pop_chanedit(input.EEG, 'lookup', 'matlab/standard-10-5-cap385.elp');
     % run iclabel
     input.EEG = iclabel(input.EEG);
 

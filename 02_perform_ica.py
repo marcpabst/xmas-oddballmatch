@@ -30,8 +30,9 @@ def perform_ica(id):
         raw, events, config["events_dict"], "begin", "end")
 
     # Remove line noise using ZapLine
-    #raw = utils.apply_zapline(
-    #    raw, config["line_freq"], picks=["eeg"], nremove=3)
+    if config["line_freq"] is not None:
+        raw = utils.apply_zapline(
+            raw, config["line_freq"], picks=["eeg"], nremove=3)
 
     # Filter
     raw = raw.filter(
@@ -48,7 +49,7 @@ def perform_ica(id):
 
     epochs.info['bads'] = ransac.bad_chs_
     n_bad_channels = len(epochs.info['bads'])
-    n_all_channels = len(mne.channel_indices_by_type(epochs.info)["eeg"])
+    n_all_channels = len(mne.channel_indices_by_type(epochs.info)["eeg"]) + len(mne.channel_indices_by_type(epochs.info)["eog"])
 
     # Drop bad channels
     epochs = epochs.drop_channels(epochs.info['bads'])
@@ -63,8 +64,8 @@ def perform_ica(id):
                                 fit_params=None, random_state=config["random_state"])
 
     # Fit ICA
-    ica.fit(epochs, picks=["eeg"], reject={
-            "eeg": config["ica_diff_criterion"]})
+    ica.fit(epochs, picks=["eeg", "eog"], reject={
+            "data": config["ica_diff_criterion"]})
 
     # Save ICA to disk
     ica_filename = utils.get_derivative_file_name(

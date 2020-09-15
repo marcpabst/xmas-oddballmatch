@@ -85,3 +85,18 @@ def get_derivative_report_file_name(bids_root_path, subject, pipeline_name, exte
     return join(save_dir, bids_basename) + extension
 
     
+def get_mean_amplitude(evoked, window, picks = "all"):
+
+    if isinstance(evoked, list):
+        for 
+        evoked = evoked.pick(picks)
+
+        window = np.arange(evoked.time_as_index(window[0]),
+                                evoked.time_as_index(window[1]))
+
+        data = epochs.get_data()
+        mean = data.mean(axis=2)
+    else:
+        return get_mean_amplitude([evoked], window, picks)
+
+    return mean, 

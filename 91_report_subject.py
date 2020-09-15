@@ -55,25 +55,25 @@ def report_subject(id):
         figures, captions=["ICA componnts details"] * len(figures), section='ica')
     
     # Report evoked
-    ave_filename = utils.get_derivative_file_name(
-        config["bids_root_path"], id, config["pipeline_name"], ".fif", suffix="ave")
+    # ave_filename = utils.get_derivative_file_name(
+    #     config["bids_root_path"], id, config["pipeline_name"], ".fif", suffix="ave")
 
-    evokeds_list = mne.read_evokeds(ave_filename)
-    evokeds_list_as_dict = {evoked.comment: evoked for evoked in evokeds_list}
+    # evokeds_list = mne.read_evokeds(ave_filename)
+    # evokeds_list_as_dict = {evoked.comment: evoked for evoked in evokeds_list}
 
 
-    figure = mne.viz.plot_compare_evokeds(evokeds_list_as_dict, picks="Fz")
-    report.add_figs_to_section(
-        figure, captions='All standards vs. all deviants (random condition): Fz', section='evoked')
+    # figure = mne.viz.plot_compare_evokeds(evokeds_list_as_dict, picks="Fz")
+    # report.add_figs_to_section(
+    #     figure, captions='All standards vs. all deviants (random condition): Fz', section='evoked')
 
-    #  Pool 
-    figure = mne.viz.plot_compare_evokeds(evokeds_list_as_dict, picks=["F3", "Fz", "F4", "FC1", "FC2"], combine = "mean")
-    report.add_figs_to_section(
-        figure, captions='All standards vs. all deviants (random condition): Pooled F3, Fz, F4, FC1, FC2', section='evoked')
+    # #  Pool 
+    # figure = mne.viz.plot_compare_evokeds(evokeds_list_as_dict, picks=["F3", "Fz", "F4", "FC1", "FC2"], combine = "mean")
+    # report.add_figs_to_section(
+    #     figure, captions='All standards vs. all deviants (random condition): Pooled F3, Fz, F4, FC1, FC2', section='evoked')
 
-    figure = plotting.compare_evokeds(evokeds_list_as_dict, config["main_colors"], config["accent_colors"], picks=["Fz"])
-    report.add_figs_to_section(
-        figure, captions='Test', section='evoked')
+    # figure = plotting.compare_evokeds(evokeds_list_as_dict, config["main_colors"], config["accent_colors"], picks=["Fz"])
+    # report.add_figs_to_section(
+    #     figure, captions='Test', section='evoked')
 
         
 

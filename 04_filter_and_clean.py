@@ -30,16 +30,6 @@ def filter_and_clean(id):
     raw = mne.io.read_raw_fif(raw_filename, preload = True)
     events = mne.read_events(events_filename)
 
-    # Bipolarize EOG
-    raw = mne.set_bipolar_reference(raw, "SO2", "IO2", "vEOG")
-    raw = mne.set_bipolar_reference(raw, "LO1", "LO2", "hEOG")
-
-    # Re-reference
-    raw = raw.set_eeg_reference(["Nose"])
-
-    # Filter data
-    raw = raw.filter(l_freq = config["l_freq"], h_freq = config["h_freq"], fir_window = config["fir_window"])
-    
     # Read ICA and labels from disk
     ica_filename = utils.get_derivative_file_name(
         config["bids_root_path"], id, config["pipeline_name"], ".fif", suffix="ica")
@@ -54,6 +44,16 @@ def filter_and_clean(id):
 
     # Apply ICA to data, but zeroing-out non-brain components
     raw = ica.apply(raw, exclude= exclude_idx)
+
+    # Bipolarize EOG
+    raw = mne.set_bipolar_reference(raw, "SO2", "IO2", "vEOG")
+    raw = mne.set_bipolar_reference(raw, "LO1", "LO2", "hEOG")
+
+    # Re-reference
+    raw = raw.set_eeg_reference(["Nose"])
+
+    # Filter data
+    raw = raw.filter(l_freq = config["l_freq"], h_freq = config["h_freq"], fir_window = config["fir_window"])
 
     # Interpolate bad channels
     bad_channels = list(set(raw.info["ch_names"]) -  set(ica.info["ch_names"]))
