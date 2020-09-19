@@ -11,6 +11,9 @@ from joblib import Parallel, delayed
 from autoreject import Ransac, AutoReject
 
 import utils
+import numpy as np
+from numpy.core.records import fromarrays
+from scipy.io import savemat
 
 config = load_configuration()
 
@@ -26,8 +29,8 @@ def perform_ica(id):
     events = mne.read_events(events_filename)
 
     # Cut non-block data
-    raw = utils.cut_raw_blocks(
-        raw, events, config["events_dict"], "begin", "end")
+    # raw = utils.cut_raw_blocks(
+    #    raw, events, config["events_dict"], "begin", "end")
 
     # Remove line noise using ZapLine
     if config["line_freq"] is not None:
@@ -36,36 +39,52 @@ def perform_ica(id):
 
     # Filter
     raw = raw.filter(
-        l_freq=config["ica_l_freq"], h_freq=config["ica_h_freq"], fir_window="blackman")
+        l_freq=config["ica_l_freq"], h_freq=config["ica_h_freq"], fir_window=config["ica_fir_window"])
+
+
+    # Downsample
+    if config["ica_downsample_freq"] is not None:
+        raw = raw.resample(config["ica_downsample_freq"])
+  
+
 
     # Cut continous data into arbitrary epochs of 1 s
-    events = mne.make_fixed_length_events(raw, duration=1.0)
-    epochs = mne.Epochs(raw, events, tmin=0.0, tmax=1.0,
-                        reject=None, baseline=None, preload=True)
+    events = mne.make_fixed_length_events(raw, duration=config["ica_step"])
+    epochs = mne.Epochs(raw, events, tmin=0.0, tmax=config["ica_step"], picks=[
+                        "eeg", "eog"], baseline=None, preload=True, reject=None)
 
     # Identify bad channels using RANSAC
-    ransac = Ransac(n_jobs=config["njobs2"], verbose='progressbar')
-    ransac.fit(epochs)
-
+    ransac = Ransac(n_jobs=config["njobs2"])
+    eeg_epochs = epochs.copy().pick("eeg")
+    ransac.fit(eeg_epochs)
     epochs.info['bads'] = ransac.bad_chs_
-    n_bad_channels = len(epochs.info['bads'])
-    n_all_channels = len(mne.channel_indices_by_type(epochs.info)["eeg"]) + len(mne.channel_indices_by_type(epochs.info)["eog"])
+
+    #epochs.info['bads'] = ransac.bad_chs_
+    print("Dropped {} bad channels: {}.".format(len(epochs.info['bads']),epochs.info['bads'])) 
 
     # Drop bad channels
     epochs = epochs.drop_channels(epochs.info['bads'])
 
+    # Calculate rank
+    ranks = mne.compute_rank(epochs)
+    rank = sum(ranks.values()) + 4
+    print("Data rank: {}. ".format(rank))
+    
     # Downsample
     if config["ica_downsample_freq"] is not None:
         epochs = epochs.resample(config["ica_downsample_freq"])
 
-    # Create ICA
-    n_pca_components = n_all_channels - n_bad_channels - 1
-    ica = mne.preprocessing.ICA(n_components=n_pca_components, method="picard",
-                                fit_params=None, random_state=config["random_state"])
 
+    # Create ICA
+    #ica = mne.preprocessing.ICA(n_components=rank, method="infomax", fit_params=dict(extended=True),
+                                random_state=config["random_state"], max_iter=600)
     # Fit ICA
-    ica.fit(epochs, picks=["eeg", "eog"], reject={
-            "data": config["ica_diff_criterion"]})
+    #ica.fit(epochs, picks=["eeg", "eog"], reject=config["ica_diff_criterion"])
+
+    # ICA using EEEGLAB
+    with EEGlab() as eeglab, EEG(raw) as eeg:
+        EEG = eeglab.pop_chanedit(eeg, 'lookup', 'matlab/standard-10-5-cap385.elp')
+        ica = EEG.get_ica()
 
     # Save ICA to disk
     ica_filename = utils.get_derivative_file_name(

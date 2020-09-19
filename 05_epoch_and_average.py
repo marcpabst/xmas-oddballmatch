@@ -30,7 +30,15 @@ def epoch_and_average(id):
                         tmin=config["epoch_window"][0],
                         tmax=config["epoch_window"][1],
                         baseline=config["baseline_winow"],
-                        reject={"eog": 100e-4})
+                        reject=config["diff_criterion"])
+
+    # Epoch-wise cleaning and interpolation using AutoReject (AutoReject will ignore bad channels)
+    # we also can now interpolate bad channels identified before ICA
+    if config["use_autoreject"]:
+        ar = AutoReject(n_jobs=config["n_jobs2"])
+        ar.fit(epochs)
+        epochs = ar.transform(epochs)
+        epochs = epochs.interpolate_bads(reset_bads=True)
 
     evokeds_list = []
     for condition in config["conditions_of_interest"]:

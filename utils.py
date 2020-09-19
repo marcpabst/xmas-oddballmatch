@@ -49,16 +49,26 @@ def apply_asr(raw, calibrate_window, picks = "eeg"):
     return raw
 
 def cut_raw_blocks(raw, events, eventinfo, begin_event, end_event):
+    sfreq = raw.info["sfreq"]
 
     begin_event_id = eventinfo[begin_event]
     end_event_id = eventinfo[end_event]
 
-    begin_idx =  np.squeeze(events[np.where(events[:,2] == begin_event_id),0])
-    end_idx = np.squeeze(events[np.where(events[:,2] == end_event_id),0])
+    begin_idx =  np.squeeze(events [np.where(events[:,2] == end_event_id), 0] )
+    end_idx = np.squeeze(events[np.where(events[:,2] == begin_event_id), 0])
 
-    if begin_idx[0] > end_idx[0]: end_idx = end_idx[1:]
+    if begin_idx[0] > end_idx[0]:
+        end_idx = end_idx[1:]
 
-    raw._data = np.hstack( [raw._data[:, np.arange(b, e) ] for b, e in zip(begin_idx[0:(len(end_idx)-1)], end_idx) ] )
+    if len(begin_idx) is not len(end_idx):
+        min_len = min([len(begin_idx), len(end_idx)])
+        begin_idx = begin_idx[0:min_len]
+        end_idx = end_idx[0:min_len]
+
+    print(*["Annotating from {b} s to {e} s.".format(b=b/ sfreq,e=e/ sfreq) for b,e in zip(begin_idx, end_idx)])
+
+    annot = mne.Annotations(begin_idx / sfreq, (end_idx - begin_idx) / sfreq, "bad_nonblock")
+    raw.set_annotations(annot)
 
     return raw
 
@@ -85,18 +95,51 @@ def get_derivative_report_file_name(bids_root_path, subject, pipeline_name, exte
     return join(save_dir, bids_basename) + extension
 
     
-def get_mean_amplitude(evoked, window, picks = "all"):
+def get_mean_amplitudes(evokeds, window, picks = "all"):
 
-    if isinstance(evoked, list):
-        for 
-        evoked = evoked.pick(picks)
 
-        window = np.arange(evoked.time_as_index(window[0]),
+    means = []
+    if isinstance(evokeds, list):
+        for i, evoked in enumerate(evokeds):
+            evoked = evoked.copy().pick(picks)
+
+            _window = np.arange(evoked.time_as_index(window[0]),
                                 evoked.time_as_index(window[1]))
 
-        data = epochs.get_data()
-        mean = data.mean(axis=2)
+            data = evoked.data[:, _window]
+            mean = data.mean()
+            means.append(mean)
     else:
-        return get_mean_amplitude([evoked], window, picks)
+        return get_mean_amplitudes([evokeds], window, picks)
 
-    return mean, 
+    return means
+
+
+def write_set(fname, raw):
+    """Export raw to EEGLAB .set file."""
+    import numpy as np
+    from numpy.core.records import fromarrays
+    from scipy.io import savemat
+    data = raw.get_data() * 1e6  # convert to microvolts
+    fs = raw.info["sfreq"]
+    times = raw.times
+    ch_names = raw.info["ch_names"]
+    chanlocs = fromarrays([ch_names], names=["labels"])
+    events = fromarrays([raw.annotations.description,
+                         raw.annotations.onset * fs + 1,
+                         raw.annotations.duration * fs],
+                        names=["type", "latency", "duration"])
+    savemat(fname, dict(EEG=dict(data=data,
+                                 setname=fname,
+                                 nbchan=data.shape[0],
+                                 pnts=data.shape[1],
+                                 trials=1,
+                                 srate=fs,
+                                 xmin=times[0],
+                                 xmax=times[-1],
+                                 chanlocs=chanlocs,
+                                 event=events,
+                                 icawinv=[],
+                                 icasphere=[],
+                                 icaweights=[])),
+            appendmat=False)

@@ -287,15 +287,39 @@ labels_confidence = labels.iloc[1].tolist()
 plotting.plot_ica_component_simple(ica, raw, 1, labels_names, labels_confidence)
 # %%
 import mne
+import plotting
+import configuration
+import pandas as pd
 
-raw_filename = "/home/pabst/data/xmasoddballmatch-bids/derivatives/pipeline01/sub-001/sub-001_proc-prepared_raw.fif"
-events_filename = "/home/pabst/data/xmasoddballmatch-bids/derivatives/pipeline01/sub-001/sub-001_proc-prepared_eve.txt"
+config = configuration.load_configuration()
+
+raw_filename = "/share/tmpdata/pabst/xmasoddballmatch-bids/derivatives/pipeline01/sub-012/sub-012_proc-prepared_raw.fif"
+events_filename = "/share/tmpdata/pabst/xmasoddballmatch-bids/derivatives/pipeline01/sub-012/sub-012_proc-prepared_eve.txt"
 raw = mne.io.read_raw_fif(raw_filename, preload=True)
 events = mne.read_events(events_filename)
+csv_filename = "/share/tmpdata/pabst/xmasoddballmatch-bids/derivatives/pipeline01/sub-012/sub-012_ica-matlab.csv"
+labels = pd.read_csv(csv_filename)
 
+labels_names = labels.columns.tolist()
+labels_confidence = labels.iloc[0].tolist()
     
-ica_filename = "/home/pabst/data/xmasoddballmatch-bids/derivatives/pipeline01/sub-001/sub-001_ica.fif"
+ica_filename = "/share/tmpdata/pabst/xmasoddballmatch-bids/derivatives/pipeline01/sub-012/sub-012_ica.fif"
 ica = mne.preprocessing.read_ica(ica_filename)
+
+
+# Filter (like for ICA)
+raw = raw.filter(
+    l_freq=config["ica_l_freq"], h_freq=config["ica_h_freq"], fir_window="blackman")
+
+# Epoch data
+epochs = mne.Epochs(raw, events, config["events_dict"], picks = ["eeg", "eog"],
+                    tmin=config["epoch_window"][0],
+                    tmax=config["epoch_window"][1],
+                    preload=True,
+                    baseline=config["baseline_winow"], reject=None)
+
+plotting.plot_ica_properties_and_labels(ica, epochs, 0, labels_names, labels_confidence, topomap_args = {"cmap" = "rainbow"})
+
 #%%
 
 # Epoch data
@@ -333,4 +357,23 @@ for evokeds_list in all_evokeds:
 
 
 figure = mne.viz.plot_compare_evokeds(evokeds_list_as_dict, picks=["F3", "Fz", "F4", "FC1", "FC2"], combine = "mean")
+# %%
+from interop import EEG, EEGlab
+import interop
+import mne
+
+raw_filename = "/share/tmpdata/pabst/xmasoddballmatch-bids/derivatives/pipeline01/sub-012/sub-012_proc-prepared_raw.fif"
+raw = mne.io.read_raw_fif(raw_filename, preload=True)
+raw = raw.resample(50.)
+#%%
+with EEGlab() as eeglab, EEG(raw) as eeg:
+    EEG = eeglab.pop_chanedit(eeg, 'lookup', 'matlab/standard-10-5-cap385.elp')
+
+# %%
+eeg.setGlobalx()
+
+#%%
+interop.matlab.eval("global x; class(x.chanlocs)")
+#%%
+hh = eeg
 # %%

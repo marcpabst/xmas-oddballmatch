@@ -9,6 +9,8 @@ from joblib import Parallel, delayed
 
 from autoreject import Ransac, AutoReject
 
+from os.path import join
+
 import utils
 
 config = load_configuration()
@@ -17,8 +19,9 @@ config = load_configuration()
 def prepare_data(id):
     # Read file from disk
     bids_basename = make_bids_basename(subject=id, task=config["task_name"])
-    bids_filename = bids_basename + "_{}.bdf".format("eeg")
-    raw = read_raw_bids(bids_filename, config["bids_root_path"])
+    # read raw bids is problematic
+    bids_filename = join(config["bids_root_path"], "sub-{}".format(id), "eeg", bids_basename + "_{}.bdf".format("eeg"))
+    raw = mne.io.read_raw_bdf(bids_filename, preload=True)
     events = mne.find_events(raw, initial_event=True, shortest_event=1)
 
     # Drop EXG8
@@ -26,7 +29,7 @@ def prepare_data(id):
 
     # Rename channels to match MNE's montage
     raw = raw.rename_channels(
-        {"FZ": "Fz", "PZ": "Pz", "OZ": "Oz", "CZ": "Cz", "FP2": "Fp2"})
+        {"FZ": "Fz", "PZ": "Pz", "OZ": "Oz", "CZ": "Cz", "FP1": "Fp1", "FP2": "Fp2"})
 
     # Re-Reference
     raw = raw.set_eeg_reference("average")

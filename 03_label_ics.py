@@ -11,6 +11,7 @@ from mne_bids.utils import get_entity_vals
 from os.path import join
 import argparse
 from joblib import Parallel, delayed
+import os
 
 from autoreject import Ransac, AutoReject
 
@@ -29,12 +30,22 @@ def label_ics(id):
     # Read raw file from disk
     raw_filename = utils.get_derivative_file_name(
         config["bids_root_path"], id, config["pipeline_name"], ".fif", suffix="raw", processing="prepared")
+    events_filename = utils.get_derivative_file_name(
+        config["bids_root_path"], id, config["pipeline_name"], ".txt", suffix="eve", processing="prepared")
     raw = mne.io.read_raw_fif(raw_filename, preload=True)
+    events = mne.read_events(events_filename)
     raw = raw.pick(picks=["eeg", "eog"])
 
-    events = mne.make_fixed_length_events(raw, duration=1.0)
-    epochs = mne.Epochs(raw, events, tmin=0.0, tmax=1.0,
-                        reject=None, baseline=None, preload=True)
+    # Filter (like for ICA)
+    raw = raw.filter(
+        l_freq=config["ica_l_freq"], h_freq=config["ica_h_freq"], fir_window="blackman")
+
+    # Epoch data
+    epochs = mne.Epochs(raw, events, config["events_dict"], picks = ["eeg", "eog"],
+                        tmin=config["epoch_window"][0],
+                        tmax=config["epoch_window"][1],
+                        preload=True,
+                        baseline=None, reject=None)
 
     # Read ica file from disk
     ica_filename = utils.get_derivative_file_name(
@@ -77,13 +88,14 @@ def label_ics(id):
         config["bids_root_path"], id, config["pipeline_name"], ".mat", suffix="ica-matlab")
     savemat(mat_filename, {'EEG': eeglab_EEG})
 
+    
     csv_filename = utils.get_derivative_file_name(
         config["bids_root_path"], id, config["pipeline_name"], ".csv", suffix="ica-matlab")
 
     # Calling Matlab through shell
     process = subprocess.Popen(['matlab', '-nodisplay', '-batch',
                                 'addpath("matlab/", genpath("matlab/eeglab")); label_ics("'+mat_filename+'", "'+csv_filename+'"); exit();']).wait()
-
+    os.remove(mat_filename)
 
 def main():
     parser = argparse.ArgumentParser(description='Filter and epoch data.')

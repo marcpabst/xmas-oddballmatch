@@ -54,12 +54,14 @@ def filter_and_clean(id):
 
     # Filter data
     raw = raw.filter(l_freq = config["l_freq"], h_freq = config["h_freq"], fir_window = config["fir_window"])
+        
+    # Annotate bad channels 
+    raw.info["bads"] = list(set(raw.info["ch_names"]) -  set(ica.info["ch_names"]))
 
-    # Interpolate bad channels
-    bad_channels = list(set(raw.info["ch_names"]) -  set(ica.info["ch_names"]))
-    raw.info["bads"] = bad_channels
-    raw.interpolate_bads(reset_bads = True)
-
+    # Interpolate bad channels (if we use autoreject, we interpolate after epoching)
+    if not config["use_autoreject"]:
+        raw.interpolate_bads(reset_bads = True)
+    
     # Write to file
     raw_filename = utils.get_derivative_file_name(
         config["bids_root_path"], id, config["pipeline_name"], ".fif", suffix="raw", processing="cleaned")
