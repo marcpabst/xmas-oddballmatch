@@ -15,6 +15,8 @@ import numpy as np
 from numpy.core.records import fromarrays
 from scipy.io import savemat
 
+from interop import EEGlab, EEG
+
 config = load_configuration()
 
 
@@ -74,10 +76,9 @@ def perform_ica(id):
     if config["ica_downsample_freq"] is not None:
         epochs = epochs.resample(config["ica_downsample_freq"])
 
-
     # Create ICA
     #ica = mne.preprocessing.ICA(n_components=rank, method="infomax", fit_params=dict(extended=True),
-                                random_state=config["random_state"], max_iter=600)
+    #                            random_state=config["random_state"], max_iter=600)
     # Fit ICA
     #ica.fit(epochs, picks=["eeg", "eog"], reject=config["ica_diff_criterion"])
 

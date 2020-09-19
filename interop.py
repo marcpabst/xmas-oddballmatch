@@ -118,7 +118,6 @@ class EEG(object):
     def get_ica(self):
         return self.ica
 
-
     def items(self):
         return OrderedDict([
             ["data", self["data"]],
@@ -142,6 +141,7 @@ class EEG(object):
     
     def update_ica_from_eeglab(self, eeg):
 
+        # TODO: Maybe taking the info dict from inst?
         info = _get_info(eeg)[0]
         mne.pick.pick_info(info, np.round(eeg['icachansind']).astype(int) - 1, copy=False)
 
@@ -175,8 +175,13 @@ class EEG(object):
         
         self.ica = ica
 
-    def updateyyy_raw_from_eeglab(self, eeg):
+    def update_raw_from_eeglab(self, eeg):
         info = self.inst.info.copy()
         data = eeg.data.T
         self.inst = mne.io.RawArray(data, info)
         
+def eeg_from_matlab(eeg_struct):
+    eeg = EEG()
+    eeg.set_raw_from_eeglab(eeg_struct)
+    return eeg
+    
