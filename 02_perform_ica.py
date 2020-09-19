@@ -83,8 +83,8 @@ def perform_ica(id):
 
     # ICA using EEEGLAB
     with EEGlab() as eeglab, EEG(raw) as eeg:
-        EEG = eeglab.pop_chanedit(eeg, 'lookup', 'matlab/standard-10-5-cap385.elp')
-        ica = EEG.get_ica()
+        eeg = eeglab.pop_runica(eeg, 'icatype', 'runica')
+        ica = eeg.get_ica()
 
     # Save ICA to disk
     ica_filename = utils.get_derivative_file_name(

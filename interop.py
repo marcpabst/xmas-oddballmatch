@@ -5,10 +5,13 @@ import numpy as np
 from functools import partial
 
 from mne.io.eeglab.eeglab import _get_info
+from mne.fixes import _safe_svd
 
 
 class EEGlab():
-
+    """
+    Wrapper object for EEGLAB.
+    """
     session = None
 
     def __init__(self):
@@ -29,22 +32,35 @@ class EEGlab():
             for arg in args:
                 print("ARG: ", type(arg))
             
-            if hasattr(args[0], "inst"):
-                info = args[0].inst.info
-    
             r = getattr(self.session, str(name))(*args)
+            
+            if hasattr(args[0], "inst"): # check whether first argument is an EEG object
+                info = args[0].inst.info
+                eeg = args[0]
 
+                eeg.update_raw_from_eeglab(r)
+                
+                try:
+                    eeg.update_ica_from_eeglab(r)
+                except:
+                    print("No ICA solution found. Skipping conversion.")
+
+                return eeg
+            
             return r
 
         return wrapper
 
 
 class EEG(object):
+    """
+    Wraps an MNE's Raw instance and optionally instances of ICA, etc.
+    """
 
     inst = None
     ica = None
 
-    def __init__(self, inst, ica=None):
+    def __init__(self, inst=None, ica=None):
         self.inst = inst
 
     def __setitem__(self, floor_number, data):
@@ -127,9 +143,11 @@ class EEG(object):
     def update_ica_from_eeglab(self, eeg):
 
         info = _get_info(eeg)[0]
-        pick_info(info, np.round(eeg['icachansind']).astype(int) - 1, copy=False)
+        mne.pick.pick_info(info, np.round(eeg['icachansind']).astype(int) - 1, copy=False)
 
         n_components = eeg.icaweights.shape[0]
+
+        ica = mne.preprocessing.ICA(method='imported_eeglab', n_components=n_components)
 
         ica.current_fit = "eeglab"
         ica.ch_names = info["ch_names"]
@@ -157,5 +175,8 @@ class EEG(object):
         
         self.ica = ica
 
-def create_from_eeglab(eeg_struct):
-    
+    def updateyyy_raw_from_eeglab(self, eeg):
+        info = self.inst.info.copy()
+        data = eeg.data.T
+        self.inst = mne.io.RawArray(data, info)
+        
