@@ -358,17 +358,27 @@ for evokeds_list in all_evokeds:
 
 figure = mne.viz.plot_compare_evokeds(evokeds_list_as_dict, picks=["F3", "Fz", "F4", "FC1", "FC2"], combine = "mean")
 # %%
-from interop import EEG, EEGlab
+from interop2 import EEG, EEGlab
 import interop
 import mne
+import warnings
+
+warnings.simplefilter(action="default")
 
 raw_filename = "/share/tmpdata/pabst/xmasoddballmatch-bids/derivatives/pipeline01/sub-012/sub-012_proc-prepared_raw.fif"
 raw = mne.io.read_raw_fif(raw_filename, preload=True)
-raw = raw.resample(50.)
-#%%
-with EEGlab() as eeglab, EEG(raw) as eeg:
-    EEG = eeglab.pop_chanedit(eeg, 'lookup', 'matlab/standard-10-5-cap385.elp')
+raw = raw.resample(200.)
 
+eeg = EEG(raw.copy().pick(["Fz", "Cz"]))
+#%%
+with EEGlab("/share/projects/pabst/xmasoddballmatch/xmas-oddballmatch/matlab/eeglab") as eeglab:
+    #print(eeglab.pop_chanedit(dict(eeg.to_dict()), 'lookup', 'matlab/standard-10-5-cap385.elp'))
+    eeg2 = eeglab.pop_runica(eeg, "icatype", "runica")
+#%%
+eeg.update_ica_from_eeglab(r)
+ica = eeg.get_ica()
+ica.info = eeg.inst.info
+ica.plot_components()
 # %%
 eeg.setGlobalx()
 

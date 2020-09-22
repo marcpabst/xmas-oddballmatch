@@ -39,69 +39,35 @@ def perform_ica(id):
         raw = utils.apply_zapline(
             raw, config["line_freq"], picks=["eeg"], nremove=3)
 
+    # Running PREP
+    prep_params = {
+        "ref_chs": "eeg",
+        "reref_chs": ["eeg", "eog"],
+        "line_freqs": np.arange(config["line_freq"], raw.info["sfreq"] / 2, config["line_freq"]),
+    }
+
+    prep = PrepPipeline(raw, prep_params, raw.get_montage())
+    prep.fit()
+  
     # Filter
     raw = raw.filter(
         l_freq=config["ica_l_freq"], h_freq=config["ica_h_freq"], fir_window=config["ica_fir_window"])
 
-
-    # Downsample
-    if config["ica_downsample_freq"] is not None:
-        raw = raw.resample(config["ica_downsample_freq"])
-  
-
-
-    # Cut continous data into arbitrary epochs of 1 s
-    events = mne.make_fixed_length_events(raw, duration=config["ica_step"])
-    epochs = mne.Epochs(raw, events, tmin=0.0, tmax=config["ica_step"], picks=[
-                        "eeg", "eog"], baseline=None, preload=True, reject=None)
-
-    # Identify bad channels using RANSAC
-    # ransac = Ransac(n_jobs=config["njobs2"])
-    # eeg_epochs = epochs.copy().pick("eeg")
-    # ransac.fit(eeg_epochs)
-    # epochs.info['bads'] = ransac.bad_chs_
-
-    #epochs.info['bads'] = ransac.bad_chs_
-    print("Dropped {} bad channels: {}.".format(len(epochs.info['bads']),epochs.info['bads'])) 
-
-    # Drop bad channels
-    #raw = raw.drop_channels(epochs.info['bads'])
-
-    # Calculate rank
-    ranks = mne.compute_rank(epochs)
-    rank = sum(ranks.values()) + 4
-    print("Data rank: {}. ".format(rank))
-    
     # Downsample
     if config["ica_downsample_freq"] is not None:
         raw = raw.resample(config["ica_downsample_freq"])
 
-    raw = raw.pick(["eeg"])
-
-    # Determine global rejection threshold
-    #rejection_thresholds = get_rejection_threshold(epochs)
-    #print("Rejection Threshold:")
-    #print(rejection_thresholds)
+    # Run ASR
+    raw = utils.apply_asr(raw)
 
     # Create ICA
-    #ica = mne.preprocessing.ICA(n_components=rank, method="picard",
-    #                           random_state=config["random_state"], max_iter=600)
+    n_channels = len(raw.info["ch_names"])
+    n_components = n_channels - len(prep.interpolated_channels())
+    ica = mne.preprocessing.ICA(n_components=, method="picard",
+                              random_state=config["random_state"], max_iter=600)
     # Fit ICA
-    #ica.fit(epochs, picks=["eeg", "eog"], reject=rejection_thresholds)
+    ica.fit(raw, picks=["eeg", "eog"], reject=rejection_thresholds)
 
-    #epochs = epochs.pick(["eeg", "eog"])
-
-    csv_filename = utils.get_derivative_file_name(
-        config["bids_root_path"], id, config["pipeline_name"], ".csv", suffix="ica-matlab")
- 
-    # ICA using EEEGLAB
-    with EEGlab("/share/projects/pabst/xmasoddballmatch/xmas-oddballmatch/matlab/eeglab", config["tmp_dir"]) as eeglab, EEG(inst=raw) as eeg:
-        eeg = eeglab.perform_ica(eeg, csv_filename, eeglab.tmp_dir.name)
-        ica = eeg.get_ica()
-
-    # Re-assigne infor
-    #ica.info = raw.info
-        
     # Save ICA to disk
     ica_filename = utils.get_derivative_file_name(
         config["bids_root_path"], id, config["pipeline_name"], ".fif", suffix="ica")

@@ -48,12 +48,16 @@ def report_subject(id):
     #                     tmax=config["epoch_window"][1],
     #                     preload=True, baseline=None,
     #                     reject=None)
+    ten_twenty_montage = mne.channels.make_standard_montage('standard_1020')
+    ica.info.set_montage(ten_twenty_montage, match_case=False)
 
-
-    # Overview
-    figures = ica.plot_components(cmap="rainbow")
+    figures = ica.plot_components(cmap="rainbow", contours = 20, outlines = "head", topomap_args={"extrapolate":"head"}, show=False)
     report.add_figs_to_section(
         figures, captions=["ICA componnts overview"] * len(figures), section='ica')
+
+
+    #besa_montage = mne.channels.read_custom_montage("matlab/standard-10-5-cap385.elp")
+
 
     # # Classification table
     # csv_filename = utils.get_derivative_file_name(
@@ -74,46 +78,46 @@ def report_subject(id):
     # report.add_figs_to_section(
     #     figures, captions=["ICA componnts details"] * len(figures), section='ica')
     
-    # # Report evoked
-    # ave_filename = utils.get_derivative_file_name(
-    #     config["bids_root_path"], id, config["pipeline_name"], ".fif", suffix="ave")
+    # Report evoked
+    ave_filename = utils.get_derivative_file_name(
+        config["bids_root_path"], id, config["pipeline_name"], ".fif", suffix="ave")
 
-    # evokeds_list = mne.read_evokeds(ave_filename)
-    # evokeds_list_as_dict = {evoked.comment: evoked for evoked in evokeds_list}
+    evokeds_list = mne.read_evokeds(ave_filename)
+    evokeds_list_as_dict = {evoked.comment: evoked for evoked in evokeds_list}
 
-    # def difference_wave(evokeds_as_dict, conditions, grandaverage=True):
+    def difference_wave(evokeds_as_dict, conditions, grandaverage=True):
 
-    #     try:
-    #         out = [mne.combine_evoked([a, -b], "equal") for a, b in zip(
-    #             evokeds_as_dict[conditions[0]], evokeds_as_dict[conditions[1]])]
-    #     except TypeError:
-    #         out = mne.combine_evoked( [evokeds_as_dict[conditions[0]], -evokeds_as_dict[conditions[1]]] , "equal")
+        try:
+            out = [mne.combine_evoked([a, -b], "equal") for a, b in zip(
+                evokeds_as_dict[conditions[0]], evokeds_as_dict[conditions[1]])]
+        except TypeError:
+            out = mne.combine_evoked( [evokeds_as_dict[conditions[0]], -evokeds_as_dict[conditions[1]]] , "equal")
  
 
-    #     if grandaverage:
-    #         return mne.grand_average(out)
-    #     else:
-    #         return out
+        if grandaverage:
+            return mne.grand_average(out)
+        else:
+            return out
 
 
-    # label = lambda condition_touple: str(condition_touple[0]) + " - " + str(condition_touple[1])
+    label = lambda condition_touple: str(condition_touple[0]) + " - " + str(condition_touple[1])
 
-    # for contrast in config["contrasts"]:
-    #     if isinstance(contrast, list):
-    #         plot_data = OrderedDict( [[label( contrast[0] ), difference_wave(evokeds_list_as_dict, contrast[0], False)],
-    #                                   [label( contrast[1] ), difference_wave(evokeds_list_as_dict, contrast[1], False)]] )
-    #         colors = config["alt_main_colors"]
+    for contrast in config["contrasts"]:
+        if isinstance(contrast, list):
+            plot_data = OrderedDict( [[label( contrast[0] ), difference_wave(evokeds_list_as_dict, contrast[0], False)],
+                                      [label( contrast[1] ), difference_wave(evokeds_list_as_dict, contrast[1], False)]] )
+            colors = config["alt_main_colors"]
 
-    #     else:
-    #         plot_data =  OrderedDict( [[str(contrast[0]), evokeds_list_as_dict[contrast[0]] ],
-    #                                    [str(contrast[1]), evokeds_list_as_dict[contrast[1]] ]] )
-    #         colors = config["main_colors"]
+        else:
+            plot_data =  OrderedDict( [[str(contrast[0]), evokeds_list_as_dict[contrast[0]] ],
+                                       [str(contrast[1]), evokeds_list_as_dict[contrast[1]] ]] )
+            colors = config["main_colors"]
 
-    #     figure = mne.viz.plot_compare_evokeds(
-    #             plot_data, picks = ["Fz", "F4", "FC1", "FC2", "F3"], combine = "mean", colors=colors)
+        figure = mne.viz.plot_compare_evokeds(
+                plot_data, picks = ["Fz", "F4", "FC1", "FC2", "F3"], combine = "mean", colors=colors, show=False)
 
-    #     report.add_figs_to_section(
-    #         figure, captions = ' ', section = 'evoked')
+        report.add_figs_to_section(
+            figure, captions = ' ', section = 'evoked')
 
 
         
@@ -122,7 +126,7 @@ def report_subject(id):
     report_filename = utils.get_derivative_report_file_name(
         config["bids_root_path"], id, config["pipeline_name"], suffix="report")
 
-    report.save(report_filename, overwrite=True)
+    report.save(report_filename, overwrite=True, open_browser=False)
 
 
 def main():

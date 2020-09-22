@@ -1,5 +1,5 @@
 import meegkit
-from meegkit.asr import ASR
+from meegkit.asr import ASR, clean_windows
 from meegkit.utils.matrix import sliding_window
 import numpy as np
 
@@ -22,29 +22,26 @@ def apply_zapline(raw, fline, picks = "eeg", nremove=1):
 
     return raw
 
-def apply_asr(raw, calibrate_window, picks = "eeg"):
-
-
-    sfreq = raw.info["sfreq"]
-    
-    ix = mne.channel_indices_by_type(raw.info, picks)["eeg"]
-    data = raw._data[ix,:]
+def apply_asr(raw, ref_maxbadchannels = 0.075, ref_tolerances = [-3.5, 5.5], ref_wndlen = 1):
 
     asr = ASR(method='euclid')
-    start_t, end_t = calibrate_window
-    train_idx = np.arange(start_t * sfreq, end_t * sfreq, dtype=int)
-    _, sample_mask = asr.fit(data[:, train_idx])
 
+    data = raw.get_data()
+    # get reference window
+    ref_section = clean_windows(data, ref_maxbadchannels, ref_tolerances,ref_wndlen); 
+    asr.fit(ref_section)
 
-    X = sliding_window(data, window=int(sfreq), step=int(sfreq))
+    sfreq = raw.info["sfreq"]
+    windowlen = np.max(0.5, 1.5*np.size(data,1)/sfreq)
+
+    X = sliding_window(data, window=windowlen, step=windowlen)
     Y = np.zeros_like(X)
     for i in range(X.shape[1]):
         Y[:, i, :] = asr.transform(X[:, i, :])
 
-    #raw = X.reshape(8, -1)  # reshape to (n_chans, n_times)
     clean = Y.reshape(8, -1)
 
-    raw._data[ix,:] = clean
+
 
     return raw
 

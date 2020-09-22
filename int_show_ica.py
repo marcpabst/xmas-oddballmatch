@@ -20,7 +20,7 @@ from interop2 import EEG, EEGlab
 config = load_configuration()
 
 
-def perform_ica(id):
+def show_ica(id):
 
     # Read file from disk
     raw_filename = utils.get_derivative_file_name(
@@ -48,65 +48,21 @@ def perform_ica(id):
     if config["ica_downsample_freq"] is not None:
         raw = raw.resample(config["ica_downsample_freq"])
   
-
-
     # Cut continous data into arbitrary epochs of 1 s
     events = mne.make_fixed_length_events(raw, duration=config["ica_step"])
     epochs = mne.Epochs(raw, events, tmin=0.0, tmax=config["ica_step"], picks=[
                         "eeg", "eog"], baseline=None, preload=True, reject=None)
 
-    # Identify bad channels using RANSAC
-    # ransac = Ransac(n_jobs=config["njobs2"])
-    # eeg_epochs = epochs.copy().pick("eeg")
-    # ransac.fit(eeg_epochs)
-    # epochs.info['bads'] = ransac.bad_chs_
-
-    #epochs.info['bads'] = ransac.bad_chs_
-    print("Dropped {} bad channels: {}.".format(len(epochs.info['bads']),epochs.info['bads'])) 
-
-    # Drop bad channels
-    #raw = raw.drop_channels(epochs.info['bads'])
-
-    # Calculate rank
-    ranks = mne.compute_rank(epochs)
-    rank = sum(ranks.values()) + 4
-    print("Data rank: {}. ".format(rank))
-    
     # Downsample
     if config["ica_downsample_freq"] is not None:
-        raw = raw.resample(config["ica_downsample_freq"])
+        epochs = epochs.resample(config["ica_downsample_freq"])
 
-    raw = raw.pick(["eeg"])
-
-    # Determine global rejection threshold
-    #rejection_thresholds = get_rejection_threshold(epochs)
-    #print("Rejection Threshold:")
-    #print(rejection_thresholds)
-
-    # Create ICA
-    #ica = mne.preprocessing.ICA(n_components=rank, method="picard",
-    #                           random_state=config["random_state"], max_iter=600)
-    # Fit ICA
-    #ica.fit(epochs, picks=["eeg", "eog"], reject=rejection_thresholds)
-
-    #epochs = epochs.pick(["eeg", "eog"])
-
-    csv_filename = utils.get_derivative_file_name(
-        config["bids_root_path"], id, config["pipeline_name"], ".csv", suffix="ica-matlab")
- 
-    # ICA using EEEGLAB
-    with EEGlab("/share/projects/pabst/xmasoddballmatch/xmas-oddballmatch/matlab/eeglab", config["tmp_dir"]) as eeglab, EEG(inst=raw) as eeg:
-        eeg = eeglab.perform_ica(eeg, csv_filename, eeglab.tmp_dir.name)
-        ica = eeg.get_ica()
-
-    # Re-assigne infor
-    #ica.info = raw.info
-        
-    # Save ICA to disk
     ica_filename = utils.get_derivative_file_name(
         config["bids_root_path"], id, config["pipeline_name"], ".fif", suffix="ica")
+    ica = mne.preprocessing.ica.read_ica(ica_filename)
 
-    ica.save(ica_filename)
+    ica.plot_components(inst=epochs)
+
 
 
 def main():
@@ -114,15 +70,9 @@ def main():
     parser.add_argument('-s', '--subjects', nargs='+', type=str,
                         help='IDs of subjects to process.', required=False)
 
-    args = parser.parse_args()
-    if args.subjects:
-        Parallel(n_jobs=config["njobs"], prefer="threads")(
-            delayed(perform_ica)(id) for id in args.subjects)
-    else:
-        ids = get_entity_vals(config["bids_root_path"], "sub")
-        Parallel(n_jobs=config["njobs"], prefer="threads")(
-            delayed(perform_ica)(id) for id in ids)
-
+    ids = get_entity_vals(config["bids_root_path"], "sub")
+    show_ica(ids[0]) 
+ 
 
 if __name__ == '__main__':
     main()

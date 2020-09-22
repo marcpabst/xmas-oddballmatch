@@ -21,6 +21,8 @@ import numpy as np
 from numpy.core.records import fromarrays
 from scipy.io import savemat
 
+from interop2 import EEG, EEGlab
+
 import subprocess
 
 config = load_configuration()
@@ -56,46 +58,30 @@ def label_ics(id):
     bad_channels = list(set(epochs.info["ch_names"]) -  set(ica.info["ch_names"]))
     epochs = epochs.drop_channels(bad_channels)
 
-    # Create an EEGLAB EEG data structure
-    ica_unmixing_matrix = np.linalg.pinv(ica.mixing_matrix_)
-    ica_pca_matrix = ica.pca_components_[:ica.n_components_]
+    # # Create an EEGLAB EEG data structure
+    # ica_unmixing_matrix = np.linalg.pinv(ica.mixing_matrix_)
+    # ica_pca_matrix = ica.pca_components_[:ica.n_components_]
 
-    icawinv = np.linalg.pinv(np.matmul(ica_unmixing_matrix, ica_pca_matrix))
-    icasphere = ica_pca_matrix
-    icaweights = ica_unmixing_matrix
+    # icawinv = ica.mixing_matrix_
+    # icasphere = ica.pca_components_
+    # icaweights =  ica.unmixing_matrix_
 
-    eeglab_EEG = {}
-    eeglab_EEG['data'] = np.transpose(epochs._data, [1, 2, 0]) * 1000
-    eeglab_EEG['icaweights'] = icaweights
-    eeglab_EEG['icasphere'] = icasphere
-    eeglab_EEG['icawinv'] = icawinv
-    eeglab_EEG["srate"] = epochs.info["sfreq"]
-    eeglab_EEG["nbchan"] = epochs.info["nchan"]
-    eeglab_EEG["times"] = epochs.times / 1000
-    eeglab_EEG["trials"] = events.shape[0] - 1
-    eeglab_EEG["xmin"] = 0
-    eeglab_EEG["xmax"] = 1
-    eeglab_EEG["ref"] = "average"
-    eeglab_EEG["pnts"] = len(epochs.times)
-    eeglab_EEG["setname"] = "Testset"
-    eeglab_EEG["event"] = []
-    eeglab_EEG["icaact"] = []
-    # eeglab_EEG["chanlocs"] = [{"X": ch["loc"][1], "Y": -ch["loc"][0],
-    #                            "Z": ch["loc"][2], "labels": ch["ch_name"]} for ch in epochs.info["chs"]]
-    eeglab_EEG["chanlocs"] = [{"labels": ch["ch_name"]} for ch in epochs.info["chs"]]
-
-    mat_filename = utils.get_derivative_file_name(
-        config["bids_root_path"], id, config["pipeline_name"], ".mat", suffix="ica-matlab")
-    savemat(mat_filename, {'EEG': eeglab_EEG})
-
-    
     csv_filename = utils.get_derivative_file_name(
         config["bids_root_path"], id, config["pipeline_name"], ".csv", suffix="ica-matlab")
 
+    
+    # Run IClabel using matlab
+    with EEGlab("/share/projects/pabst/xmasoddballmatch/xmas-oddballmatch/matlab/eeglab") as eeglab, EEG(inst=epochs, ica=ica) as eeg:
+        #eeg = eeglab.pop_chanedit(eeg, 'lookup', 'matlab/standard-10-5-cap385.elp')
+        eeglab.label_ics(eeg, csv_filename)
+        
+
+    
+  
     # Calling Matlab through shell
-    process = subprocess.Popen(['matlab', '-nodisplay', '-batch',
-                                'addpath("matlab/", genpath("matlab/eeglab")); label_ics("'+mat_filename+'", "'+csv_filename+'"); exit();']).wait()
-    os.remove(mat_filename)
+   ## process = subprocess.Popen(['matlab', '-nodisplay', '-batch',
+    #                            'addpath("matlab/", genpath("matlab/eeglab")); label_ics("'+mat_filename+'", "'+csv_filename+'"); exit();']).wait()
+    #os.remove(mat_filename)
 
 def main():
     parser = argparse.ArgumentParser(description='Filter and epoch data.')

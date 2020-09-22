@@ -6,8 +6,9 @@
 
 # Name of the pipeline
 pipeline_name: "pipeline01"
+tmp_dir: "/tmp/"
 
-njobs: 3 # Max. number of concurent jobs
+njobs: 5 # Max. number of concurent jobs
 njobs2: 5 # Max. number of concurent jobs per participant
 
 ## CONVERSION ##
@@ -55,12 +56,13 @@ events_dict:
 ## ICA ##
 ica_l_freq: 2.0
 ica_h_freq: 40.
-ica_downsample_freq: 200.
+ica_downsample_freq: 128.
 ica_filter_method: firwin
 ica_fir_window: hamming
-ica_use_autoreject: no
+ica_use_autoreject: true
 ica_diff_criterion: # Delta criterion for epoch rejection
-  eeg: 750e-6
+  eeg: null
+  eog: null
 ica_step: 1.
 
 ## FILTERING ##
@@ -70,24 +72,37 @@ l_freq: 0.1
 h_freq: 30.0
 
 ## EPOCHING ##
-epoch_window: !!python/tuple [-0.1, 0.3]
+epoch_window: !!python/tuple [-0.3, 0.3]
 baseline_winow: !!python/tuple [-0.1, 0.0]
-use_autoreject: yes
-diff_criterion: null
-#  eeg: 150e-6
+use_autoreject: false
+diff_criterion:
+  eeg: 100e-6
+# conditions_of_interest:
+#   - random/deviant
+#   - random/standard
+#   - predictable/4/standard
+#   - predictable/5/deviant
+#   - random/4/standard
+#   - random/5/deviant
+# contrasts:
+#   - !!python/tuple [random/standard, random/deviant]
+#   - !!python/tuple [predictable/4/standard, predictable/5/deviant]
+#   - !!python/tuple [random/4/standard, random/5/deviant]
+#   - - !!python/tuple [predictable/5/deviant, predictable/4/standard]
+#     - !!python/tuple [random/5/deviant, random/4/standard]
 conditions_of_interest:
   - random/deviant
   - random/standard
-  - predictable/4/standard
-  - predictable/5/deviant
-  - random/4/standard
+  - random/5/standard
   - random/5/deviant
+  - predictable/standard
+  - predictable/5/deviant
+
 contrasts:
   - !!python/tuple [random/standard, random/deviant]
-  - !!python/tuple [predictable/4/standard, predictable/5/deviant]
-  - !!python/tuple [random/4/standard, random/5/deviant]
-  - - !!python/tuple [predictable/5/deviant, predictable/4/standard]
-    - !!python/tuple [random/5/deviant, random/4/standard]
+  - !!python/tuple [random/5/standard, random/5/deviant]
+  - !!python/tuple [random/standard, random/5/deviant]
+  - !!python/tuple [predictable/standard, predictable/5/deviant]
 
 
 ## VIZ ##

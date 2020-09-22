@@ -39,9 +39,9 @@ def prepare_data(id):
         {"SO2": "eog", "IO2": "eog", "LO1": "eog", "LO2": "eog", "Nose": "misc"})
 
     # Load and apply standard 10-20 montage
-    #ten_twenty_montage = mne.channels.make_standard_montage('standard_1020')
-    besa_montage = mne.channels.read_custom_montage("matlab/standard-10-5-cap385.elp")
-    raw = raw.set_montage(besa_montage)
+    ten_twenty_montage = mne.channels.make_standard_montage('standard_1020')
+    #besa_montage = mne.channels.read_custom_montage("matlab/standard-10-5-cap385.elp")
+    raw = raw.set_montage(ten_twenty_montage)
     
 
     # Write to file
