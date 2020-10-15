@@ -1,0 +1,128 @@
+###########################################
+### Configuration file for EEG pipeline ###
+###########################################
+
+## GENERAL ##
+
+# Name of the pipeline
+pipeline_name: "pipeline01_noautoreject"
+tmp_dir: "/tmp/"
+
+njobs: 5 # Max. number of concurent jobs
+njobs2: 5 # Max. number of concurent jobs per participant
+
+## CONVERSION ##
+
+# Ids for original files (will only be used for conversion)
+raw_ids: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
+# Path of original files (will only be used for conversion)
+raw_path: "/nfs/users/Xmas_Oddballmatch/raw_biosemi/Xmas_{id:02d}.bdf"
+
+# Root path for BIDS files structure
+bids_root_path: "/nfs/user/mo808sujo/xmasoddballmatch-bids"
+# Name of the task
+task_name: "xmasoddballmatch"
+
+## PREPROCESSING ##
+include_channels: [Fp1,AF3,F7,F3,FC1,FC5,T7,C3,CP1,CP5,P7,P3,PZ,PO3,O1,OZ,O2,PO4,P4,P8,CP6,CP2,C4,T8,FC6,FC2,F4,F8,AF4,FP2,FZ,CZ,SO2,IO2,LO1,LO2,M1,M2,Nose,EXG8]
+
+# Power line frequenciy (null to skip ZapLine)
+line_freq: 50
+
+# Seed for PRNGs
+random_state: 42
+
+# Events
+events_dict:
+  random/0/deviant: 102
+  random/1/standard: 111
+  random/0/standard: 101
+  random/2/standard: 121
+  random/3/standard: 131
+  random/4/standard: 141
+  random/5/deviant : 152
+  random/5/standard: 151
+  random/nopattern/standard: 1
+  random/nopattern/deviant: 2
+  predictable/1/standard: 11
+  predictable/2/standard: 21
+  predictable/3/standard: 31
+  predictable/4/standard: 41
+  predictable/5/standard: 51
+  predictable/5/deviant: 52
+  begin: 65790
+  end: 65536
+
+
+## ICA ##
+use_ica: True
+ica_l_freq: 3.
+ica_h_freq: 35.
+ica_downsample_freq: 128
+ica_filter_method: firwin
+ica_fir_window: hamming
+ica_use_autoreject: true
+ica_diff_criterion: # Delta criterion for epoch rejection
+  eeg: null
+  eog: null
+ica_step: 1.
+
+## FILTERING ##
+filter_method: firwin
+fir_window: hamming
+l_freq: 0.1
+h_freq: 30.0
+
+## EPOCHING ##
+epoch_window: !!python/tuple [-0.3, 0.3]
+baseline_winow: !!python/tuple [-0.1, 0.0]
+use_autoreject: False
+diff_criterion:
+  eeg: 150e-6
+# conditions_of_interest:
+#   - random/deviant
+#   - random/standard
+#   - predictable/4/standard
+#   - predictable/5/deviant
+#   - random/4/standard
+#   - random/5/deviant
+# contrasts:
+#   - !!python/tuple [random/standard, random/deviant]
+#   - !!python/tuple [predictable/4/standard, predictable/5/deviant]
+#   - !!python/tuple [random/4/standard, random/5/deviant]
+#   - - !!python/tuple [predictable/5/deviant, predictable/4/standard]
+#     - !!python/tuple [random/5/deviant, random/4/standard]
+conditions_of_interest:
+- random/deviant
+- random/standard
+- predictable/deviant
+- predictable/standard
+- random/0/deviant
+- random/1/standard
+- random/0/standard
+- random/2/standard
+- random/3/standard
+- random/4/standard
+- random/5/deviant
+- random/5/standard
+- random/nopattern/standard
+- random/nopattern/deviant
+- predictable/1/standard
+- predictable/2/standard
+- predictable/3/standard
+- predictable/4/standard
+- predictable/5/standard
+- predictable/5/deviant
+
+contrasts:
+  - !!python/tuple [random/nopattern/standard, random/nopattern/deviant]
+  - !!python/tuple [random/standard, random/deviant]
+  - !!python/tuple [random/4/standard, random/5/deviant]
+  - !!python/tuple [predictable/4/standard, predictable/5/deviant]
+
+
+## VIZ ##
+main_colors: ["#548bb3", "#DF4A56"]
+alt_main_colors: ["#8E5094", "#008a5a"]
+accent_colors: ["#43B7C2", "#FFAD48"]
+

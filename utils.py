@@ -22,28 +22,42 @@ def apply_zapline(raw, fline, picks = "eeg", nremove=1):
 
     return raw
 
-def apply_asr(raw, ref_maxbadchannels = 0.075, ref_tolerances = [-3.5, 5.5], ref_wndlen = 1):
+def asr(X, sfreq, ref_maxbadchannels = 0.075, ref_tolerances = [-3.5, 5.5], ref_wndlen = 1):
 
-    asr = ASR(method='euclid')
+    asr = ASR(method='euclid', sfreq = sfreq)
 
-    data = raw.get_data()
-    # get reference window
-    ref_section = clean_windows(data, ref_maxbadchannels, ref_tolerances,ref_wndlen); 
-    asr.fit(ref_section)
+    nchan = X.shape[0]
 
-    sfreq = raw.info["sfreq"]
-    windowlen = np.max(0.5, 1.5*np.size(data,1)/sfreq)
+    print(X.shape, nchan)
 
-    X = sliding_window(data, window=windowlen, step=windowlen)
+    data = X * 1000000
+
+    asr.fit(data)
+    print("ASR calibrated.")
+  
+
+    # Apply filter using sliding (non-overlapping) windows
+    X = sliding_window(data, window=int(sfreq), step=int(sfreq))
     Y = np.zeros_like(X)
     for i in range(X.shape[1]):
         Y[:, i, :] = asr.transform(X[:, i, :])
 
-    clean = Y.reshape(8, -1)
+    #raw = X.reshape(nchan, -1)  # reshape to (n_chans, n_times)
+    clean = Y.reshape(nchan, -1)
 
+    print(clean.shape)
+    print("ASR finished. Now comparing signals...")
 
+    sample_mask = np.sum(np.abs(data - clean), 0) < 1e-10
 
-    return raw
+    # find latency of regions
+    retain_data_intervals = np.reshape( np.argwhere(np.diff([False] + sample_mask + [False])), 2,[])
+    retain_data_intervals[:,1] = retain_data_intervals[:,1]-1
+
+    # reject regions
+    new_data = data[:, retain_data_intervals]
+
+    return new_data / 1000000
 
 def cut_raw_blocks(raw, events, eventinfo, begin_event, end_event):
     sfreq = raw.info["sfreq"]
@@ -93,7 +107,6 @@ def get_derivative_report_file_name(bids_root_path, subject, pipeline_name, exte
 
     
 def get_mean_amplitudes(evokeds, window, picks = "all"):
-
 
     means = []
     if isinstance(evokeds, list):

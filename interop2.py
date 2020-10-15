@@ -198,18 +198,15 @@ class EEG(object):
         ica.pre_whitener_ = np.ones((len(eeg.icachansind), 1))
         ica.pca_mean_ = np.zeros(len(eeg.icachansind))
         
-        n_ch = len(ica.ch_names)
-
-        if n_components < ica.n_ch:
-            u, s, v = _safe_svd(eeg.icaweights, full_matrices=False)
-            ica.unmixing_matrix_ = u * s
-            ica.pca_components_ = v
-        else:
-            ica.unmixing_matrix_ = eeg.icaweights
-            ica.pca_components_ = eeg.icasphere
-            ica.mixing_matrix_ = np.linalg.pinv(ica.pca_components_) @ eeg.icawinv
-
-        ica.pca_explained_variance_ = np.zeros((1,1))
+        # So in either case, we can use SVD to get our square whitened
+        # weights matrix (u * s) and our PCA vectors (v) back:
+        use = eeg.icaweights @ eeg.icasphere
+        u, s, v = _safe_svd(use, full_matrices=False)
+        ica.unmixing_matrix_ = u * s
+        ica.pca_components_ = v
+        ica.pca_explained_variance_ = s * s
+           
+        ica._update_mixing_matrix()
         ica._update_ica_names()
      
         return ica

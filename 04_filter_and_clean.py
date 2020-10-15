@@ -3,25 +3,36 @@
 ###########################################
 
 from configuration import load_configuration
-import mne
-
-from mne_bids import make_bids_basename, read_raw_bids
 from mne_bids.utils import get_entity_vals
 
-from os.path import join
 import argparse
-from joblib import Parallel, delayed
 
-from autoreject import Ransac, AutoReject
+import time
 
-import pandas as pd
-
-import utils
+import parsl
+from parsl.app.app import python_app
+from parsl_config import pconfig
 
 config = load_configuration()
 
+@python_app
+def filter_and_clean(id, config):
+    import mne
+    from autoreject import Ransac, AutoReject, get_rejection_threshold
+    import utils
+    import numpy as np
+    from os.path import join
+    import pandas as pd
+    import logging
+    import sys
+    from interop2 import EEG, EEGlab
+    from scipy.io import savemat
 
-def filter_and_clean(id):
+    # Logging
+    log_filename = utils.get_derivative_file_name(
+        config["bids_root_path"], id, config["pipeline_name"], ".txt", suffix="log")
+    sys.stdout = open(log_filename, 'w', buffering = 1)
+
     # Read file from disk
     raw_filename = utils.get_derivative_file_name(
         config["bids_root_path"], id, config["pipeline_name"], ".fif", suffix="raw", processing="prepared")
@@ -30,56 +41,75 @@ def filter_and_clean(id):
     raw = mne.io.read_raw_fif(raw_filename, preload = True)
     events = mne.read_events(events_filename)
 
+    # Channel names to upper case
+    upper = lambda s: s.upper()
+    raw.rename_channels(upper)
+
     # Read ICA and labels from disk
-    ica_filename = utils.get_derivative_file_name(
-        config["bids_root_path"], id, config["pipeline_name"], ".fif", suffix="ica")
-    ica = mne.preprocessing.read_ica(ica_filename)
-    csv_filename = utils.get_derivative_file_name(
-        config["bids_root_path"], id, config["pipeline_name"], ".csv", suffix="ica-matlab")
-    labels = pd.read_csv(csv_filename)
+    if config["use_ica"]:
+        ica_filename = utils.get_derivative_file_name(
+            config["bids_root_path"], id, config["pipeline_name"], ".fif", suffix="ica")
+        ica = mne.preprocessing.read_ica(ica_filename)
+        csv_filename = utils.get_derivative_file_name(
+            config["bids_root_path"], id, config["pipeline_name"], ".csv", suffix="ica-matlab")
+        labels = pd.read_csv(csv_filename)
 
-    labels_names = labels.idxmax(axis=1).tolist()
-    labels_confidence = labels.max(axis=1).tolist()
-    exclude_idx = [i for i, name in enumerate(labels_names) if name != "Brain" and name != "Other"]
+        labels_names = labels.idxmax(axis=1).tolist()
+        labels_confidence = labels.max(axis=1).tolist()
+        exclude_idx = [i for i, name in enumerate(labels_names) if name != "Brain" and name != "Other"]
 
-    # Apply ICA to data, but zeroing-out non-brain components
-    raw = ica.apply(raw, exclude= exclude_idx)
+    
+        mne.channels.rename_channels(ica.info, upper)
+        ica.ch_names = ica.info.ch_names
+
+        # Annotate bad channels 
+        raw.info["bads"] = list(set(raw.info["ch_names"]) -  set(ica.info["ch_names"]))
+
+        # Assign correct channel types
+        # raw = raw.set_channel_types(
+        #     {"SO2": "eeg", "IO2": "eeg", "LO1": "eeg", "LO2": "eeg"})
+
+        # Apply ICA to data, but zeroing-out non-brain components
+        raw = ica.apply(raw, exclude=exclude_idx)
+
+    # Interpolate bad channels
+    raw.interpolate_bads(reset_bads = True)
 
     # Bipolarize EOG
     raw = mne.set_bipolar_reference(raw, "SO2", "IO2", "vEOG")
     raw = mne.set_bipolar_reference(raw, "LO1", "LO2", "hEOG")
 
     # Re-reference
-    raw = raw.set_eeg_reference(["Nose"])
+    #raw = raw.set_eeg_reference(["Nose"])
 
     # Filter data
     raw = raw.filter(l_freq = config["l_freq"], h_freq = config["h_freq"], fir_window = config["fir_window"])
-        
-    # Annotate bad channels 
-    raw.info["bads"] = list(set(raw.info["ch_names"]) -  set(ica.info["ch_names"]))
-
-    # Interpolate bad channels (if we use autoreject, we interpolate after epoching)
-    if not config["use_autoreject"]:
-        raw.interpolate_bads(reset_bads = True)
-    
+            
     # Write to file
     raw_filename = utils.get_derivative_file_name(
         config["bids_root_path"], id, config["pipeline_name"], ".fif", suffix="raw", processing="cleaned")
     raw.save(raw_filename, overwrite = True)
 
     
-
 def main():
-    parser = argparse.ArgumentParser(description='Filter and clean data.')
+    parser = argparse.ArgumentParser(description='Epoch data.')
     parser.add_argument('-s', '--subjects', nargs='+', type=str,
-                    help='IDs of subjects to process.', required=False)
+                        help='IDs of subjects to process.', required=False)
+
+    args = parser.parse_args()
     
-    args = parser.parse_args()  
+    parsl.load(pconfig)
+    parsl.set_stream_logger()
+
     if args.subjects:
-        Parallel(n_jobs=config["njobs"], prefer="threads")(delayed(filter_and_clean)(id) for id in args.subjects)
+        tasks = [filter_and_clean(id, config) for id in args.subjects]
     else:
         ids = get_entity_vals(config["bids_root_path"], "sub")
-        Parallel(n_jobs=config["njobs"], prefer="threads")(delayed(filter_and_clean)(id) for id in ids)
+        tasks = [filter_and_clean(id, config) for id in ids]
+
+    [i.result() for i in tasks]
+
 
 if __name__ == '__main__':
     main()
+

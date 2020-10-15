@@ -1,21 +1,26 @@
-from configuration import load_configuration
-import mne
+###########################################
+########## Filter and clean data ##########
+###########################################
 
-from mne_bids import make_bids_basename, read_raw_bids
+from configuration import load_configuration
 from mne_bids.utils import get_entity_vals
 
-from os.path import join
 import argparse
-from joblib import Parallel, delayed
 
-from autoreject import Ransac, AutoReject
+import time
 
-import utils
+import parsl
+from parsl.app.app import python_app
+from parsl_config import pconfig
 
 config = load_configuration()
 
-
-def epoch_and_average(id):
+@python_app
+def epoch_and_average(id, config):
+    import mne
+    from autoreject import AutoReject
+    import utils
+    import sys
 
     # Read file from disk
     raw_filename = utils.get_derivative_file_name(
@@ -25,24 +30,34 @@ def epoch_and_average(id):
     raw = mne.io.read_raw_fif(raw_filename, preload=True)
     events = mne.read_events(events_filename)
 
+    # Logging
+    log_filename = utils.get_derivative_file_name(
+        config["bids_root_path"], id, config["pipeline_name"], ".txt", suffix="log")
+    sys.stdout = open(log_filename, 'w', buffering = 1)
+
     # Interpolate bad channels (if we use autoreject, we interpolate after epoching)
-    raw.interpolate_bads(reset_bads = True)
+    # raw.interpolate_bads(reset_bads = True)
 
     # Epoch data
+    raw.pick(["eeg", "eog"])
     epochs = mne.Epochs(raw, events, config["events_dict"],
                         tmin=config["epoch_window"][0],
                         tmax=config["epoch_window"][1],
                         baseline=config["baseline_winow"],
-                        reject=config["diff_criterion"],
+                        #reject=config["diff_criterion"],
+                        reject=None,
                         preload=True)
 
-    # Epoch-wise cleaning and interpolation using AutoReject (AutoReject will ignore bad channels)
-    # we also can now interpolate bad channels identified before ICA
-    # if config["use_autoreject"]:
-    #     ar = AutoReject(n_jobs=config["njobs2"], verbose = False)
-    #     ar.fit(epochs)
-    #     epochs = ar.transform(epochs)
-    #     epochs = epochs.interpolate_bads(reset_bads=True)
+    raw = raw.set_channel_types(
+        {"vEOG": "eog", "hEOG": "eog"})
+
+    if config["use_autoreject"] is not None and config["use_autoreject"]:
+        print("Running AutoReject...")
+        ar = AutoReject(verbose = False)
+        ar.fit(epochs)
+        epochs = ar.transform(epochs)
+    elif config["diff_criterion"] is not None:
+        epochs = epochs.drop_bad(config["diff_criterion"])
 
     evokeds_list = []
     for condition in config["conditions_of_interest"]:
@@ -56,20 +71,26 @@ def epoch_and_average(id):
     mne.write_evokeds(ave_filename, evokeds_list)
 
 
+
 def main():
-    parser = argparse.ArgumentParser(description='Filter and epoch data.')
+    parser = argparse.ArgumentParser(description='Epoch data.')
     parser.add_argument('-s', '--subjects', nargs='+', type=str,
                         help='IDs of subjects to process.', required=False)
 
     args = parser.parse_args()
+    
+    parsl.load(pconfig)
+    parsl.set_stream_logger()
+
     if args.subjects:
-        Parallel(n_jobs=config["njobs"], prefer="threads")(
-            delayed(epoch_and_average)(id) for id in args.subjects)
+        tasks = [epoch_and_average(id, config) for id in args.subjects]
     else:
         ids = get_entity_vals(config["bids_root_path"], "sub")
-        Parallel(n_jobs=config["njobs"], prefer="threads")(
-            delayed(epoch_and_average)(id) for id in ids)
+        tasks = [epoch_and_average(id, config) for id in ids]
+
+    [i.result() for i in tasks]
 
 
 if __name__ == '__main__':
     main()
+

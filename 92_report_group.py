@@ -53,7 +53,7 @@ def report_group():
 
     def difference_wave(evokeds_as_dict, conditions, grandaverage=False):
 
-        out = [mne.combine_evoked([a, -b], "equal") for a, b in zip(
+        out = [mne.combine_evoked([a, a], [1, -1]) for a, b in zip(
             evokeds_as_dict[conditions[0]], evokeds_as_dict[conditions[1]])]
 
         if grandaverage:
@@ -63,7 +63,7 @@ def report_group():
 
     # # Find peak and find a window (±25ms) 
     diff = difference_wave(evokeds_list_as_dict, ("random/deviant", "random/standard"), grandaverage=True)
-    peak_latency = diff.pick(picks="Fz").get_peak(tmin = .1, tmax = .2,  return_amplitude = True)[1]
+    peak_latency = diff.pick(picks="FZ").get_peak(tmin = .1, tmax = .2,  return_amplitude = True)[1]
 
     #peak_latency = .140
     peakwindow = (peak_latency-0.025, peak_latency+0.025)
@@ -81,10 +81,10 @@ def report_group():
                                        [str(contrast[1]), evokeds_list_as_dict[contrast[1]] ]] )
             colors = config["main_colors"]
 
-        means_dict = OrderedDict( [[key, utils.get_mean_amplitudes(value, peakwindow, picks = ["Fz", "F4", "FC1", "FC2", "F3"])] for key,value in plot_data.items()])
+        means_dict = OrderedDict( [[key, utils.get_mean_amplitudes(value, peakwindow, picks = ["FZ", "F4", "FC1", "FC2", "F3"])] for key,value in plot_data.items()])
         
         figure = plotting.compare_evokeds_boxplot(
-                plot_data, means_dict = means_dict, picks = ["Fz", "F4", "FC1", "FC2", "F3"], combine = "mean", colors=colors, peakwindow = peakwindow)
+                plot_data, means_dict = means_dict, picks = ["FZ", "F4", "FC1", "FC2", "F3"], combine = "mean", colors=colors, peakwindow = peakwindow, ci=False)
         
         # figure = plotting.compare_evokeds_seaborn(
         #         plot_data, picks = ["Fz"], colors1 = config["main_colors"], colors2= config["accent_colors"])
@@ -94,39 +94,39 @@ def report_group():
 
     # Anova
 
-    conditions = {
-    ("predictable", "standard"): "predictable/4/standard",
-    ("predictable", "deviant"): "predictable/5/deviant",
-    ("random", "standard"): "random/4/standard",
-    ("random", "deviant"): "random/5/deviant"
-    }
+    # conditions = {
+    # #("predictable", "standard"): "predictable/4/standard",
+    # ("predictable", "deviant"): "predictable/5/deviant",
+    # ("random", "standard"): "random/4/standard",
+    # ("random", "deviant"): "random/5/deviant"
+    # }
 
-    avgfunc = partial(utils.get_mean_amplitudes, picks = ["Fz", "F4", "FC1", "FC2", "F3"])
+    # avgfunc = partial(utils.get_mean_amplitudes, picks = ["FZ", "F4", "FC1", "FC2", "F3"])
 
-    rows = []
-    for key, condition in conditions.items():
-        evokeds = evokeds_list_as_dict[condition]
-        [rows.append(OrderedDict( [["Id", str(id)], ["Predictability", key[0]], ["Deviance", key[1]], ["MeanAmplitude",avgfunc(evoked, peakwindow)[0]]] )) for id, evoked in enumerate(evokeds)]
+    # rows = []
+    # for key, condition in conditions.items():
+    #     evokeds = evokeds_list_as_dict[condition]
+    #     [rows.append(OrderedDict( [["Id", str(id)], ["Predictability", key[0]], ["Deviance", key[1]], ["MeanAmplitude",avgfunc(evoked, peakwindow)[0]]] )) for id, evoked in enumerate(evokeds)]
 
-    #%%
-    data = pd.DataFrame(rows)
+    # #%%
+    # data = pd.DataFrame(rows)
 
-    anova = statsmodels.stats.anova.AnovaRM(data,"MeanAmplitude","Id", within = ["Predictability", "Deviance"])
+    # anova = statsmodels.stats.anova.AnovaRM(data,"MeanAmplitude","Id", within = ["Predictability", "Deviance"])
     
-    #print(type(anova.fit().summary(returns="html")))
+    # #print(type(anova.fit().summary(returns="html")))
     
-    results = anova.fit().anova_table.to_html(classes="table table-hover")
+    # results = anova.fit().anova_table.to_html(classes="table table-hover")
 
-    report.add_htmls_to_section(results, captions = 'ANOVA', section = 'stats')
-    figure = plt.figure()
-    ax=figure.add_subplot()
-    sns.pointplot(data=data, ax=ax, x='Deviance', y='MeanAmplitude', hue='Predictability', dodge=True, markers=['o', 's'],
-	      capsize=.1, errwidth=1, palette=config["alt_main_colors"])
+    # report.add_htmls_to_section(results, captions = 'ANOVA', section = 'stats')
+    # figure = plt.figure()
+    # ax=figure.add_subplot()
+    # sns.pointplot(data=data, ax=ax, x='Deviance', y='MeanAmplitude', hue='Predictability', dodge=True, markers=['o', 's'],
+	#       capsize=.1, errwidth=1, palette=config["alt_main_colors"])
 
-    report.add_figs_to_section(figure, captions = 'ANOVA results (mean amplitude ~ deviance x predicatbility)', section = 'stats')
+    # report.add_figs_to_section(figure, captions = 'ANOVA results (mean amplitude ~ deviance x predicatbility)', section = 'stats')
     # # Find peak and find a window (±25ms)
     # diff = difference_wave(evokeds_list_as_dict, ("random/deviant", "random/standard"), grandaverage=True)
-    # peak = diff.pick(picks="Fz").get_peak(tmin = .1, tmax = .2,  return_amplitude = True)
+    # peak = diff.pick(picks="FZ").get_peak(tmin = .1, tmax = .2,  return_amplitude = True)
     # peak_latency = peak[1]
     # peak_amplitude = peak[2]
     # peakwindow = (peak_latency-0.025, peak_latency+0.025)
