@@ -1,4 +1,4 @@
-from configuration import load_configuration
+from ...configuration.configuration import load_configuration
 from mne_bids.utils import get_entity_vals
 
 import argparse

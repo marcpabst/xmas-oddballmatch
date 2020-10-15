@@ -1,4 +1,4 @@
-from configuration import load_configuration
+from ...configuration.configuration import load_configuration
 import mne
 
 from mne_bids import make_bids_basename, read_raw_bids

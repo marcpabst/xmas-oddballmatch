@@ -2,7 +2,7 @@
 ###### Label Independant Components #######
 ###########################################
 
-from configuration import load_configuration
+from ...configuration.configuration import load_configuration
 
 from os.path import join
 import argparse
