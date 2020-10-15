@@ -1,4 +1,4 @@
-from onfiguration import load_configuration
+from configuration import load_configuration
 from mne_bids.utils import get_entity_vals
 
 import argparse
@@ -12,11 +12,17 @@ from parsl_config import pconfig
 config = load_configuration()
 
 @python_app
-def epoch_and_average(id, config):
+def analyis_subsample(id, config):
     import mne
     from autoreject import AutoReject
     import utils
     import sys
+
+    nums = [100, 200, 300, 400, 500]
+    N = 10
+    peak_latency = 0.135
+    cond1 = "random/standard"
+    cond2 = "random/deviant"
 
     # Read file from disk
     raw_filename = utils.get_derivative_file_name(
@@ -25,11 +31,6 @@ def epoch_and_average(id, config):
         config["bids_root_path"], id, config["pipeline_name"], ".txt", suffix="eve", processing="prepared")
     raw = mne.io.read_raw_fif(raw_filename, preload=True)
     events = mne.read_events(events_filename)
-
-    # Logging
-    log_filename = utils.get_derivative_file_name(
-        config["bids_root_path"], id, config["pipeline_name"], ".txt", suffix="log")
-    sys.stdout = open(log_filename, 'w', buffering = 1)
 
     # Interpolate bad channels (if we use autoreject, we interpolate after epoching)
     # raw.interpolate_bads(reset_bads = True)
@@ -55,38 +56,47 @@ def epoch_and_average(id, config):
     elif config["diff_criterion"] is not None:
         epochs = epochs.drop_bad(config["diff_criterion"])
 
-    evokeds_list = []
-    for condition in config["conditions_of_interest"]:
-        evoked = epochs[condition].average()
-        evoked.comment = condition
-        evokeds_list.append(evoked)
+    mean_amplitudes = []
 
-    ave_filename = utils.get_derivative_file_name(
-        config["bids_root_path"], id, config["pipeline_name"], ".fif", suffix="ave")
+    for num in nums:
+        for n in range(N):
+            evokeds = {cond: [] for cond in [cond1, cond2]}
+            
+            for cond in [cond1, cond2]:
+                # select epochs
+                s_epochs = epochs[cond]
 
-    mne.write_evokeds(ave_filename, evokeds_list)
+                # draw a random sample of epochs
+                idx = list(range(len(s_epochs)))
+                retain_idx = np.random.choice(idx, num)
+                drop_idx = set(idx) - set(retain_idx)
+                subsample_epochs = s_epochs.copy().drop(drop_idx)
+
+                # apply autoreject
+                subsample_epochs = ar.transform(subsample_epochs)
+                # average
+                evokeds[cond].append(subsample_epochs.average())
+
+            # calculate amplitude differenc (effect estimate)
+            diff_waves = [mne.combine_evoked([e1,e2], [1,-1]) for e1,e2 in zip(evokeds["random/standard"], evokeds["random/deviant"])]
+            mean_amplitudes = get_mean_amplitudes(diff_waves, peakwindow, picks = ["FZ"]) 
+            mean_amplitudes.append(mean(mean_amplitudes))
+
+    return mean_amplitudes
+   
 
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Epoch data.')
-    parser.add_argument('-s', '--subjects', nargs='+', type=str,
-                        help='IDs of subjects to process.', required=False)
 
-    args = parser.parse_args()
-    
-    parsl.load(pconfig)
-    parsl.set_stream_logger()
+    ids = get_entity_vals(config["bids_root_path"], "sub")
+    #tasks = [epoch_and_average(id, config) for id in ids]
+    tasks = [epoch_and_average(id, config) for id in ["001"]]
 
-    if args.subjects:
-        tasks = [epoch_and_average(id, config) for id in args.subjects]
-    else:
-        ids = get_entity_vals(config["bids_root_path"], "sub")
-        tasks = [epoch_and_average(id, config) for id in ids]
+    mean_amplitudes = [i.result() for i in tasks]
 
-    [i.result() for i in tasks]
+    print(mean_amplitudes)
 
 
 if __name__ == '__main__':
     main()
-
