@@ -4,7 +4,7 @@ from mne_bids.utils import get_entity_vals
 import argparse
 
 import time
-
+import pandas as pd
 import parsl
 from parsl.app.app import python_app
 from parsl_config import pconfig
@@ -17,12 +17,36 @@ def analyis_subsample(id, config):
     from autoreject import AutoReject
     import utils
     import sys
+    import numpy as np
+    import pandas as pd
 
-    nums = [100, 200, 300, 400, 500]
-    N = 10
+
+    def get_mean_amplitudes(evokeds, window, picks = "all"):
+
+        means = []
+        if isinstance(evokeds, list):
+            for i, evoked in enumerate(evokeds):
+                evoked = evoked.copy().pick(picks)
+
+                _window = np.arange(evoked.time_as_index(window[0]),
+                                    evoked.time_as_index(window[1]))
+
+                data = evoked.data[:, _window]
+                mean = data.mean()
+                means.append(mean)
+        else:
+            return get_mean_amplitudes([evokeds], window, picks)[0]
+
+        return means
+
+
+    nums = [50, 100, 500, 1000]
+    N = 1000
     peak_latency = 0.135
     cond1 = "random/standard"
     cond2 = "random/deviant"
+    peak = 0.135
+    peakwindow = (peak-0.025,peak+0.025)
 
     # Read file from disk
     raw_filename = utils.get_derivative_file_name(
@@ -47,7 +71,7 @@ def analyis_subsample(id, config):
 
     raw = raw.set_channel_types(
         {"vEOG": "eog", "hEOG": "eog"})
-
+    config["use_autoreject"] = False
     if config["use_autoreject"] is not None and config["use_autoreject"]:
         print("Running AutoReject...")
         ar = AutoReject(verbose = False)
@@ -56,7 +80,10 @@ def analyis_subsample(id, config):
     elif config["diff_criterion"] is not None:
         epochs = epochs.drop_bad(config["diff_criterion"])
 
-    mean_amplitudes = []
+    mean_amplitudes = {}
+    mean_amplitudes["id"] = []
+    mean_amplitudes["num"] = [] 
+    mean_amplitudes["amplitude_difference"] = [] 
 
     for num in nums:
         for n in range(N):
@@ -69,33 +96,36 @@ def analyis_subsample(id, config):
                 # draw a random sample of epochs
                 idx = list(range(len(s_epochs)))
                 retain_idx = np.random.choice(idx, num)
-                drop_idx = set(idx) - set(retain_idx)
+                drop_idx = list(set(idx) - set(retain_idx))
                 subsample_epochs = s_epochs.copy().drop(drop_idx)
 
                 # apply autoreject
-                subsample_epochs = ar.transform(subsample_epochs)
+                #subsample_epochs = ar.transform(subsample_epochs)
                 # average
                 evokeds[cond].append(subsample_epochs.average())
 
-            # calculate amplitude differenc (effect estimate)
+            # calculate amplitude difference (effect estimate)
             diff_waves = [mne.combine_evoked([e1,e2], [1,-1]) for e1,e2 in zip(evokeds["random/standard"], evokeds["random/deviant"])]
-            mean_amplitudes = get_mean_amplitudes(diff_waves, peakwindow, picks = ["FZ"]) 
-            mean_amplitudes.append(mean(mean_amplitudes))
+            ma = get_mean_amplitudes(diff_waves, peakwindow, picks = ["FZ"]) 
 
-    return mean_amplitudes
+            mean_amplitudes["id"].append(id) 
+            mean_amplitudes["num"].append(num)
+            mean_amplitudes["amplitude_difference"].append(np.mean(ma))
+
+    return pd.DataFrame(mean_amplitudes)
    
 
-
-
 def main():
-
+    parsl.load(pconfig)
     ids = get_entity_vals(config["bids_root_path"], "sub")
-    #tasks = [epoch_and_average(id, config) for id in ids]
-    tasks = [epoch_and_average(id, config) for id in ["001"]]
+    tasks = [analyis_subsample(id, config) for id in ids]
+    #tasks = [analyis_subsample(id, config) for id in ["001"]]
 
     mean_amplitudes = [i.result() for i in tasks]
 
-    print(mean_amplitudes)
+    df = pd.concat(mean_amplitudes)
+    df.to_csv("out.csv")
+    print(df)
 
 
 if __name__ == '__main__':

@@ -1,6 +1,3 @@
-import meegkit
-from meegkit.asr import ASR, clean_windows
-from meegkit.utils.matrix import sliding_window
 import numpy as np
 
 from mne_bids import make_bids_basename, read_raw_bids, write_raw_bids

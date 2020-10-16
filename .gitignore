@@ -137,3 +137,6 @@ plots/
 
 # EEGLAB
 matlab/eeglab
+
+# parsl
+runinfo
