@@ -11,6 +11,9 @@ from parsl_config import pconfig
 
 config = load_configuration()
 
+config["bids_root_path"] = "/nfs/user/mo808sujo/xmasoddballmatch-bids"
+config["pipeline_name"] = "pipeline01"
+
 @python_app
 def analyis_subsample(id, config):
     import mne
@@ -20,6 +23,9 @@ def analyis_subsample(id, config):
     import numpy as np
     import pandas as pd
 
+    
+
+    
 
     def get_mean_amplitudes(evokeds, window, picks = "all"):
 
@@ -40,8 +46,8 @@ def analyis_subsample(id, config):
         return means
 
 
-    nums = [50, 100, 500, 1000]
-    N = 1000
+    nums = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200]
+    N = 100
     peak_latency = 0.135
     cond1 = "random/standard"
     cond2 = "random/deviant"
@@ -55,9 +61,6 @@ def analyis_subsample(id, config):
         config["bids_root_path"], id, config["pipeline_name"], ".txt", suffix="eve", processing="prepared")
     raw = mne.io.read_raw_fif(raw_filename, preload=True)
     events = mne.read_events(events_filename)
-
-    # Interpolate bad channels (if we use autoreject, we interpolate after epoching)
-    # raw.interpolate_bads(reset_bads = True)
 
     # Epoch data
     raw.pick(["eeg", "eog"])
@@ -83,26 +86,28 @@ def analyis_subsample(id, config):
     mean_amplitudes = {}
     mean_amplitudes["id"] = []
     mean_amplitudes["num"] = [] 
+    mean_amplitudes["run"] = [] 
     mean_amplitudes["amplitude_difference"] = [] 
+
+    epochs1 = epochs[cond1]
+    epochs2 = epochs[cond2]
+
+    idx1 = list(range(len(epochs1)))
+    idx2 = list(range(len(epochs2)))
+
+    np.random.shuffle(idx1)
+    np.random.shuffle(idx2)
 
     for num in nums:
         for n in range(N):
             evokeds = {cond: [] for cond in [cond1, cond2]}
             
-            for cond in [cond1, cond2]:
-                # select epochs
-                s_epochs = epochs[cond]
+            subsample_epochs1 = epochs1.copy().drop(idx1[num:])
+            subsample_epochs2 = epochs2.copy().drop(idx2[num:])
 
-                # draw a random sample of epochs
-                idx = list(range(len(s_epochs)))
-                retain_idx = np.random.choice(idx, num)
-                drop_idx = list(set(idx) - set(retain_idx))
-                subsample_epochs = s_epochs.copy().drop(drop_idx)
-
-                # apply autoreject
-                #subsample_epochs = ar.transform(subsample_epochs)
-                # average
-                evokeds[cond].append(subsample_epochs.average())
+            # average
+            evokeds[cond1].append(subsample_epochs1.average())
+            evokeds[cond2].append(subsample_epochs2.average())
 
             # calculate amplitude difference (effect estimate)
             diff_waves = [mne.combine_evoked([e1,e2], [1,-1]) for e1,e2 in zip(evokeds["random/standard"], evokeds["random/deviant"])]
@@ -110,6 +115,7 @@ def analyis_subsample(id, config):
 
             mean_amplitudes["id"].append(id) 
             mean_amplitudes["num"].append(num)
+            mean_amplitudes["run"].append(n)
             mean_amplitudes["amplitude_difference"].append(np.mean(ma))
 
     return pd.DataFrame(mean_amplitudes)
@@ -124,7 +130,7 @@ def main():
     mean_amplitudes = [i.result() for i in tasks]
 
     df = pd.concat(mean_amplitudes)
-    df.to_csv("out.csv")
+    df.to_csv("out100.csv")
     print(df)
 
 
