@@ -95,11 +95,15 @@ def analyis_subsample(id, config):
     idx1 = list(range(len(epochs1)))
     idx2 = list(range(len(epochs2)))
 
-    np.random.shuffle(idx1)
-    np.random.shuffle(idx2)
 
-    for num in nums:
-        for n in range(N):
+
+
+    for n in range(N):
+        
+        np.random.shuffle(idx1)
+        np.random.shuffle(idx2)
+
+        for num in nums:
             evokeds = {cond: [] for cond in [cond1, cond2]}
             
             subsample_epochs1 = epochs1.copy().drop(idx1[num:])
