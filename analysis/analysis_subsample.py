@@ -20,6 +20,18 @@ config["150"]["pipeline_name"] = "pipeline_christine"
 
 
 
+def cronbachs_alpha(X):
+    """
+    X: ndarray (n_items * n_observations)
+    """
+    N = X.shape[0]
+    corrs = np.corrcoef(X)
+
+    r = 0
+    return = (N * r) / (1 + (N - 1) * r)
+
+    
+
 @python_app
 def analyis_subsample(id, config, soa):
     import mne
@@ -132,6 +144,7 @@ def analyis_subsample(id, config, soa):
             mean_amplitudes["soa"].append(soa) 
             mean_amplitudes["num"].append(num)
             mean_amplitudes["run"].append(n)
+            mean_amplitudes["type"].append("full") 
             mean_amplitudes["amplitude_difference"].append(np.mean(ma))
 
             ## split-half
