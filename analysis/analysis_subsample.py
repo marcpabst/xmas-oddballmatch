@@ -17,19 +17,6 @@ config["100"]["pipeline_name"] = "pipeline01"
 config["150"] = {}
 config["150"]["bids_root_path"] = "/nfs/user/mo808sujo/machristine-bids"
 config["150"]["pipeline_name"] = "pipeline_christine"
-
-
-
-def cronbachs_alpha(X):
-    """
-    X: ndarray (n_items * n_observations)
-    """
-    N = X.shape[0]
-    corrs = np.corrcoef(X)
-
-    r = 0
-    return = (N * r) / (1 + (N - 1) * r)
-
     
 
 @python_app
@@ -75,6 +62,7 @@ def analyis_subsample(id, config, soa):
     mean_amplitudes["soa"] = []
     mean_amplitudes["num"] = [] 
     mean_amplitudes["run"] = [] 
+    mean_amplitudes["type"] = [] 
     mean_amplitudes["amplitude_difference"] = [] 
 
 
@@ -120,11 +108,12 @@ def analyis_subsample(id, config, soa):
 
         for num in nums:
             if num > len(idx1) or num > len(idx2):
-                mean_amplitudes["id"].append(id) 
-                mean_amplitudes["soa"].append(soa) 
-                mean_amplitudes["num"].append(num)
-                mean_amplitudes["run"].append(n)
-                mean_amplitudes["amplitude_difference"].append(np.nan)
+                # mean_amplitudes["id"].append(id) 
+                # mean_amplitudes["soa"].append(soa) 
+                # mean_amplitudes["num"].append(num)
+                # mean_amplitudes["run"].append(n)
+                # mean_amplitudes["type"].append("full") 
+                # mean_amplitudes["amplitude_difference"].append(np.nan)
                 break
 
             evokeds = {cond: [] for cond in [cond1, cond2]}
@@ -152,11 +141,11 @@ def analyis_subsample(id, config, soa):
             evokeds_h2 = {cond: [] for cond in [cond1, cond2]}
             
 
-            subsample_epochs1_h1 = epochs1[idx1[:num]][:num]
-            subsample_epochs1_h2 = epochs1[idx1[:num]][num:]
+            subsample_epochs1_h1 = epochs1[idx1[:num]][:(num/2)]
+            subsample_epochs1_h2 = epochs1[idx1[:num]][(num/2):]
 
-            subsample_epochs2_h1 = epochs2[idx2[:num]][:num]
-            subsample_epochs2_h2 = epochs2[idx2[:num]][num:]
+            subsample_epochs2_h1 = epochs2[idx2[:num]][:(num/2)]
+            subsample_epochs2_h2 = epochs2[idx2[:num]][(num/2):]
 
             # average
             evokeds_h1[cond1].append(subsample_epochs1_h1.average())
