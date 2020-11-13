@@ -14,6 +14,18 @@ config = load_configuration()
 config["bids_root_path"] = "/nfs/user/mo808sujo/xmasoddballmatch-bids"
 config["pipeline_name"] = "pipeline01"
 
+def cronbachs_alpha(X):
+    """
+    X: ndarray (n_items * n_observations)
+    """
+    N = X.shape[0]
+    corrs = np.corrcoef(X)
+
+    r = 0
+    return = (N * r) / (1 + (N - 1) * r)
+
+    
+
 @python_app
 def analyis_subsample(id, config):
     import mne
@@ -96,8 +108,6 @@ def analyis_subsample(id, config):
     idx2 = list(range(len(epochs2)))
 
 
-
-
     for n in range(N):
         
         np.random.shuffle(idx1)
@@ -106,8 +116,8 @@ def analyis_subsample(id, config):
         for num in nums:
             evokeds = {cond: [] for cond in [cond1, cond2]}
             
-            subsample_epochs1 = epochs1.copy().drop(idx1[num:])
-            subsample_epochs2 = epochs2.copy().drop(idx2[num:])
+            subsample_epochs1 = epochs1[idx1[:num]]
+            subsample_epochs2 = epochs2[idx2[:num]]
 
             # average
             evokeds[cond1].append(subsample_epochs1.average())
@@ -120,7 +130,48 @@ def analyis_subsample(id, config):
             mean_amplitudes["id"].append(id) 
             mean_amplitudes["num"].append(num)
             mean_amplitudes["run"].append(n)
+            mean_amplitudes["type"].append("full") 
             mean_amplitudes["amplitude_difference"].append(np.mean(ma))
+
+            # split-half
+            evokeds_h1 = {cond: [] for cond in [cond1, cond2]}
+            evokeds_h2 = {cond: [] for cond in [cond1, cond2]}
+            
+
+            subsample_epochs1_h1 = epochs1[idx1[:num]][:num]
+            subsample_epochs1_h2 = epochs1[idx1[:num]][num:]
+
+            subsample_epochs2_h1 = epochs2[idx2[:num]][:num]
+            subsample_epochs2_h2 = epochs2[idx2[:num]][num:]
+
+            # average
+            evokeds_h1[cond1].append(subsample_epochs1_h1.average())
+            evokeds_h2[cond1].append(subsample_epochs1_h2.average())
+
+            evokeds_h1[cond2].append(subsample_epochs2_h1.average())
+            evokeds_h2[cond2].append(subsample_epochs2_h2.average())
+
+            # calculate amplitude difference (effect estimate)
+            diff_waves_h1 = [mne.combine_evoked([e1,e2], [1,-1]) for e1,e2 in zip(evokeds_h1["random/standard"], evokeds_h1["random/deviant"])]
+            diff_waves_h2 = [mne.combine_evoked([e1,e2], [1,-1]) for e1,e2 in zip(evokeds_h2["random/standard"], evokeds_h2["random/deviant"])]
+
+            ma_h1 = get_mean_amplitudes(diff_waves_h1, peakwindow, picks = ["FZ"]) 
+            ma_h2 = get_mean_amplitudes(diff_waves_h2, peakwindow, picks = ["FZ"]) 
+
+            mean_amplitudes["id"].append(id) 
+            mean_amplitudes["num"].append(num)
+            mean_amplitudes["run"].append(n)
+            mean_amplitudes["type"].append("half_1") 
+            mean_amplitudes["amplitude_difference"].append(np.mean(ma_h1))
+
+            mean_amplitudes["id"].append(id) 
+            mean_amplitudes["num"].append(num)
+            mean_amplitudes["run"].append(n)
+            mean_amplitudes["type"].append("half_2") 
+            mean_amplitudes["amplitude_difference"].append(np.mean(ma_h2))
+
+
+
 
     return pd.DataFrame(mean_amplitudes)
    
