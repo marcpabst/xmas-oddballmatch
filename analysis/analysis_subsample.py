@@ -10,21 +10,24 @@ from parsl.app.app import python_app
 from parsl_config import pconfig
 
 config = load_configuration()
+config["100"] = {}
+config["100"]["bids_root_path"] = "/nfs/user/mo808sujo/xmasoddballmatch-bids"
+config["100"]["pipeline_name"] = "pipeline01"
 
-config["bids_root_path"] = "/nfs/user/mo808sujo/xmasoddballmatch-bids"
-config["pipeline_name"] = "pipeline01"
+config["150"] = {}
+config["150"]["bids_root_path"] = "/nfs/user/mo808sujo/machristine-bids"
+config["150"]["pipeline_name"] = "pipeline_christine"
+
+
 
 @python_app
-def analyis_subsample(id, config):
+def analyis_subsample(id, config, soa):
     import mne
     from autoreject import AutoReject
     import utils
     import sys
     import numpy as np
     import pandas as pd
-
-    
-
     
 
     def get_mean_amplitudes(evokeds, window, picks = "all"):
@@ -46,19 +49,28 @@ def analyis_subsample(id, config):
         return means
 
 
-    nums = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200]
+    #nums = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, ]
+    nums = list(range(100, 3100, 100))
     N = 100
-    peak_latency = 0.135
+    peak_latency = 0.138
     cond1 = "random/standard"
     cond2 = "random/deviant"
-    peak = 0.135
+    peak = 0.138
     peakwindow = (peak-0.025,peak+0.025)
+
+    mean_amplitudes = {}
+    mean_amplitudes["id"] = []
+    mean_amplitudes["soa"] = []
+    mean_amplitudes["num"] = [] 
+    mean_amplitudes["run"] = [] 
+    mean_amplitudes["amplitude_difference"] = [] 
+
 
     # Read file from disk
     raw_filename = utils.get_derivative_file_name(
-        config["bids_root_path"], id, config["pipeline_name"], ".fif", suffix="raw", processing="cleaned")
+        config[soa]["bids_root_path"], id, config[soa]["pipeline_name"], ".fif", suffix="raw", processing="cleaned")
     events_filename = utils.get_derivative_file_name(
-        config["bids_root_path"], id, config["pipeline_name"], ".txt", suffix="eve", processing="prepared")
+        config[soa]["bids_root_path"], id, config[soa]["pipeline_name"], ".txt", suffix="eve", processing="prepared")
     raw = mne.io.read_raw_fif(raw_filename, preload=True)
     events = mne.read_events(events_filename)
 
@@ -83,20 +95,11 @@ def analyis_subsample(id, config):
     elif config["diff_criterion"] is not None:
         epochs = epochs.drop_bad(config["diff_criterion"])
 
-    mean_amplitudes = {}
-    mean_amplitudes["id"] = []
-    mean_amplitudes["num"] = [] 
-    mean_amplitudes["run"] = [] 
-    mean_amplitudes["amplitude_difference"] = [] 
-
     epochs1 = epochs[cond1]
     epochs2 = epochs[cond2]
 
     idx1 = list(range(len(epochs1)))
     idx2 = list(range(len(epochs2)))
-
-
-
 
     for n in range(N):
         
@@ -104,10 +107,18 @@ def analyis_subsample(id, config):
         np.random.shuffle(idx2)
 
         for num in nums:
+            if num > len(idx1) or num > len(idx2):
+                mean_amplitudes["id"].append(id) 
+                mean_amplitudes["soa"].append(soa) 
+                mean_amplitudes["num"].append(num)
+                mean_amplitudes["run"].append(n)
+                mean_amplitudes["amplitude_difference"].append(np.nan)
+                break
+
             evokeds = {cond: [] for cond in [cond1, cond2]}
             
-            subsample_epochs1 = epochs1.copy().drop(idx1[num:])
-            subsample_epochs2 = epochs2.copy().drop(idx2[num:])
+            subsample_epochs1 = epochs1[idx1[:num]]
+            subsample_epochs2 = epochs2[idx2[:num]]
 
             # average
             evokeds[cond1].append(subsample_epochs1.average())
@@ -118,23 +129,68 @@ def analyis_subsample(id, config):
             ma = get_mean_amplitudes(diff_waves, peakwindow, picks = ["FZ"]) 
 
             mean_amplitudes["id"].append(id) 
+            mean_amplitudes["soa"].append(soa) 
             mean_amplitudes["num"].append(num)
             mean_amplitudes["run"].append(n)
             mean_amplitudes["amplitude_difference"].append(np.mean(ma))
+
+            ## split-half
+            evokeds_h1 = {cond: [] for cond in [cond1, cond2]}
+            evokeds_h2 = {cond: [] for cond in [cond1, cond2]}
+            
+
+            subsample_epochs1_h1 = epochs1[idx1[:num]][:num]
+            subsample_epochs1_h2 = epochs1[idx1[:num]][num:]
+
+            subsample_epochs2_h1 = epochs2[idx2[:num]][:num]
+            subsample_epochs2_h2 = epochs2[idx2[:num]][num:]
+
+            # average
+            evokeds_h1[cond1].append(subsample_epochs1_h1.average())
+            evokeds_h2[cond1].append(subsample_epochs1_h2.average())
+
+            evokeds_h1[cond2].append(subsample_epochs2_h1.average())
+            evokeds_h2[cond2].append(subsample_epochs2_h2.average())
+
+            # calculate amplitude difference (effect estimate)
+            diff_waves_h1 = [mne.combine_evoked([e1,e2], [1,-1]) for e1,e2 in zip(evokeds_h1["random/standard"], evokeds_h1["random/deviant"])]
+            diff_waves_h2 = [mne.combine_evoked([e1,e2], [1,-1]) for e1,e2 in zip(evokeds_h2["random/standard"], evokeds_h2["random/deviant"])]
+
+            ma_h1 = get_mean_amplitudes(diff_waves_h1, peakwindow, picks = ["FZ"]) 
+            ma_h2 = get_mean_amplitudes(diff_waves_h2, peakwindow, picks = ["FZ"]) 
+
+            mean_amplitudes["id"].append(id) 
+            mean_amplitudes["soa"].append(soa) 
+            mean_amplitudes["num"].append(num)
+            mean_amplitudes["run"].append(n)
+            mean_amplitudes["type"].append("half_1") 
+            mean_amplitudes["amplitude_difference"].append(np.mean(ma_h1))
+
+            mean_amplitudes["id"].append(id) 
+            mean_amplitudes["soa"].append(soa) 
+            mean_amplitudes["num"].append(num)
+            mean_amplitudes["run"].append(n)
+            mean_amplitudes["type"].append("half_2") 
+            mean_amplitudes["amplitude_difference"].append(np.mean(ma_h2))
 
     return pd.DataFrame(mean_amplitudes)
    
 
 def main():
     parsl.load(pconfig)
-    ids = get_entity_vals(config["bids_root_path"], "sub")
-    tasks = [analyis_subsample(id, config) for id in ids]
-    #tasks = [analyis_subsample(id, config) for id in ["001"]]
+    parsl.set_stream_logger()
 
-    mean_amplitudes = [i.result() for i in tasks]
+    ids1 = get_entity_vals(config["100"]["bids_root_path"], "sub")
+    ids2 = get_entity_vals(config["150"]["bids_root_path"], "sub")
+
+    tasks1 = [analyis_subsample(id, config, "100") for id in ids1]
+    tasks2 = [analyis_subsample(id, config, "150") for id in ids2]
+
+    mean_amplitudes = [i.result() for i in tasks1 + tasks2]
 
     df = pd.concat(mean_amplitudes)
-    df.to_csv("out100.csv")
+    df.to_csv("out.csv")
+    
     print(df)
 
 
