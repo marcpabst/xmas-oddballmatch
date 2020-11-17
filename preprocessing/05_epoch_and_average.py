@@ -31,9 +31,6 @@ def epoch_and_average(id, config):
         config["bids_root_path"], id, config["pipeline_name"], ".txt", suffix="log")
     sys.stdout = open(log_filename, 'w', buffering = 1)
 
-    # Interpolate bad channels (if we use autoreject, we interpolate after epoching)
-    # raw.interpolate_bads(reset_bads = True)
-
     # Epoch data
     raw.pick(["eeg", "eog"])
     epochs = mne.Epochs(raw, events, config["events_dict"],

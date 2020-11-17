@@ -75,7 +75,7 @@ h_freq: 30.0
 
 ## EPOCHING ##
 epoch_window: !!python/tuple [-0.3, 0.3]
-baseline_winow: !!python/tuple [-0.1, 0.0]
+baseline_winow: None
 use_autoreject: false
 diff_criterion:
   eeg: 100e-6

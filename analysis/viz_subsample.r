@@ -2,7 +2,7 @@ library("tidyverse")
 library("cowplot")
 library("gridExtra")
 
-setwd("./analysis")
+#setwd("./analysis")
 
 df <- read.csv("out.csv") 
 
@@ -10,8 +10,6 @@ df <- read.csv("out.csv")
 # https://twitter.com/EamonCaddigan/status/646759751242620928
 # based mostly on copy/pasting from ggplot2 geom_violin source:
 # https://github.com/hadley/ggplot2/blob/master/R/geom-violin.r
-
-
 
 
 "%||%" <- function(a, b) {
@@ -132,8 +130,8 @@ plot_e = ggplot(data=gdf1, aes(x = epochs, y = mean_amplitude_difference, fill=S
     scale_color_brewer(palette="Set1") +
     geom_point(aes(color=SOA), position = position_jitterdodge(dodge.width = .25, jitter.width = .25), size = .25, alpha = 1) +
     #geom_line(aes(group=interaction(run,SOA)), alpha=.2) +
-    geom_boxplot(width = .3, outlier.shape = NA, alpha = 0.5) +
-    geom_flat_violin(position = position_nudge(x = .2, y = 0), alpha = .8)  + 
+    geom_boxplot(width = .6, outlier.shape = NA, alpha = 0.5) +
+    #geom_flat_violin(position = position_nudge(x = .2, y = 0), alpha = .8)  + 
     theme_min() +
     ggtitle("Mean Amplitude Difference") + 
     ylab("µV") +
@@ -150,8 +148,8 @@ plot_t = ggplot(data=gdf2, aes(x = epochs, y = t_val, fill=SOA)) +
     scale_color_brewer(palette="Set1") +
     geom_point(aes(color=SOA), position = position_jitterdodge(dodge.width = .25, jitter.width = .25), size = .25, alpha = 1) +
     #geom_line(aes(group=interaction(run,soa)), alpha=.2) +
-    geom_boxplot(width = .3, outlier.shape = NA, alpha = 0.5) +
-    geom_flat_violin(position = position_nudge(x = .2, y = 0), alpha = .8)  + 
+    geom_boxplot(width = .6, outlier.shape = NA, alpha = 0.5) +
+    #geom_flat_violin(position = position_nudge(x = .2, y = 0), alpha = .8)  + 
     theme_min() +
     ggtitle("t-Values") + 
     ylab(expression(italic(t))) +
@@ -168,11 +166,11 @@ legend <- get_legend(
 
 
 plot_final = plot_grid(
-  plot_e + theme(legend.position="none"),
+  plot_e + theme(legend.position="none", text = element_text(size=8)),
   plot_t + theme(legend.position="none"),
   legend = legend,
   align = 'vh',
-  labels = c("A", "B"),
+  #labels = c("A", "B"),
   hjust = -1,
   nrow = 3,
   ncol=1,
@@ -192,32 +190,4 @@ ggplot(data=gdf, aes(x = epochs, y = mean_amplitude_difference, group=soa, color
     geom_line()
 
 
-ggsave("~/a2_subsamples.png", plot_final)
-
-
-lm_model = lm(Sepal.Length~1+Sepal.Width,data=iris)
-lm_model_null = lm(Sepal.Length~1,data=iris)
-
-load("~/dragons.RData")
-model = lme4::lmer(testScore ~ bodyLength + site + (1|mountainRange), data = dragons, REML=FALSE)
-model_null = lme4::lmer(testScore ~ bodyLength + (1|mountainRange), data = dragons, REML=FALSE)
-
-anova(lm_model, lm_model_null)
-
-anova(model, model_null)
-drop1(model)
-
-anova()
-
-summary(model)
-
-lmtest::lrtest(model_null, model)
-
-
-
-findMethod <- function(generic, ...) {
-  ch <- deparse(substitute(generic))
-  f <- X <- function(x, ...) UseMethod("X")
-  for(m in methods(ch)) assign(sub(ch, "X", m, fixed = TRUE), "body<-"(f, value = m))
-  X(...)
-}
+ggsave("/home/marc/ba-thesis/input/figures/fig3.png", plot_final, width = 6.25, height = 4.5, units = "in")
