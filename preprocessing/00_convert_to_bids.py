@@ -8,7 +8,7 @@ from os.path import join
 import argparse
 from joblib import Parallel, delayed
 
-config = load_configuration()
+config = None
 
 
 def convert_to_bids(id):
@@ -34,6 +34,7 @@ def main():
                         help='IDs of subjects to process.', required=False)
 
     args = parser.parse_args()
+    config = load_configuration(args.config)
     if args.subjects:
         Parallel(n_jobs=config["njobs"], prefer="threads")(
             delayed(convert_to_bids)(id) for id in args.subjects)

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Marc Pabst" />
+  <title>Titel123</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Titel123</h1>
+<p class="author">Marc Pabst</p>
+</header>
+<h1 id="introduction">Introduction</h1>
+<h1 id="methods">Methods</h1>
+<h2 id="data-acquisition">Data Acquisition</h2>
+<h3 id="participants">Participants</h3>
+<p>For study 1, 24 participants were recruited.</p>
+<h3 id="stimuli">Stimuli</h3>
+<figure>
+<img src="/home/marc/ba-thesis/input/figures/fig1.png" alt="Auditory stimuli in two different condition" /><figcaption aria-hidden="true">Auditory stimuli in two different condition</figcaption>
+</figure>
+<p>Stimuli consisted of pure sinusodial tones with a duration of 50 ms (including a 10 ms cosine on/off ramp), presented isochronously at a stimulation onsets asynchrony (SOA) of 100 ms for study 1 and 150 ms for study 2. Participants where seated in a electromagnetically shielded and sound-proofed cabin while administering a total of 40 blocks containing a mixture of frequent 440 Hz tones (“A” tones) and infrequent 449 Hz tones (“B” tones). In one half of the blocks, tones were presented in pseudo-random order (e.g. AAABABA}, “random” condition), while in the remaining block tones followed a simple pattern in which a five-tone-sequence of four frequent tones and one infrequent tone (i.e. AAAAB) was repeated cyclically (“predictable” condition). The ratio of frequent and infrequent tones was 1/10 for both conditions. Additionally, within the predictable condition, 10% of designated (infrequent) B tones were replaced by A tones, resulting in sporadic five-tone sequences consisting solely of A tones (i.e. AAAAA). In the random condition, randomly arranged tones were interspersed with sequences mimicking aforementioned patterns from the predictable condition (BAAAAB and BAAAAA).</p>
+<p>In Study 1, a total of 2000 tones for (4000 tones Study 2) was delivered to each participant.</p>
+<h3 id="data-acquisition-1">Data Acquisition</h3>
+<p>Electrophysiological data was recorded from active Silver-silver chloride (<em>Ag</em>-<em>AgCl</em>) electrodes using an ActiveTwo amplifier (BioSemi B.V., Amsterdam, The Netherlands). Acquisition was monitored online to ensure data quality. A total of 39 channels were obtained using a 32-electrode-cap and 7 external electrodes. Scalp electrode locations conformed to the international 10–20 system. Horizontal and vertical eye movement was obtained using two bipolar configurations with electrodes placed around the lateral canthi of the eyes and above and below the right eye. Three additional external electrodes were placed on the tip of the nose and at the left and right mastoid sites. Data was sampled at 512 Hz and on-line filtered at 1000 Hz.</p>
+<h2 id="analysis-pipeline">Analysis Pipeline</h2>
+<p>Data prepossessing was implemented using a custom pipeline based on the <em>MNE Python</em> software package <span class="citation" data-cites="gramfortMEGEEGData2013">(Gramfort, 2013)</span> using <em>Python 3.7</em>. All computations were carried out on a cluster operated by the University Computation Center of the University of Leipzig. Code used in thesis is publicly available at <a href="https://github.com/marcpabst/xmas-oddballmatch" class="uri">https://github.com/marcpabst/xmas-oddballmatch</a>.</p>
+<h3 id="bad-channel-detection-and-interpolation">Bad Channel Detection and Interpolation</h3>
+<p>Firstly, EEG data was subject to the ZapLine procedure <span class="citation" data-cites="decheveigneZapLineSimpleEffective2020">(de Cheveigné, 2020)</span> to remove line noise contamination. A fivefold detection procedure as described by <span class="citation" data-cites="bigdely-shamloPREPPipelineStandardized2015">Bigdely-Shamlo et al. (2015)</span> was then used to detect and subsequently interpolate bad channels. This specifically included the detection of channels thain contain prolonged segments with verry small values (i.e. flat channels), the exclusion of channels based on robust standard deviation (deviation criterion), unusualy pronounced high-frequency noise (noisiness criterion), and the removal of channels that were poorly predicted by nearby channels (correlation criterion and predictability criterion). Channels considered bad by one or more of these methods were removed and interpolated using spherical splines <span class="citation" data-cites="perrinSphericalSplinesScalp1989">(Perrin et al., 1989)</span>. Electrode locations for interpolations were informed by the BESA Spherical Head Model.</p>
+<h3 id="independent-component-analysis">Independent Component Analysis</h3>
+<p>Given the <span class="math inline">$\frac{1}{f}$</span> power spectral density of EEG data, the estimation independent components (ICs) by independent component analysis (ICA) would be strongly influenced by high-frequency noise that is ususally considere brain-irrelevant [reference]. To mitigate this effect, a 1-Hz-high-pass filter (134th order hamming-windowed FIR) was applied prior to ICA <span class="citation" data-cites="winklerInfluenceHighpassFiltering2015">(Winkler et al., 2015)</span>.</p>
+<p>To further reduce artifacts, Artifact Subspace Reconstruction <span class="citation" data-cites="mullenRealtimeNeuroimagingCognitive2015">(ASR, Mullen et al., 2015)</span> was used to identify parts of the data with unusual characteristics (bursts) which were subsequently removed. ICA was then carried out using the <em>Picard</em> algorithm <span class="citation" data-cites="ablinFasterICAOrthogonal2017 ablinFasterIndependentComponent2018">(Ablin et al., 2018, 2017)</span> on PCA-whitened data. To avoid rank-deficiency when extracting components from data with one or more interpolated channels, PCA was also used for dimensionality reduction to obtain full-ranked data.</p>
+<p>The EEGLAB <span class="citation" data-cites="delormeEEGLABOpenSource2004">(version 2020.0, Delorme &amp; Makeig, 2004)</span> software package and the IClabel plugin <span class="citation" data-cites="pion-tonachiniICLabelAutomatedElectroencephalographic2019">(version X.Y, Pion-Tonachini et al., 2019)</span> were used to automatically classify estimated components. Only components clearly classified (i.e. confidence above 50%) as resulting from either eye movement, muscular, or heartbeat activity were zeroed-out in the mixing matrix before inversely transform ICs.</p>
+<h3 id="filtering">Filtering</h3>
+<p>In line with recommendations from <span class="citation" data-cites="widmannDigitalFilterDesign2015">Widmann et al. (2015)</span>, a bandpass filter from 0.1 Hz to 30 Hz was applied (Hamming window with 0.0194 passband ripple and 53 dB stopband attenuation).</p>
+<h3 id="epoching-and-averaging">Epoching and Averaging</h3>
+<p>Continuous data was epoched into 400 ms long segments around stimulus onsets. This included a 100 ms pre-stimulus interval which was used to perform baseline correction by subtracting its mean amplitude from each epoch. The AutoReject software package <span class="citation" data-cites="jasAutorejectAutomatedArtifact2017">(Jas et al., 2017)</span> was used to reject bad epochs. The AutoReject algorithm uses cross-validations and basyan optimaziation to calculate channel-wise peak-to-peak amplitude thresholds that minimizes the root mean square error (RMSE) between the mean (after removing the trials marked as bad) and the median of the data (including all trials). For epochs where only a small subset of channels exceeded the critical threshold, bad channels were interpolated instead of removing the whole epoch.</p>
+<h2 id="statistical-analysis">Statistical Analysis</h2>
+<h1 class="unnumbered" id="references">References</h1>
+<div id="refs" class="references hanging-indent" role="doc-bibliography">
+<div id="ref-ablinFasterIndependentComponent2018">
+<p>Ablin, P., Cardoso, J.-F., &amp; Gramfort, A. (2018). Faster independent component analysis by preconditioning with Hessian approximations. <em>IEEE Transactions on Signal Processing</em>, <em>66</em>(15), 4040–4049. <a href="https://doi.org/10.1109/TSP.2018.2844203">https://doi.org/10.1109/TSP.2018.2844203</a></p>
+</div>
+<div id="ref-ablinFasterICAOrthogonal2017">
+<p>Ablin, P., Cardoso, J.-F., &amp; Gramfort, A. (2017). Faster ICA under orthogonal constraint. <em>arXiv:1711.10873 [Stat]</em>. <a href="http://arxiv.org/abs/1711.10873">http://arxiv.org/abs/1711.10873</a></p>
+</div>
+<div id="ref-bigdely-shamloPREPPipelineStandardized2015">
+<p>Bigdely-Shamlo, N., Mullen, T., Kothe, C., Su, K.-M., &amp; Robbins, K. A. (2015). The PREP pipeline: standardized preprocessing for large-scale EEG analysis. <em>Frontiers in Neuroinformatics</em>, <em>9</em>. <a href="https://doi.org/10.3389/fninf.2015.00016">https://doi.org/10.3389/fninf.2015.00016</a></p>
+</div>
+<div id="ref-decheveigneZapLineSimpleEffective2020">
+<p>de Cheveigné, A. (2020). ZapLine: A simple and effective method to remove power line artifacts. <em>NeuroImage</em>, <em>207</em>, 116356. <a href="https://doi.org/10.1016/j.neuroimage.2019.116356">https://doi.org/10.1016/j.neuroimage.2019.116356</a></p>
+</div>
+<div id="ref-delormeEEGLABOpenSource2004">
+<p>Delorme, A., &amp; Makeig, S. (2004). EEGLAB: an open source toolbox for analysis of single-trial EEG dynamics including independent component analysis. <em>Journal of Neuroscience Methods</em>, <em>134</em>(1), 9–21. <a href="https://doi.org/10.1016/j.jneumeth.2003.10.009">https://doi.org/10.1016/j.jneumeth.2003.10.009</a></p>
+</div>
+<div id="ref-gramfortMEGEEGData2013">
+<p>Gramfort, A. (2013). MEG and EEG data analysis with MNE-Python. <em>Frontiers in Neuroscience</em>, <em>7</em>. <a href="https://doi.org/10.3389/fnins.2013.00267">https://doi.org/10.3389/fnins.2013.00267</a></p>
+</div>
+<div id="ref-jasAutorejectAutomatedArtifact2017">
+<p>Jas, M., Engemann, D. A., Bekhti, Y., Raimondo, F., &amp; Gramfort, A. (2017). Autoreject: Automated artifact rejection for MEG and EEG data. <em>NeuroImage</em>, <em>159</em>, 417–429. <a href="https://doi.org/10.1016/j.neuroimage.2017.06.030">https://doi.org/10.1016/j.neuroimage.2017.06.030</a></p>
+</div>
+<div id="ref-mullenRealtimeNeuroimagingCognitive2015">
+<p>Mullen, T. R., Kothe, C. A. E., Chi, Y. M., Ojeda, A., Kerth, T., Makeig, S., Jung, T.-P., &amp; Cauwenberghs, G. (2015). Real-time neuroimaging and cognitive monitoring using wearable dry EEG. <em>IEEE Transactions on Biomedical Engineering</em>, <em>62</em>(11), 2553–2567. <a href="https://doi.org/10.1109/TBME.2015.2481482">https://doi.org/10.1109/TBME.2015.2481482</a></p>
+</div>
+<div id="ref-perrinSphericalSplinesScalp1989">
+<p>Perrin, F., Pernier, J., Bertrand, O., &amp; Echallier, J. F. (1989). Spherical splines for scalp potential and current density mapping. <em>Electroencephalography and Clinical Neurophysiology</em>, <em>72</em>(2), 184–187. <a href="https://doi.org/10.1016/0013-4694(89)90180-6">https://doi.org/10.1016/0013-4694(89)90180-6</a></p>
+</div>
+<div id="ref-pion-tonachiniICLabelAutomatedElectroencephalographic2019">
+<p>Pion-Tonachini, L., Kreutz-Delgado, K., &amp; Makeig, S. (2019). ICLabel: An automated electroencephalographic independent component classifier, dataset, and website. <em>NeuroImage</em>, <em>198</em>, 181–197. <a href="https://doi.org/10.1016/j.neuroimage.2019.05.026">https://doi.org/10.1016/j.neuroimage.2019.05.026</a></p>
+</div>
+<div id="ref-widmannDigitalFilterDesign2015">
+<p>Widmann, A., Schröger, E., &amp; Maess, B. (2015). Digital filter design for electrophysiological data – a practical approach. <em>Journal of Neuroscience Methods</em>, <em>250</em>, 34–46. <a href="https://doi.org/10.1016/j.jneumeth.2014.08.002">https://doi.org/10.1016/j.jneumeth.2014.08.002</a></p>
+</div>
+<div id="ref-winklerInfluenceHighpassFiltering2015">
+<p>Winkler, I., Debener, S., Müller, K.-R., &amp; Tangermann, M. (2015). On the influence of high-pass filtering on ICA-based artifact reduction in EEG-ERP. <em>2015 37th Annual International Conference of the IEEE Engineering in Medicine and Biology Society (EMBC)</em>, 4101–4105. <a href="https://doi.org/10.1109/EMBC.2015.7319296">https://doi.org/10.1109/EMBC.2015.7319296</a></p>
+</div>
+</div>
+</body>
+</html>

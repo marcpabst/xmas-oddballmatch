@@ -59,7 +59,7 @@
     "\n",
     "import seaborn as sns\n",
     "\n",
-    "config = load_configuration()\n",
+    "config = None\n",
     "\n",
     "def difference_wave(evokeds_as_dict, conditions, grandaverage=False):\n",
     "    out = [mne.combine_evoked([a, b], [1,-1]) for a, b in zip(\n",

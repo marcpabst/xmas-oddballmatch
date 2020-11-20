@@ -337,7 +337,7 @@ from mne_bids.utils import get_entity_vals
 from ...configuration.configuration import load_configuration
 from os.path import join
 import utils
-config = load_configuration()
+config = None
 # Get subjects ids
 ids = get_entity_vals(join(config["bids_root_path"], "derivatives"), "sub")
 

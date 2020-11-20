@@ -12,7 +12,7 @@ import os
 import utils
 
 
-config = load_configuration()
+config = None
 
 
 def cleanup(id):
@@ -35,8 +35,11 @@ def main():
     parser = argparse.ArgumentParser(description='Filter and epoch data.')
     parser.add_argument('-s', '--subjects', nargs='+', type=str,
                         help='IDs of subjects to process.', required=False)
+    parser.add_argument('-c', '--config', type=str,
+                        help='Config file', required=True)
 
     args = parser.parse_args()
+    config = load_configuration(args.config)
     if args.subjects:
         Parallel(n_jobs=config["njobs"], prefer="threads")(
             delayed(cleanup)(id) for id in args.subjects)

@@ -17,7 +17,7 @@ from scipy.io import savemat
 
 from interop2 import EEG, EEGlab
 
-config = load_configuration()
+config = None
 
 
 def show_ica(id):
@@ -69,6 +69,8 @@ def main():
     parser = argparse.ArgumentParser(description='Epoch data.')
     parser.add_argument('-s', '--subjects', nargs='+', type=str,
                         help='IDs of subjects to process.', required=False)
+    parser.add_argument('-c', '--config', type=str,
+                        help='Config file', required=True)
 
     ids = get_entity_vals(config["bids_root_path"], "sub")
     show_ica(ids[0]) 
