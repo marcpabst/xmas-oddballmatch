@@ -71,27 +71,16 @@ ica_step: 1.
 filter_method: firwin
 fir_window: hamming
 l_freq: 0.1
-h_freq: 30.0
+h_freq: 40.0
 
 ## EPOCHING ##
-epoch_window: !!python/tuple [-0.3, 0.3]
+epoch_window: !!python/tuple [-0.1, 0.3]
 baseline_winow: null
 use_autoreject: false
 diff_criterion:
   eeg: 100e-6
-# conditions_of_interest:
-#   - random/deviant
-#   - random/standard
-#   - predictable/4/standard
-#   - predictable/5/deviant
-#   - random/4/standard
-#   - random/5/deviant
-# contrasts:
-#   - !!python/tuple [random/standard, random/deviant]
-#   - !!python/tuple [predictable/4/standard, predictable/5/deviant]
-#   - !!python/tuple [random/4/standard, random/5/deviant]
-#   - - !!python/tuple [predictable/5/deviant, predictable/4/standard]
-#     - !!python/tuple [random/5/deviant, random/4/standard]
+
+## CONDITIONS ##
 conditions_of_interest:
 - random/deviant
 - random/standard
