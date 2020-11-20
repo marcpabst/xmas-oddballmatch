@@ -9,7 +9,7 @@ import parsl
 from parsl.app.app import python_app
 from parsl_config import pconfig
 
-config = load_configuration()
+config = None
 
 @python_app
 def epoch_and_average(id, config):
@@ -69,8 +69,11 @@ def main():
     parser = argparse.ArgumentParser(description='Epoch data.')
     parser.add_argument('-s', '--subjects', nargs='+', type=str,
                         help='IDs of subjects to process.', required=False)
+    parser.add_argument('-c', '--config', type=str,
+                        help='Config file', required=True)
 
     args = parser.parse_args()
+    config = load_configuration(args.config)
     
     parsl.load(pconfig)
     parsl.set_stream_logger()

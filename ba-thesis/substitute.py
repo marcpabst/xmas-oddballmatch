@@ -19,6 +19,7 @@ if __name__ == '__main__':
 		                help='Output file.', required=False)
 
 	args = parser.parse_args()
+    config = load_configuration(args.config)
 
 
 	with open(args.yaml, 'r') as f:

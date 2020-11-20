@@ -1,10 +1,10 @@
 from ruamel.yaml import YAML
 
 
-def load_configuration():
+def load_configuration(filename):
     # Load config
     yaml = YAML(typ='unsafe')
-    with open("../configuration/configuration.yaml") as file:
+    with open(filename) as file:
         configuration = yaml.load(file.read())
 
     return configuration

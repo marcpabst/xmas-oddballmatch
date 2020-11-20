@@ -12,7 +12,7 @@ from parsl_config import pconfig
 import matplotlib.pyplot as plt
 import ptitprince as pt
 
-config = load_configuration()
+config = None
 
 @python_app
 def func(config):

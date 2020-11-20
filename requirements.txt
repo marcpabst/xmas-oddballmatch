@@ -60,9 +60,8 @@ lazy-object-proxy==1.4.3
 liac-arff==2.4.0
 lxml==4.5.2
 MarkupSafe==1.1.1
-matplotlib==3.3.2+1552.g59bfcfa8f
+matplotlib==3.3.2
 mccabe==0.6.1
-meegkit==0.1
 mistune==0.8.4
 mne==0.21.0
 mne-bids==0.4

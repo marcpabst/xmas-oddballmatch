@@ -12,7 +12,7 @@ from autoreject import Ransac, AutoReject
 
 import utils
 
-config = load_configuration()
+config = None
 
 
 def group_statistics():

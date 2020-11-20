@@ -40,7 +40,7 @@
     "\n",
     "import seaborn as sns\n",
     "\n",
-    "config = load_configuration()\n",
+    "config = None\n",
     "\n",
     "\n",
     "nums = [100, 200, 300, 400, 500]\n",

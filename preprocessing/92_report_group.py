@@ -24,7 +24,7 @@ import matplotlib.pyplot as plt
 
 from functools import partial
 
-config = load_configuration()
+config = None
 
 
 def report_group():
