@@ -1,0 +1,21 @@
+anova_00_soa: $F(1,41) = 0.19$, $p = 0.6680$, $\eta_{gen}=0.0030$
+anova_02_100_condition: $F(1,19) = 0.83$, $p = 0.3730$
+anova_02_100_stimulustype: $F(1,19) = 1.05$, $p = 0.3180$
+anova_02_100_electrode: $F(1,19) = 0.04$, $p = 0.8520$
+anova_02_100_condition_stimulustype: $F(1,19) = 0.05$, $p = 0.8230$
+anova_02_100_condition_electrode: $F(1,19) = 0.76$, $p = 0.3930$
+anova_02_100_stimulustype_electrode: $F(1,19) = 0.80$, $p = 0.3830$
+anova_02_100_condition_stimulustype_electrode: $F(1,19) = 7.53$, $p = 0.0130$
+anova_01_100_condition: $F(1,19) = 0.16$, $p = 0.6940$
+anova_01_100_stimulustype: $F(1,19) = 0.01$, $p = 0.9380$
+anova_01_100_condition_stimulustype: $F(1,19) = 16.75$, $p = 0.0006$
+anova_02_150_condition: $F(1,22) = 0.08$, $p = 0.7800$
+anova_02_150_stimulustype: $F(1,22) = 0.32$, $p = 0.5790$
+anova_02_150_electrode: $F(1,22) = 0.04$, $p = 0.8540$
+anova_02_150_condition_stimulustype: $F(1,22) = 0.16$, $p = 0.6930$
+anova_02_150_condition_electrode: $F(1,22) = 1.13$, $p = 0.2990$
+anova_02_150_stimulustype_electrode: $F(1,22) = 20.76$, $p = 0.0002$
+anova_02_150_condition_stimulustype_electrode: $F(1,22) = 0.05$, $p = 0.8190$
+anova_01_150_condition: $F(1,22) = 0.95$, $p = 0.3410$
+anova_01_150_stimulustype: $F(1,22) = 22.67$, $p = 0.0001$
+anova_01_150_condition_stimulustype: $F(1,22) = 0.03$, $p = 0.8680$
