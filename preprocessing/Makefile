@@ -39,12 +39,7 @@ epoch_and_average:
 	$(PYTHON) 05_epoch_and_average.py $(ARGS) $(ARGSS)
 report:
 	$(PYTHON) 91_report_subject.py $(ARGS) $(ARGSS)
-preprocess:
-	prepare_data
-	perform_ica
-	label_ics
-	filter_and_clean
-	epoch_and_average
+preprocess: prepare_data perform_ica label_ics filter_and_clean epoch_and_average
 run_full:
 	preprocess
 	report
