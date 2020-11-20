@@ -29,22 +29,16 @@ convert:
 	$(PYTHON) 00_convert_to_bids.py $(ARGS) $(ARGSS)
 prepare_data:
 	$(PYTHON) 01_prepare_data.py $(ARGS) $(ARGSS)
-	deactivate
 perform_ica:
 	$(PYTHON) 02_perform_ica.py $(ARGS) $(ARGSS)
-	deactivate
 label_ics:
 	$(PYTHON) 03_label_ics.py $(ARGS) $(ARGSS)
-	deactivate
 filter_and_clean:
 	$(PYTHON) 04_filter_and_clean.py $(ARGS) $(ARGSS)
-	deactivate
 epoch_and_average:
 	$(PYTHON) 05_epoch_and_average.py $(ARGS) $(ARGSS)
-	deactivate
 report:
 	$(PYTHON) 91_report_subject.py $(ARGS) $(ARGSS)
-	deactivate
 preprocess:
 	prepare_data
 	perform_ica

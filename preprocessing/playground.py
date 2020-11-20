@@ -334,7 +334,7 @@ epochs = mne.Epochs(raw, events, config["events_dict"],
 # %%
 import mne
 from mne_bids.utils import get_entity_vals
-from ...configuration.configuration import load_configuration
+from configuration import load_configuration
 from os.path import join
 import utils
 config = None

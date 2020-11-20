@@ -1,4 +1,4 @@
-from ...configuration.configuration import load_configuration
+from configuration import load_configuration
 import mne
 from mne_bids.config import BIDS_VERSION
 from mne_bids.utils import _write_json

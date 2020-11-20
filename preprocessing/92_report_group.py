@@ -1,4 +1,4 @@
-from ...configuration.configuration import load_configuration
+from configuration import load_configuration
 
 import utils
 
