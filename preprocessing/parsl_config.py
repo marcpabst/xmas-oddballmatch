@@ -12,13 +12,13 @@ pconfig = Config(
                 'galaxy-test',  # Partition / QOS
                 nodes_per_block = 1,
                 min_blocks = 1,
-                max_blocks = 1,
-                init_blocks= 1,
+                max_blocks = 20,
+                init_blocks = 1,
                 parallelism = 1.,
                 # string to prepend to #SBATCH blocks in the submit
                 #scheduler_options='#SBATCH -C haswell',
                 # Command to be run before starting a worker
-                worker_init='module load python; module load MATLAB; source activate env/bin/activate; PYTHONPATH="${PYTHONPATH}:./";',
+                worker_init='module load python; module load MATLAB; source activate ../env/bin/activate; PYTHONPATH="${PYTHONPATH}:./";',
                 walltime='01:00:00'
             ),
         )
