@@ -137,15 +137,17 @@ def analyis_subsample(id, config, soa):
             mean_amplitudes["amplitude_difference"].append(np.mean(ma))
 
             ## split-half
+            h_num = int(num/2)
+
             evokeds_h1 = {cond: [] for cond in [cond1, cond2]}
             evokeds_h2 = {cond: [] for cond in [cond1, cond2]}
             
 
-            subsample_epochs1_h1 = epochs1[idx1[:num]][:(num/2)]
-            subsample_epochs1_h2 = epochs1[idx1[:num]][(num/2):]
+            subsample_epochs1_h1 = epochs1[idx1[:num]][:h_num]
+            subsample_epochs1_h2 = epochs1[idx1[:num]][h_num:]
 
-            subsample_epochs2_h1 = epochs2[idx2[:num]][:(num/2)]
-            subsample_epochs2_h2 = epochs2[idx2[:num]][(num/2):]
+            subsample_epochs2_h1 = epochs2[ idx2[:num] ][:h_num]
+            subsample_epochs2_h2 = epochs2[ idx2[:num] ][h_num:]
 
             # average
             evokeds_h1[cond1].append(subsample_epochs1_h1.average())

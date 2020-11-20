@@ -55,6 +55,7 @@ events_dict:
 
 
 ## ICA ##
+use_ica: True
 ica_l_freq: 3.
 ica_h_freq: 35.
 ica_downsample_freq: 128
@@ -74,7 +75,7 @@ h_freq: 30.0
 
 ## EPOCHING ##
 epoch_window: !!python/tuple [-0.3, 0.3]
-baseline_winow: !!python/tuple [-0.1, 0.0]
+baseline_winow: null
 use_autoreject: false
 diff_criterion:
   eeg: 100e-6
@@ -94,6 +95,8 @@ diff_criterion:
 conditions_of_interest:
 - random/deviant
 - random/standard
+- predictable/deviant
+- predictable/standard
 - random/0/deviant
 - random/1/standard
 - random/0/standard
