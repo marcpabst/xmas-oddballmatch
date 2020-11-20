@@ -9,7 +9,7 @@ pconfig = Config(
             label='Galaxy',
             max_workers = 1,
             provider=SlurmProvider(
-                'galaxy-test',  # Partition / QOS
+                'galaxy-job',  # Partition / QOS
                 nodes_per_block = 1,
                 min_blocks = 1,
                 max_blocks = 20,
