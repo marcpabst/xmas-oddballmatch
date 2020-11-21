@@ -17,7 +17,7 @@ $endif$
 $endif$
 
 %
-\documentclass[stu,a4paper,11pt,floatsintext]{apa7}
+\documentclass[stu,a4paper,12pt,floatsintext]{apa7}
 
 % deps for huxtable
 \usepackage{array}
