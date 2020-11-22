@@ -1,18 +1,18 @@
-# Methods
+# Methods and Materials
 ## Data Acquisition
 
 ### Participants
 
-#### Study 1
+#### 100 ms Presentation Rate
 
 Twenty-three psychology undergraduate students (2 males, average age 22.6 yrs., $SD=5.57$, range 18 - 42 yrs.) were recruited at the Institute of Psychology at the University of Leipzig. All participants reported good general health, normal hearing and had normal or corrected-to-normal vision. Written informed consent was obtained before the experiment. One-third (34.8%) of participants spent time enaging in musical activities at time of survey, while 8.7% had no prior experience in music training. Handedness was asseced using a modified version of the Edinburgh Handedness Inventory [@oldfieldAssessmentAnalysisHandedness1971, see appendix]. A majoritiy (00%) of parcicipants favored the right hand.  Particpants were blinded in respect to the purpose of the experiment and received course credit in compensation.
 
-#### Study 2
+#### 150 ms Presentation Rate
 
 Twenty healthy participants (0 males, average age 00.0 yrs., $SD=0.00$, range 00 - 00 yrs.) were recruited. Particpants gave informed consent and reported normal hearing and corrected or corrected-to-normal vision. All participants were naive regarding the purpose of the experiment and were compensated in cource credit or money. 00 participants (00%) had received musical training in the last 5 years before the experiment while 00 (00%) reported no musical experiance. In addition, participants reported if streaming occured during the presentation of the tones.
 
 ### Stimuli
-![ Tones of two different frequencies (A=440 Hz, B=449 Hz) were presented in two blocked conditions: In the “predictable” condition (top half), tones followed a simple pattern in which a single B-tone followed four A-tones. Some designated B-tones were replaced by A-tones ("pattern deviants"). In the "random" condition (lower half), tones were presented in a pseudo-random fashion ()  ](figures/fig1.png)
+![ Tones of two different frequencies (A=440 Hz, B=449 Hz) were presented in two blocked conditions: In the “predictable” condition (top half), tones followed a simple pattern in which a single B-tone followed four A-tones. Some designated B-tones were replaced by A-tones ("pattern deviants"). In the "random" condition (lower half), tones were presented in a pseudo-random fashion ()  ](figures/fig_tones.png)
 
 Stimuli consisted of pure sinusoidal tones with a duration of 50 ms (including a 10 ms cosine on/off ramp), presented isochronously at a stimulation onsets asynchrony (SOA) of 100 ms for study 1 and 150 ms for study 2. Participants where seated in a electromagnetically shielded and sound-proofed cabin while administering a total of 40 blocks containing a mixture of frequent 440 Hz tones (“A” tones) and infrequent 449 Hz tones ("B" tones). In one half of the blocks, tones were presented in pseudo-random order (e.g. A-A-A-B-A-B-A}, "random" condition), while in the remaining  block tone presentation followed a simple pattern in which a five-tone-sequence of four frequent tones and one infrequent tone (i.e. A-A-A-A-B) was repeated cyclically ("predictable" condition). The ratio of frequent and infrequent tones was 10% for both conditions. Within the predictable condition, 10% of designated (infrequent) B tones were replaced by A tones, resulting in sporadic five-tone sequences consisting solely of A tones (i.e. A-A-A-A-A), thus violating the predictability rule. To assure comparability of local histories between tones in both conditions, randomly arranged tones were interspersed with sequences mimicking aforementioned patterns from the predictable condition (B-A-A-A-A-B and B-A-A-A-A-A) in the random condition. A grand total of 2000 tones in study 1 and 4000 tones in study 2 were delivered to each participant. 
 
@@ -25,25 +25,13 @@ Electrophysiological data was recorded from active silver-silver-chloride (*Ag*-
 
 Data prepossessing was implemented using a custom pipeline based on the *MNE Python* software package [@gramfortMEGEEGData2013] using *Python 3.7*. All computations were carried out on a cluster operated by the University Computation Center of the University of Leipzig. Code used in thesis is publicly available at <https://github.com/marcpabst/xmas-oddballmatch>. 
 
-### Bad Channel Detection and Interpolation
+First, EEG data was subjected to the ZapLine procedure [@decheveigneZapLineSimpleEffective2020] to remove line noise contamination. A fivefold detection procedure as described by @bigdely-shamloPREPPipelineStandardized2015 was then used to detect and subsequently interpolate bad channels. This specifically included the detection of channels thain contain prolonged segments with verry small values (i.e. flat channels), the exclusion of channels based on robust standard deviation (deviation criterion), unusualy pronounced high-frequency noise (noisiness criterion), and the removal of channels that were poorly predicted by nearby channels (correlation criterion and predictability criterion). Channels considered bad by one or more of these methods were removed and interpolated using spherical splines [@perrinSphericalSplinesScalp1989]. Electrode locations for interpolations were informed by the BESA Spherical Head Model.
 
-Firstly, EEG data was subject to the ZapLine procedure [@decheveigneZapLineSimpleEffective2020] to remove line noise contamination. A fivefold detection procedure as described by @bigdely-shamloPREPPipelineStandardized2015 was then used to detect and subsequently interpolate bad channels. This specifically included the detection of channels thain contain prolonged segments with verry small values (i.e. flat channels), the exclusion of channels based on robust standard deviation (deviation criterion), unusualy pronounced high-frequency noise (noisiness criterion), and the removal of channels that were poorly predicted by nearby channels (correlation criterion and predictability criterion). Channels considered bad by one or more of these methods were removed and interpolated using spherical splines [@perrinSphericalSplinesScalp1989]. Electrode locations for interpolations were informed by the BESA Spherical Head Model.
-
-### Independent Component Analysis
-
-Given the $\frac{1}{f}$ power spectral density of EEG data, the estimation independent components (ICs) by independent component analysis (ICA) would be strongly influenced by high-frequency noise that is ususally considere brain-irrelevant [reference]. To mitigate this effect, a 1-Hz-high-pass filter (134th order hamming-windowed FIR) was applied prior to ICA [@winklerInfluenceHighpassFiltering2015]. 
-
-To further reduce artifacts, Artifact Subspace Reconstruction [ASR, @mullenRealtimeNeuroimagingCognitive2015] was used to identify parts of the data with unusual characteristics (bursts) which were subsequently removed. ICA was then carried out using the *Picard* algorithm [@ablinFasterICAOrthogonal2017; @ablinFasterIndependentComponent2018] on PCA-whitened data. To avoid rank-deficiency when extracting components from data with one or more interpolated channels, PCA was also used for dimensionality reduction to obtain full-ranked data.
-
-The EEGLAB [version 2020.0, @delormeEEGLABOpenSource2004] software package and the IClabel plugin [version 1.2.6, @pion-tonachiniICLabelAutomatedElectroencephalographic2019] were used to automatically classify estimated components. Only components clearly classified (i.e. confidence above 50%) as resulting from either eye movement, muscular, or heartbeat activity were zeroed-out in the mixing matrix before inversely transform ICs.
-
-### Filtering
+For Independant Component Anaylsis (ICA), data 1-Hz-high-pass filtered (134th order hamming-windowed FIR) was applied prior to ICA [@winklerInfluenceHighpassFiltering2015]. To further reduce artifacts, Artifact Subspace Reconstruction [ASR, @mullenRealtimeNeuroimagingCognitive2015] was used to identify parts of the data with unusual characteristics (bursts) which were subsequently removed. ICA was then carried out using the *Picard* algorithm [@ablinFasterICAOrthogonal2017; @ablinFasterIndependentComponent2018] on PCA-whitened data. To avoid rank-deficiency when extracting components from data with one or more interpolated channels, PCA was also used for dimensionality reduction. The EEGLAB [version 2020.0, @delormeEEGLABOpenSource2004] software package and the IClabel plugin [version 1.2.6, @pion-tonachiniICLabelAutomatedElectroencephalographic2019] were used to automatically classify estimated components. Only components clearly classified (i.e. confidence above 50%) as resulting from either eye movement, muscular, or heartbeat activity were zeroed-out before applying the mixing matrix to unfiltered data.
 
 In line with recommendations from @widmannDigitalFilterDesign2015 and @decheveigneFiltersWhenWhy2019, a ORDER finite impulse response (FIR) bandpass filter from 0.1 Hz to 30 Hz was applied in forward direction only (Hamming window with 0.0194 passband ripple and 53 dB stopband attenuation). 
 
-### Epoching and Averaging
-
-Continuous data was epoched into 400 ms long segments around stimulus onsets. This included a 100 ms pre-stimulus interval which was used to perform baseline correction by subtracting its mean amplitude from each epoch. The AutoReject software package [@jasAutorejectAutomatedArtifact2017] was used to reject bad epochs. The AutoReject algorithm uses cross-validations and basyan optimaziation to calculate channel-wise peak-to-peak amplitude thresholds that minimizes the root mean square error (RMSE) between the mean (after removing the trials marked as bad) and the median of the data (including all trials). For epochs where only a small subset of channels exceeded the critical threshold, bad channels were interpolated instead of removing the whole epoch.
+Continuous data was epoched into 400 ms long segments around stimulus onsets. Epochs included a 100 ms pre-stimulus interval. No baseline correction was applied. Segments exeeding a peak-to-peak voltage difference of 100 µV were removed. No data set meet the pre-registrated exclusion criterion stated of less than 100 trials per condition.
 
 ## Statistical Analysis
 
@@ -62,6 +50,6 @@ For post-hock comparison, two-tailed Student's t-test were calculated for . P-va
 [^1]: This is a sample footnote.
 
 
-
+\newpage
 
 
