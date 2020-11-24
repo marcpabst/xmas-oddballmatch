@@ -42,6 +42,7 @@ $endif$
 \usepackage{tikz}
 \usepackage{csquotes}
 \usepackage{lineno}
+\usepackage[section]{placeins}
 
 \captionsetup[figure]{skip=5pt, font=small, labelsep=period}
 \linenumbers
