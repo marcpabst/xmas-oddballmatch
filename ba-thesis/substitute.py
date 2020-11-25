@@ -1,12 +1,16 @@
 import pystache
 import yaml
 import argparse
+import re
  
 def render(text, variables):
         result_text = pystache.render(text, variables)
         if result_text.count("{{"):
             raise ConfigurationException("Unresolved variable")
         return result_text 
+
+def replace_png_width_pdf(text):
+	return re.sub(r'\((.+).png\)', r'(\1.pdf)', text)
         
 
 if __name__ == '__main__':
@@ -27,6 +31,7 @@ if __name__ == '__main__':
 		text = f.read()
 
 	out = render(text, variables)
+	out = replace_png_width_pdf(out)
 
 	if args.output != None:
 		with open(args.output, "w") as f:

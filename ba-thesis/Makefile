@@ -17,4 +17,5 @@ ctex:
 	pandoc *.md -s -o ../output/output.tex  --from markdown+raw_attribute --pdf-engine=xelatex --bibliography=references.json --csl ../templates/apa.csl --template ../templates/thesis
 
 pdf:	prepare cpdf cleanup
+tex:	prepare ctex cleanup
 

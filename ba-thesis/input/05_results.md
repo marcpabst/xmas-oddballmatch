@@ -22,6 +22,9 @@ Two-way ANOVAs (*condition* x *stimulus type*) were carried out seperatly for po
 ```{=latex}
 \input{tables/anova_03_full.tex}
 ```
+Post-hoc tests between ERPs to A and B tones were carried out using paired Student's t-Tests. P-values were corrected for multiple comparisons using the Benjamini–Hochberg step-up procedure. For the 100 ms SOA, results indicated a significant effect only for predictable tones at fronto-central electrodes ({{posthoc_pred_a_b_fronto_100}}). For the 150 ms SOA, B tones elicted significantly more negative ERPs than B tones at fronto-central electrode locations in both predictable ({{posthoc_pred_a_b_fronto_150}}) and random ({{posthoc_rand_a_b_fronto_150}}) conditions. Significant polarity reversal effects at mastoid sites were only present for predcitable tones ({{posthoc_pred_a_b_mast_150}}) but not for randomly presented tones ({{posthoc_rand_a_b_mast_150}}).
+
+![Averaged voltages in the MMN latency window for pooled fronto-central and mastoid electrodes. Colored areas show sample probability density function for A tones (green) and B tones (red). White diamonds indicate estimated population mean, vertical bars represent 95%-conficence interval. Only Benjamini-Hochberg-corrected  p-values $< 0.05$ are shown.](figures/fig_posthoc.png)
 
 Figure X shows EEG waveform averages for five-tone sequences (A-A-A-A-B) presented in a *predictable* (top panel) and *random* contexts (lower panel). 
 
