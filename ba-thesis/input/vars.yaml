@@ -6,13 +6,13 @@ desc_pred_a_b_100_mastoids: '$\Delta M = -0.132 \: \mu V$'
 desc_rand_a_b_100_mastoids: '$\Delta M = 0.746 \: \mu V$'
 desc_pred_a_b_150_mastoids: '$\Delta M = 0.399 \: \mu V$'
 desc_rand_a_b_150_mastoids: '$\Delta M = 0.510 \: \mu V$'
-anova_02_100_condition: $F(1,19) = 0.83$, $p = 0.3730$
-anova_02_100_stimulustype: $F(1,19) = 1.05$, $p = 0.3180$
-anova_02_100_electrode: $F(1,19) = 0.04$, $p = 0.8520$
-anova_02_100_condition_stimulustype: $F(1,19) = 0.05$, $p = 0.8230$
-anova_02_100_condition_electrode: $F(1,19) = 0.76$, $p = 0.3930$
-anova_02_100_stimulustype_electrode: $F(1,19) = 0.80$, $p = 0.3830$
-anova_02_100_condition_stimulustype_electrode: $F(1,19) = 7.53$, $p = 0.0130$
+anova_02_100_condition: $F(1,19) = 0.83$, $p = .373$
+anova_02_100_stimulustype: $F(1,19) = 1.05$, $p = .318$
+anova_02_100_electrode: $F(1,19) = 0.04$, $p = .852$
+anova_02_100_condition_stimulustype: $F(1,19) = 0.05$, $p = .823$
+anova_02_100_condition_electrode: $F(1,19) = 0.76$, $p = .393$
+anova_02_100_stimulustype_electrode: $F(1,19) = 0.80$, $p = .383$
+anova_02_100_condition_stimulustype_electrode: $F(1,19) = 7.53$, $p = .013$
 anova_01_100_condition: $F(1,19) = 0.16$, $p = 0.6940$
 anova_01_100_stimulustype: $F(1,19) = 0.01$, $p = 0.9380$
 anova_01_100_condition_stimulustype: $F(1,19) = 16.75$, $p = 0.0006$
@@ -38,11 +38,3 @@ anova_03_150_fronto_condition_stimulustype: $F(1,22) = 0.03$, $p = 0.8680$
 anova_03_150_mastoids_condition: $F(1,22) = 0.21$, $p = 0.6550$
 anova_03_150_mastoids_stimulustype: $F(1,22) = 6.56$, $p = 0.0180$
 anova_03_150_mastoids_condition_stimulustype: $F(1,22) = 0.12$, $p = 0.7300$
-posthoc_pred_a_b_fronto_100: $t(19) = -2.77$, $p = .025$, $d = -0.62$
-posthoc_pred_a_b_mast_100: $t(19) = 1.09$, $p = .291$, $d = 0.24$
-posthoc_rand_a_b_fronto_100: $t(19) = 1.64$, $p = .169$, $d = 0.37$
-posthoc_rand_a_b_mast_100: $t(19) = -1.35$, $p = .219$, $d = -0.30$
-posthoc_pred_a_b_fronto_150: $t(22) = 5.20$, $p \< .001$, $d = 1.08$
-posthoc_pred_a_b_mast_150: $t(22) = -3.95$, $p = .003$, $d = -0.82$
-posthoc_rand_a_b_fronto_150: $t(22) = 3.28$, $p = .009$, $d = 0.68$
-posthoc_rand_a_b_mast_150: $t(22) = -1.59$, $p = .169$, $d = -0.33$

@@ -11,11 +11,16 @@ cleanup:
 
 cpdf:
 	cd ./temp
-	pandoc *.md -s -o ../output/output.pdf  --from markdown+raw_attribute --pdf-engine=xelatex --bibliography=/home/marc/Documents/bib.json --csl ../templates/apa.csl --template ../templates/thesis
+	pandoc -F ../pandoc-crossref --citeproc  *.md -s -o ../output/output.pdf  --from markdown+raw_attribute --pdf-engine=xelatex --bibliography=/home/marc/Documents/bib.json --csl ../templates/apa.csl --template ../templates/thesis
 ctex:
 	cd ./temp
-	pandoc *.md -s -o ../output/output.tex  --from markdown+raw_attribute --pdf-engine=xelatex --bibliography=references.json --csl ../templates/apa.csl --template ../templates/thesis
+	pandoc -F ../pandoc-crossref --citeproc  *.md -s -o ../output/output.tex  --from markdown+raw_attribute --pdf-engine=xelatex --bibliography=references.json --csl ../templates/apa.csl --template ../templates/thesis
+ctext:
+	cd ./temp
+	pandoc -F ../pandoc-crossref --citeproc  *.md  -o ../output/output.txt --bibliography=references.json --csl ../templates/apa.csl
+ 
 
 pdf:	prepare cpdf cleanup
 tex:	prepare ctex cleanup
+text:	prepare ctext cleanup
 

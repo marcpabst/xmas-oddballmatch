@@ -12,7 +12,7 @@ pconfig = Config(
                 'galaxy-job',  # Partition / QOS
                 nodes_per_block = 1,
                 min_blocks = 1,
-                max_blocks = 20,
+                max_blocks = 10,
                 init_blocks= 1,
                 parallelism = 1.,
                 # string to prepend to #SBATCH blocks in the submit

@@ -1,7 +1,3 @@
-\newcommand{\tones}[1]{
-    {\fontspec{Noto Sans CJK JP}#1}
-    }
-
 
 % Options for packages loaded elsewhere
 
@@ -17,7 +13,7 @@ $endif$
 $endif$
 
 %
-\documentclass[stu,a4paper,11pt,floatsintext]{apa7}
+\documentclass[stu,a4paper,12pt, nofontenc, babel, american]{apa7}
 
 % deps for huxtable
 \usepackage{array}
@@ -43,9 +39,20 @@ $endif$
 \usepackage{csquotes}
 \usepackage{lineno}
 \usepackage[section]{placeins}
+\usepackage{caption}
+\usepackage{floatrow}
+%\usepackage[document]{ragged2e}
+%\RaggedRightRightskip 0pt plus 4em
 
-\captionsetup[figure]{skip=5pt, font=small, labelsep=period}
-\linenumbers
+\setcounter{totalnumber}{1}
+
+\floatsetup[figure]{capposition=top}
+\floatsetup[table]{capposition=top}
+
+\DeclareCaptionFormat{myformat}{#1#2\\#3}
+\captionsetup[figure]{skip=5pt, font=small, labelsep=period, position=top, format=myformat}
+
+%\linenumbers
 % Polar Night
 \definecolor{NordDarkBlack}{HTML}{2E3440}     % nord0
 \definecolor{NordBlack}{HTML}{3B4252}         % nord1
@@ -68,26 +75,26 @@ $endif$
 \definecolor{NordMagenta}{HTML}{B48EAD}       % nord15
 
 
-\LetLtxMacro\latexincludegraphics\includegraphics
-\renewcommand{\includegraphics}[1]{
-	\latexincludegraphics[width = \textwidth]{#1}
-}
 
 \sectionfont{\color{NordBlack}}  % sets colour of sections
 \subsectionfont{\color{NordBlack}}  % sets colour of sections
 
-\usepackage[american]{babel}
-\usepackage{fontspec}
 
+\usepackage{amsmath}
+\usepackage{unicode-math}
 
 %\setmainfont[
 %    BoldFont={Meta Pro Medium}
 %]{Meta Pro}
 
 
-%\setmainfont[
-%    BoldFont={Gulliver Bold}
-%]{Gulliver}
+
+
+\setmainfont[Numbers={Lining}]{Cochineal}
+\setmathfont[Scale=MatchUppercase]{Latin Modern Math}
+\setmathfont[range=\mathup/{num},Numbers=Lining]{Cochineal-Roman}
+\setmathfont[range=it/{latin,Latin},Ligatures={NoCommon, NoDiscretionary, NoHistoric, NoRequired, NoContextual}]{Cochineal-Italic}
+
 
 
 $if(shorttitle)$
@@ -100,73 +107,7 @@ $endif$
   \everypar{\setlength{\hangindent}{\cslhangindent}}\ignorespaces$endif$}%
   {\par}
 
-$if(fontfamily)$
-\usepackage[$for(fontfamilyoptions)$$fontfamilyoptions$$sep$,$endfor$]{$fontfamily$}
-$else$
-\usepackage{lmodern}
-$endif$
-$if(linestretch)$
-\usepackage{setspace}
-$endif$
-\usepackage{amssymb,amsmath}
-\usepackage{ifxetex,ifluatex}
-\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
-  \usepackage[$if(fontenc)$$fontenc$$else$T1$endif$]{fontenc}
-  \usepackage[utf8]{inputenc}
-  \usepackage{textcomp} % provide euro and other symbols
-\else % if luatex or xetex
-$if(mathspec)$
-  \ifxetex
-    \usepackage{mathspec}
-  \else
-    \usepackage{unicode-math}
-  \fi
-$else$
-  \usepackage{unicode-math}
-$endif$
-  \defaultfontfeatures{Scale=MatchLowercase}
-  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
-$if(mainfont)$
-  \setmainfont[$for(mainfontoptions)$$mainfontoptions$$sep$,$endfor$]{$mainfont$}
-$endif$
-$if(sansfont)$
-  \setsansfont[$for(sansfontoptions)$$sansfontoptions$$sep$,$endfor$]{$sansfont$}
-$endif$
-$if(monofont)$
-  \setmonofont[$for(monofontoptions)$$monofontoptions$$sep$,$endfor$]{$monofont$}
-$endif$
-$for(fontfamilies)$
-  \newfontfamily{$fontfamilies.name$}[$for(fontfamilies.options)$$fontfamilies.options$$sep$,$endfor$]{$fontfamilies.font$}
-$endfor$
-$if(mathfont)$
-$if(mathspec)$
-  \ifxetex
-    \setmathfont(Digits,Latin,Greek)[$for(mathfontoptions)$$mathfontoptions$$sep$,$endfor$]{$mathfont$}
-  \else
-    \setmathfont[$for(mathfontoptions)$$mathfontoptions$$sep$,$endfor$]{$mathfont$}
-  \fi
-$else$
-  \setmathfont[$for(mathfontoptions)$$mathfontoptions$$sep$,$endfor$]{$mathfont$}
-$endif$
-$endif$
-$if(CJKmainfont)$
-  \ifxetex
-    \usepackage{xeCJK}
-    \setCJKmainfont[$for(CJKoptions)$$CJKoptions$$sep$,$endfor$]{$CJKmainfont$}
-  \fi
-$endif$
-$if(luatexjapresetoptions)$
-  \ifluatex
-    \usepackage[$for(luatexjapresetoptions)$$luatexjapresetoptions$$sep$,$endfor$]{luatexja-preset}
-  \fi
-$endif$
-$if(CJKmainfont)$
-  \ifluatex
-    \usepackage[$for(luatexjafontspecoptions)$$luatexjafontspecoptions$$sep$,$endfor$]{luatexja-fontspec}
-    \setmainjfont[$for(CJKoptions)$$CJKoptions$$sep$,$endfor$]{$CJKmainfont$}
-  \fi
-$endif$
-\fi
+
 $if(beamer)$
 $if(theme)$
 \usetheme[$for(themeoptions)$$themeoptions$$sep$,$endfor$]{$theme$}
@@ -265,7 +206,7 @@ $endif$
 $if(tables)$
 \usepackage{longtable,booktabs}
 $if(beamer)$
-\usepackage{caption}
+
 % Make caption package work with longtable
 \makeatletter
 \def\fnum@table{\tablename~\thetable}
@@ -293,7 +234,7 @@ $if(graphics)$
 %\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
 % Set default figure placement to htbp
 \makeatletter
-\def\fps@figure{htbp}
+\def\fps@figure{!tbp}
 \makeatother
 $endif$
 $if(links-as-notes)$
@@ -333,37 +274,8 @@ $endif$
 $for(header-includes)$
 $header-includes$
 $endfor$
-$if(lang)$
-\ifxetex
-  % Load polyglossia as late as possible: uses bidi with RTL langages (e.g. Hebrew, Arabic)
-  \usepackage{polyglossia}
-  \setmainlanguage[$for(polyglossia-lang.options)$$polyglossia-lang.options$$sep$,$endfor$]{$polyglossia-lang.name$}
-$for(polyglossia-otherlangs)$
-  \setotherlanguage[$for(polyglossia-otherlangs.options)$$polyglossia-otherlangs.options$$sep$,$endfor$]{$polyglossia-otherlangs.name$}
-$endfor$
-\else
-  \usepackage[shorthands=off,$for(babel-otherlangs)$$babel-otherlangs$,$endfor$main=$babel-lang$]{babel}
-$if(babel-newcommands)$
-  $babel-newcommands$
-$endif$
-\fi
-$endif$
-\ifluatex
-  \usepackage{selnolig}  % disable illegal ligatures
-\fi
-$if(dir)$
-\ifxetex
-  % Load bidi as late as possible as it modifies e.g. graphicx
-  \usepackage{bidi}
-\fi
-\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
-  \TeXXeTstate=1
-  \newcommand{\RL}[1]{\beginR #1\endR}
-  \newcommand{\LR}[1]{\beginL #1\endL}
-  \newenvironment{RTL}{\beginR}{\endR}
-  \newenvironment{LTR}{\beginL}{\endL}
-\fi
-$endif$
+
+
 $if(natbib)$
 \usepackage[$natbiboptions$]{natbib}
 \bibliographystyle{$if(biblio-style)$$biblio-style$$else$plainnat$endif$}

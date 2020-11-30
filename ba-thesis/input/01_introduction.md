@@ -14,3 +14,4 @@ In a recent in-class replication study, @scharfPredictableChangesFastpacedinprep
 simplified experimental
 setup
  
+\newpage

@@ -1,0 +1,230 @@
+mutate-joins               package:dplyr               R Documentation
+
+_M_u_t_a_t_i_n_g _j_o_i_n_s
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     The mutating joins add columns from ‘y’ to ‘x’, matching rows
+     based on the keys:
+
+        • ‘inner_join()’: includes all rows in ‘x’ and ‘y’.
+
+        • ‘left_join()’: includes all rows in ‘x’.
+
+        • ‘right_join()’: includes all rows in ‘y’.
+
+        • ‘full_join()’: includes all rows in ‘x’ or ‘y’.
+
+     If a row in ‘x’ matches multiple rows in ‘y’, all the rows in ‘y’
+     will be returned once for each matching row in ‘x’.
+
+_U_s_a_g_e:
+
+     inner_join(x, y, by = NULL, copy = FALSE, suffix = c(".x", ".y"), ...)
+     
+     ## S3 method for class 'data.frame'
+     inner_join(
+       x,
+       y,
+       by = NULL,
+       copy = FALSE,
+       suffix = c(".x", ".y"),
+       ...,
+       na_matches = c("na", "never")
+     )
+     
+     left_join(
+       x,
+       y,
+       by = NULL,
+       copy = FALSE,
+       suffix = c(".x", ".y"),
+       ...,
+       keep = FALSE
+     )
+     
+     ## S3 method for class 'data.frame'
+     left_join(
+       x,
+       y,
+       by = NULL,
+       copy = FALSE,
+       suffix = c(".x", ".y"),
+       ...,
+       keep = FALSE,
+       na_matches = c("na", "never")
+     )
+     
+     right_join(
+       x,
+       y,
+       by = NULL,
+       copy = FALSE,
+       suffix = c(".x", ".y"),
+       ...,
+       keep = FALSE
+     )
+     
+     ## S3 method for class 'data.frame'
+     right_join(
+       x,
+       y,
+       by = NULL,
+       copy = FALSE,
+       suffix = c(".x", ".y"),
+       ...,
+       keep = FALSE,
+       na_matches = c("na", "never")
+     )
+     
+     full_join(
+       x,
+       y,
+       by = NULL,
+       copy = FALSE,
+       suffix = c(".x", ".y"),
+       ...,
+       keep = FALSE
+     )
+     
+     ## S3 method for class 'data.frame'
+     full_join(
+       x,
+       y,
+       by = NULL,
+       copy = FALSE,
+       suffix = c(".x", ".y"),
+       ...,
+       keep = FALSE,
+       na_matches = c("na", "never")
+     )
+     
+_A_r_g_u_m_e_n_t_s:
+
+    x, y: A pair of data frames, data frame extensions (e.g. a tibble),
+          or lazy data frames (e.g. from dbplyr or dtplyr). See
+          _Methods_, below, for more details.
+
+      by: A character vector of variables to join by.
+
+          If ‘NULL’, the default, *_join() will perform a natural join,
+          using all variables in common across ‘x’ and ‘y’. A message
+          lists the variables so that you can check they're correct;
+          suppress the message by supplying ‘by’ explicitly.
+
+          To join by different variables on ‘x’ and ‘y’, use a named
+          vector. For example, ‘by = c("a" = "b")’ will match ‘x$a’ to
+          ‘y$b’.
+
+          To join by multiple variables, use a vector with length > 1.
+          For example, ‘by = c("a", "b")’ will match ‘x$a’ to ‘y$a’ and
+          ‘x$b’ to ‘y$b’. Use a named vector to match different
+          variables in ‘x’ and ‘y’. For example, ‘by = c("a" = "b", "c"
+          = "d")’ will match ‘x$a’ to ‘y$b’ and ‘x$c’ to ‘y$d’.
+
+          To perform a cross-join, generating all combinations of ‘x’
+          and ‘y’, use ‘by = character()’.
+
+    copy: If ‘x’ and ‘y’ are not from the same data source, and ‘copy’
+          is ‘TRUE’, then ‘y’ will be copied into the same src as ‘x’.
+          This allows you to join tables across srcs, but it is a
+          potentially expensive operation so you must opt into it.
+
+  suffix: If there are non-joined duplicate variables in ‘x’ and ‘y’,
+          these suffixes will be added to the output to disambiguate
+          them. Should be a character vector of length 2.
+
+     ...: Other parameters passed onto methods.
+
+na_matches: Should ‘NA’ and ‘NaN’ values match one another?
+
+          The default, ‘"na"’, treats two ‘NA’ or ‘NaN’ values as
+          equal, like ‘%in%’, ‘match()’, ‘merge()’.
+
+          Use ‘"never"’ to always treat two ‘NA’ or ‘NaN’ values as
+          different, like joins for database sources, similarly to
+          ‘merge(incomparables = FALSE)’.
+
+    keep: Should the join keys from both ‘x’ and ‘y’ be preserved in
+          the output? Only applies to ‘nest_join()’, ‘left_join()’,
+          ‘right_join()’, and ‘full_join()’.
+
+_V_a_l_u_e:
+
+     An object of the same type as ‘x’. The order of the rows and
+     columns of ‘x’ is preserved as much as possible. The output has
+     the following properties:
+
+        • For ‘inner_join()’, a subset of ‘x’ rows. For ‘left_join()’,
+          all ‘x’ rows. For ‘right_join()’, a subset of ‘x’ rows,
+          followed by unmatched ‘y’ rows. For ‘full_join()’, all ‘x’
+          rows, followed by unmatched ‘y’ rows.
+
+        • For all joins, rows will be duplicated if one or more rows in
+          ‘x’ matches multiple rows in ‘y’.
+
+        • Output columns include all ‘x’ columns and all ‘y’ columns.
+          If columns in ‘x’ and ‘y’ have the same name (and aren't
+          included in ‘by’), ‘suffix’es are added to disambiguate.
+
+        • Output columns included in ‘by’ are coerced to common type
+          across ‘x’ and ‘y’.
+
+        • Groups are taken from ‘x’.
+
+_M_e_t_h_o_d_s:
+
+     These functions are *generic*s, which means that packages can
+     provide implementations (methods) for other classes. See the
+     documentation of individual methods for extra arguments and
+     differences in behaviour.
+
+     Methods available in currently loaded packages:
+
+        • ‘inner_join()’: dbplyr (‘tbl_lazy’), dplyr (‘data.frame’).
+
+        • ‘left_join()’: dbplyr (‘tbl_lazy’), dplyr (‘data.frame’).
+
+        • ‘right_join()’: dbplyr (‘tbl_lazy’), dplyr (‘data.frame’).
+
+        • ‘full_join()’: dbplyr (‘tbl_lazy’), dplyr (‘data.frame’).
+
+_S_e_e _A_l_s_o:
+
+     Other joins: ‘filter-joins’, ‘nest_join()’
+
+_E_x_a_m_p_l_e_s:
+
+     band_members %>% inner_join(band_instruments)
+     band_members %>% left_join(band_instruments)
+     band_members %>% right_join(band_instruments)
+     band_members %>% full_join(band_instruments)
+     
+     # To suppress the message about joining variables, supply `by`
+     band_members %>% inner_join(band_instruments, by = "name")
+     # This is good practice in production code
+     
+     # Use a named `by` if the join variables have different names
+     band_members %>% full_join(band_instruments2, by = c("name" = "artist"))
+     # By default, the join keys from `x` and `y` are coalesced in the output; use
+     # `keep = TRUE` to keep the join keys from both `x` and `y`
+     band_members %>%
+       full_join(band_instruments2, by = c("name" = "artist"), keep = TRUE)
+     
+     # If a row in `x` matches multiple rows in `y`, all the rows in `y` will be
+     # returned once for each matching row in `x`
+     df1 <- tibble(x = 1:3)
+     df2 <- tibble(x = c(1, 1, 2), y = c("first", "second", "third"))
+     df1 %>% left_join(df2)
+     
+     # By default, NAs match other NAs so that there are two
+     # rows in the output of this join:
+     df1 <- data.frame(x = c(1, NA), y = 2)
+     df2 <- data.frame(x = c(1, NA), z = 3)
+     left_join(df1, df2)
+     
+     # You can optionally request that NAs don't match, giving a
+     # a result that more closely resembles SQL joins
+     left_join(df1, df2, na_matches = "never")
+     
+
