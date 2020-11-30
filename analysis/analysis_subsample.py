@@ -9,7 +9,7 @@ import parsl
 from parsl.app.app import python_app
 from parsl_config import pconfig
 
-config = {}
+config = load_configuration("../configuration/pipeline01_100.yml")
 config["100"] = {}
 config["100"]["bids_root_path"] = "/nfs/user/mo808sujo/xmasoddballmatch-bids"
 config["100"]["pipeline_name"] = "pipeline01"
