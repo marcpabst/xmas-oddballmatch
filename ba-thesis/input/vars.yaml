@@ -38,3 +38,11 @@ anova_03_150_fronto_condition_stimulustype: $F(1,22) = 0.03$, $p = 0.8680$
 anova_03_150_mastoids_condition: $F(1,22) = 0.21$, $p = 0.6550$
 anova_03_150_mastoids_stimulustype: $F(1,22) = 6.56$, $p = 0.0180$
 anova_03_150_mastoids_condition_stimulustype: $F(1,22) = 0.12$, $p = 0.7300$
+posthoc_pred_a_b_fronto_100: $t(19) = -2.77$, $0.0246$, $CI_{.95} = [-0.67,-0.09]$
+posthoc_pred_a_b_mast_100: $t(19) = 1.09$, $0.291$, $CI_{.95} = [-0.12,0.39]$
+posthoc_rand_a_b_fronto_100: $t(19) = 1.64$, $0.169333333333333$, $CI_{.95} = [-0.10,0.81]$
+posthoc_rand_a_b_mast_100: $t(19) = -1.35$, $0.219428571428571$, $CI_{.95} = [-1.90,0.41]$
+posthoc_pred_a_b_fronto_150: $t(22) = 5.20$, $0.0002584$, $CI_{.95} = [0.35,0.81]$
+posthoc_pred_a_b_mast_150: $t(22) = -3.95$, $0.002716$, $CI_{.95} = [-0.61,-0.19]$
+posthoc_rand_a_b_fronto_150: $t(22) = 3.28$, $0.00909333333333333$, $CI_{.95} = [0.20,0.91]$
+posthoc_rand_a_b_mast_150: $t(22) = -1.59$, $0.169333333333333$, $CI_{.95} = [-1.18,0.16]$

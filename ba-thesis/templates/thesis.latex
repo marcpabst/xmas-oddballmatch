@@ -13,7 +13,7 @@ $endif$
 $endif$
 
 %
-\documentclass[stu,a4paper,12pt, nofontenc, babel, american]{apa7}
+\documentclass[twoside, stu,a4paper,12pt, nofontenc, babel, american]{apa7}
 
 % deps for huxtable
 \usepackage{array}
@@ -52,7 +52,7 @@ $endif$
 \DeclareCaptionFormat{myformat}{#1#2\\#3}
 \captionsetup[figure]{skip=5pt, font=small, labelsep=period, position=top, format=myformat}
 
-%\linenumbers
+\linenumbers
 % Polar Night
 \definecolor{NordDarkBlack}{HTML}{2E3440}     % nord0
 \definecolor{NordBlack}{HTML}{3B4252}         % nord1
@@ -101,6 +101,7 @@ $if(shorttitle)$
 \shorttitle{$shorttitle$}
 $endif$
 
+\usepackage{amsfonts}
 
 \newenvironment{cslreferences}%
   {$if(csl-hanging-indent)$\setlength{\parindent}{0pt}%
