@@ -1,8 +1,10 @@
 # Discussion
 
-We did not replicate 
+For the 150 presentation, extreme evidence for an MMN and very strong evidence for an accopying polarity reversal at the mastoids was found in the *predcitable* condition, that is, when tones were presented in a repeated five-tone pattern. When tones were presented in random order, strong evidence was foun[[anova_02_100_posthoc]] anova_02_100_posthoc.texd for an MMN but Bayes factors suggested inconclusive evidence for mastoids. In light of the resuts by @sussmanOrganizationSequentialSounds2005, we would
 
-For the 150 presentation, extreme evidence for an MMN and very strong evidence for an accopying polarity reversal at the mastoids was found in the *predcitable* condition, that is, when tones were presented in an repeated five-tone pattern. When tones were presented in random order, strong evidence was found for an MMN but Bayes factors suggested inconclusive evidence for mastoids. In light of the resuts by @sussmanOrganizationSequentialSounds2005, we would
+We found strong evidence for an MMN in the 150 ms delivery rate condition when comparing standards and deviants, regardless of the type of presentation (predictable vs. random). This finding is incompatible with the results and intepretation by [@sussmanOrganizationSequentialSounds2005] but suggests that *pattern regularities* do not inform prediction. Furthermore, no convincing evidence for an MMN was found when comparing the 4th standard to the 5th standard in predictable condition.
+
+For the 150 ms , significant MMN componets were found regardless of presentation 
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec id cursus velit, non egestas quam. Aliquam rutrum eget sem ut aliquet. Etiam euismod purus et gravida volutpat. Suspendisse consequat ipsum nibh, vitae convallis dolor efficitur a. Suspendisse vehicula erat posuere velit fermentum viverra. Proin sapien urna, iaculis ut ultricies ac, auctor eu est. Nunc ornare pharetra finibus. Morbi finibus, ipsum non accumsan cursus, metus nisl egestas leo, et aliquam nisi leo quis diam. Quisque id diam non risus elementum convallis. Duis non nisl at nisl imperdiet vestibulum. Suspendisse efficitur porttitor nulla a vehicula. Interdum et malesuada fames ac ante ipsum primis in faucibus. Praesent tempor urna in orci congue, non euismod eros volutpat. Integer ullamcorper auctor libero, in laoreet nulla hendrerit ultrices.
 

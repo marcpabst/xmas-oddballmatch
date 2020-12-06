@@ -22,13 +22,6 @@ anova_03_100_fronto_condition_stimulustype: $F(1,19) = 16.75$, $p = 0.0006$
 anova_03_100_mastoids_condition: $F(1,19) = 1.28$, $p = 0.2720$
 anova_03_100_mastoids_stimulustype: $F(1,19) = 1.21$, $p = 0.2850$
 anova_03_100_mastoids_condition_stimulustype: $F(1,19) = 2.37$, $p = 0.1410$
-anova_02_150_condition: $F(1,22) = 0.08$, $p = 0.7800$
-anova_02_150_stimulustype: $F(1,22) = 0.32$, $p = 0.5790$
-anova_02_150_electrode: $F(1,22) = 0.04$, $p = 0.8540$
-anova_02_150_condition_stimulustype: $F(1,22) = 0.16$, $p = 0.6930$
-anova_02_150_condition_electrode: $F(1,22) = 1.13$, $p = 0.2990$
-anova_02_150_stimulustype_electrode: $F(1,22) = 20.76$, $p = 0.0002$
-anova_02_150_condition_stimulustype_electrode: $F(1,22) = 0.05$, $p = 0.8190$
 anova_01_150_condition: $F(1,22) = 0.95$, $p = 0.3410$
 anova_01_150_stimulustype: $F(1,22) = 22.67$, $p = 0.0001$
 anova_01_150_condition_stimulustype: $F(1,22) = 0.03$, $p = 0.8680$
@@ -38,11 +31,11 @@ anova_03_150_fronto_condition_stimulustype: $F(1,22) = 0.03$, $p = 0.8680$
 anova_03_150_mastoids_condition: $F(1,22) = 0.21$, $p = 0.6550$
 anova_03_150_mastoids_stimulustype: $F(1,22) = 6.56$, $p = 0.0180$
 anova_03_150_mastoids_condition_stimulustype: $F(1,22) = 0.12$, $p = 0.7300$
-posthoc_pred_a_b_fronto_100: $t(19) = -2.77$, $0.0246$, $CI_{.95} = [-0.67,-0.09]$
-posthoc_pred_a_b_mast_100: $t(19) = 1.09$, $0.291$, $CI_{.95} = [-0.12,0.39]$
-posthoc_rand_a_b_fronto_100: $t(19) = 1.64$, $0.169333333333333$, $CI_{.95} = [-0.10,0.81]$
-posthoc_rand_a_b_mast_100: $t(19) = -1.35$, $0.219428571428571$, $CI_{.95} = [-1.90,0.41]$
-posthoc_pred_a_b_fronto_150: $t(22) = 5.20$, $0.0002584$, $CI_{.95} = [0.35,0.81]$
-posthoc_pred_a_b_mast_150: $t(22) = -3.95$, $0.002716$, $CI_{.95} = [-0.61,-0.19]$
-posthoc_rand_a_b_fronto_150: $t(22) = 3.28$, $0.00909333333333333$, $CI_{.95} = [0.20,0.91]$
-posthoc_rand_a_b_mast_150: $t(22) = -1.59$, $0.169333333333333$, $CI_{.95} = [-1.18,0.16]$
+posthoc_pred_a_b_fronto_100: $t(19) = -2.77$, $p = .025$, $CI_{.95} = [-0.67,-0.09]$
+posthoc_pred_a_b_mast_100: $t(19) = 1.09$, $p = .291$, $CI_{.95} = [-0.12,0.39]$
+posthoc_rand_a_b_fronto_100: $t(19) = 1.64$, $p = .169$, $CI_{.95} = [-0.10,0.81]$
+posthoc_rand_a_b_mast_100: $t(19) = -1.35$, $p = .219$, $CI_{.95} = [-1.90,0.41]$
+posthoc_pred_a_b_fronto_150: $t(22) = 5.20$, $p < .001$, $CI_{.95} = [0.35,0.81]$
+posthoc_pred_a_b_mast_150: $t(22) = -3.95$, $p = .003$, $CI_{.95} = [-0.61,-0.19]$
+posthoc_rand_a_b_fronto_150: $t(22) = 3.28$, $p = .009$, $CI_{.95} = [0.20,0.91]$
+posthoc_rand_a_b_mast_150: $t(22) = -1.59$, $p = .169$, $CI_{.95} = [-1.18,0.16]$

@@ -13,7 +13,7 @@ $endif$
 $endif$
 
 %
-\documentclass[twoside, stu,a4paper,12pt, nofontenc, babel, american]{apa7}
+\documentclass[twoside, man, a4paper,12pt, nofontenc, babel, american]{apa7}
 
 % deps for huxtable
 \usepackage{array}
@@ -44,41 +44,15 @@ $endif$
 %\usepackage[document]{ragged2e}
 %\RaggedRightRightskip 0pt plus 4em
 
+\usepackage{titlesec}
+
+
 \setcounter{totalnumber}{1}
 
 \floatsetup[figure]{capposition=top}
 \floatsetup[table]{capposition=top}
 
-\DeclareCaptionFormat{myformat}{#1#2\\#3}
-\captionsetup[figure]{skip=5pt, font=small, labelsep=period, position=top, format=myformat}
-
-\linenumbers
-% Polar Night
-\definecolor{NordDarkBlack}{HTML}{2E3440}     % nord0
-\definecolor{NordBlack}{HTML}{3B4252}         % nord1
-\definecolor{NordMediumBlack}{HTML}{434C5e}   % nord2
-\definecolor{NordBrightBlack}{HTML}{4C566A}   % nord3
-% Snow Storm
-\definecolor{NordWhite}{HTML}{D8DEE9}         % nord4
-\definecolor{NordBrighterWhite}{HTML}{E5E9F0}         % nord5
-\definecolor{NordBrightestWhite}{HTML}{ECEFF4}   % nord6
-% Frost
-\definecolor{NordCyan}{HTML}{8FBCBB}          % nord7
-\definecolor{NordBrightCyan}{HTML}{88C0D0}    % nord8
-\definecolor{NordBlue}{HTML}{81A1C1}          % nord9
-\definecolor{NordBrightBlue}{HTML}{5E81AC}    % nord10
-% Aurora
-\definecolor{NordRed}{HTML}{BF616A}           % nord11
-\definecolor{NordOrange}{HTML}{D08770}        % nord12
-\definecolor{NordYellow}{HTML}{EBCB8B}        % nord13
-\definecolor{NordGreen}{HTML}{A3BE8C}         % nord14
-\definecolor{NordMagenta}{HTML}{B48EAD}       % nord15
-
-
-
-\sectionfont{\color{NordBlack}}  % sets colour of sections
-\subsectionfont{\color{NordBlack}}  % sets colour of sections
-
+%\linenumbers
 
 \usepackage{amsmath}
 \usepackage{unicode-math}
@@ -95,7 +69,18 @@ $endif$
 \setmathfont[range=\mathup/{num},Numbers=Lining]{Cochineal-Roman}
 \setmathfont[range=it/{latin,Latin},Ligatures={NoCommon, NoDiscretionary, NoHistoric, NoRequired, NoContextual}]{Cochineal-Italic}
 
+\newfontfamily\sansfont[Numbers=Lining]{Gill Sans}
 
+
+\DeclareCaptionFormat{myformat}{#1#2\\\sansfont#3}
+\DeclareCaptionFont{quack}{\sansfont}
+\captionsetup[figure]{skip=5pt, font={up,small,quack}, labelsep=period, position=top, format=myformat, justification=justified, labelfont=sc}
+
+
+\titleformat{\chapter}[display]
+  {\huge\sansfont}{\chaptertitlename\ \thechapter}{20pt}{\Huge}
+\titleformat*{\section}{\LARGE\sansfont}
+\titleformat*{\subsection}{\Large\sansfont}
 
 $if(shorttitle)$
 \shorttitle{$shorttitle$}
