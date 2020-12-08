@@ -2,6 +2,10 @@
 
 For the 150 presentation, extreme evidence for an MMN and very strong evidence for an accopying polarity reversal at the mastoids was found in the *predcitable* condition, that is, when tones were presented in a repeated five-tone pattern. When tones were presented in random order, strong evidence was foun[[anova_02_100_posthoc]] anova_02_100_posthoc.texd for an MMN but Bayes factors suggested inconclusive evidence for mastoids. In light of the resuts by @sussmanOrganizationSequentialSounds2005, we would
 
+```{=latex}
+\input{tables/hypotheses.tex}
+```
+
 We found strong evidence for an MMN in the 150 ms delivery rate condition when comparing standards and deviants, regardless of the type of presentation (predictable vs. random). This finding is incompatible with the results and intepretation by [@sussmanOrganizationSequentialSounds2005] but suggests that *pattern regularities* do not inform prediction. Furthermore, no convincing evidence for an MMN was found when comparing the 4th standard to the 5th standard in predictable condition.
 
 For the 150 ms , significant MMN componets were found regardless of presentation 

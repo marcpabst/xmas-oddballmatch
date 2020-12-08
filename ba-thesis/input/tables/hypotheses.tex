@@ -1,0 +1,24 @@
+% \usepackage{booktabs}
+
+
+\begin{table}
+\centering
+\begin{tabular*}{\textwidth}{lcllc} 
+\toprule
+                                                                                                               & random context                               & \multicolumn{2}{c}{predictable context}               & difference wave                                                \\ 
+\cmidrule(lr){2-2}\cmidrule(lr){3-4}\cmidrule(lr){5-5}
+\multicolumn{1}{c}{Intepretation}                                                                         & \multicolumn{1}{c}{$\mathcal{H_1}: B_{5th}<A_{4th}$} & $\mathcal{H_1}: B_{5th}<A_{4th}$     & $\mathcal{H_1}: A_{5th}<A_{4th}$     & \multicolumn{1}{c}{$\mathcal{H_1}: \Lambda_{rand} \neq \Lambda_{pred}$ }  \\ 
+\cmidrule(lr){1-1}\cmidrule(lr){2-2}\cmidrule(lr){3-3}\cmidrule(lr){4-4}\cmidrule(lr){5-5}
+ \textit{pattern regularities}                                                                                 & ×                                     & \multicolumn{1}{c}{✓} & \multicolumn{1}{c}{✓} & ✓                                                          \\
+\textit{proportional regularities}                                                                             & ✓                                     & \multicolumn{1}{c}{✓} & \multicolumn{1}{c}{×} & ×                                                          \\
+\begin{tabular}[c]{@{}l@{}} \textit{pattern regularities} and \\\textit{proportional regularities} \end{tabular} & ✓                                     & \multicolumn{1}{c}{✓} & \multicolumn{1}{c}{✓} & \textasciitilde{}                                          \\
+\midrule
+Results: 100 ms                                                                                                         & \multicolumn{1}{c}{×}                & \multicolumn{1}{c}{inc.}                 & \multicolumn{1}{c}{inc.}                    & \multicolumn{1}{c}{✓}                                      \\
+Results: 150 ms                                                                                                         & \multicolumn{1}{c}{✓}                 & \multicolumn{1}{c}{✓}                      & \multicolumn{1}{c}{inc.}                    & \multicolumn{1}{c}{inc.}                                    \\
+\bottomrule
+\end{tabular*}
+ \begin{tablenotes}
+      \small
+      \item ✓: $\mathcal{H_1}$ is true / $\mathcal{H_0}$ rejected, ×: $\mathcal{H_0}$ is true, \textit{inc}: inconclusive results \~{}: no explicit expectation
+    \end{tablenotes}
+\end{table}

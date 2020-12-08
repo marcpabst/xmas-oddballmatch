@@ -13,7 +13,7 @@ $endif$
 $endif$
 
 %
-\documentclass[twoside, man, a4paper,12pt, nofontenc, babel, american]{apa7}
+\documentclass[twoside, man, a4paper,12pt, nofontenc]{apa7}
 
 % deps for huxtable
 \usepackage{array}
@@ -28,6 +28,8 @@ $endif$
 \usepackage{wrapfig}
 \usepackage{adjustbox}
 \usepackage{hyperref}
+\usepackage{fontenc}
+\usepackage{polyglossia}
 
 \usepackage{tabulary}
 \usepackage{booktabs}
@@ -133,8 +135,15 @@ $else$
   \KOMAoptions{parskip=half}}
 \makeatother
 $endif$
+\usepackage{newunicodechar}
+\newunicodechar{✓}{\(\checkmark\)}
+\newunicodechar{×}{\(×\)}
+
+
+
 $if(verbatim-in-note)$
 \usepackage{fancyvrb}
+
 $endif$
 \usepackage{xcolor}
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
