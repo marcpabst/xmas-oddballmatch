@@ -90,7 +90,7 @@ def analyis_subsample(id, config, soa):
     print("DIFF: ", config["diff_criterion"])
 
     epochs = epochs.drop_bad(config["diff_criterion"])
-
+    epochs.pick("FZ")
     epochs1 = epochs[cond1]
     epochs2 = epochs[cond2]
 
