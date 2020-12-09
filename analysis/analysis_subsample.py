@@ -128,7 +128,7 @@ def analyis_subsample(id, config, soa):
 
     
             ## split-half ##
-            t1 = split_in_half(epochs2[idx1[:num]])
+            t1 = split_in_half(epochs2[idx2[:num]])
             #t2 = split_in_half(epochs2[idx2[:num]])
             
             halves_avg = (t1[0].average(), t1[1].average())
