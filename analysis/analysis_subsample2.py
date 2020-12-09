@@ -5,9 +5,9 @@ import argparse
 
 import time
 import pandas as pd
-import parsl
-from parsl.app.app import python_app
-from parsl_config import pconfig
+#import parsl
+#from parsl.app.app import python_app
+#from parsl_config import pconfig
 
 config = load_configuration("../configuration/pipeline01_100.yml")
 config["100"] = {}
