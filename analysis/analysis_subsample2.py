@@ -51,8 +51,8 @@ def analyis_subsample(id, config, soa):
 
 
     #nums = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, ]
-    nums = list(range(100, 3100, 500))
-    N = 50
+    nums = list(range(100, 3100, 100))
+    N = 100
     peak_latency = 0.138
     cond1 = "random/standard"
     cond2 = "random/deviant"
@@ -77,7 +77,7 @@ def analyis_subsample(id, config, soa):
     events = mne.read_events(events_filename)
 
     # Epoch data
-    raw.pick("FZ")
+    raw.pick(["eeg", "eog"])
     epochs = mne.Epochs(raw, events, config["events_dict"],
                         tmin=config["epoch_window"][0],
                         tmax=config["epoch_window"][1],
@@ -86,6 +86,8 @@ def analyis_subsample(id, config, soa):
                         reject=None,
                         preload=True)
 
+    raw = raw.set_channel_types(
+        {"vEOG": "eog", "hEOG": "eog"})
     config["use_autoreject"] = False
     if config["use_autoreject"] is not None and config["use_autoreject"]:
         print("Running AutoReject...")
@@ -141,11 +143,11 @@ def analyis_subsample(id, config, soa):
             evokeds_h2 = {cond: [] for cond in [cond1, cond2]}
             
 
-            subsample_epochs1_h1 = epochs1[idx1[:num]][:int(num/2)]
-            subsample_epochs1_h2 = epochs1[idx1[:num]][int(num/2):]
+            subsample_epochs1_h1 = epochs1[idx1[:num]][:(num/2)]
+            subsample_epochs1_h2 = epochs1[idx1[:num]][(num/2):]
 
-            subsample_epochs2_h1 = epochs2[idx2[:num]][:int(num/2)]
-            subsample_epochs2_h2 = epochs2[idx2[:num]][int(num/2):]
+            subsample_epochs2_h1 = epochs2[idx2[:num]][:(num/2)]
+            subsample_epochs2_h2 = epochs2[idx2[:num]][(num/2):]
 
             # average
             evokeds_h1[cond1].append(subsample_epochs1_h1.average())
