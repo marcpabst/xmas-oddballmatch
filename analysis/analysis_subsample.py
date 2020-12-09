@@ -67,8 +67,8 @@ def analyis_subsample(id, config, soa):
 
 
     #nums = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, ]
-    nums = list(range(100, 3500, 500))
-    N = 100
+    nums = list(range(100, 3000, 100))
+    N = 200
     cond1 = "random/standard"
     cond2 = "random/deviant"
     peak = 0.132
