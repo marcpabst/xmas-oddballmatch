@@ -86,14 +86,10 @@ def analyis_subsample(id, config, soa):
 
     raw = raw.set_channel_types(
         {"vEOG": "eog", "hEOG": "eog"})
-    config["use_autoreject"] = False
-    if config["use_autoreject"] is not None and config["use_autoreject"]:
-        print("Running AutoReject...")
-        ar = AutoReject(verbose = False)
-        ar.fit(epochs)
-        epochs = ar.transform(epochs)
-    elif config["diff_criterion"] is not None:
-        epochs = epochs.drop_bad(config["diff_criterion"])
+    
+    print("DIFF: ", config["diff_criterion"])
+
+    epochs = epochs.drop_bad(config["diff_criterion"])
 
     epochs1 = epochs[cond1]
     epochs2 = epochs[cond2]
@@ -102,11 +98,12 @@ def analyis_subsample(id, config, soa):
     idx2 = list(range(len(epochs2)))
 
     for n in range(N):
-        
+        print("Run #", str(n))
         np.random.shuffle(idx1)
         np.random.shuffle(idx2)
 
         for num in nums:
+            print("Num #", str(num))
             if num > len(idx1) or num > len(idx2):
                 # mean_amplitudes["id"].append(id) 
                 # mean_amplitudes["soa"].append(soa) 
