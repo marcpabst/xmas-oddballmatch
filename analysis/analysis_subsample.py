@@ -92,14 +92,14 @@ def analyis_subsample(id, config, soa):
     events = mne.read_events(events_filename)
 
     # Epoch data
-    raw.pick(["FZ"])
+   
     epochs = mne.Epochs(raw, events, config["events_dict"],
                         tmin=config["epoch_window"][0],
                         tmax=config["epoch_window"][1],
                         baseline=None,
                         reject=config["diff_criterion"],
                         preload=True)
-
+     raw.pick(["FZ"])
     # raw = raw.set_channel_types(
     #     {"vEOG": "eog", "hEOG": "eog"})
 
@@ -128,17 +128,14 @@ def analyis_subsample(id, config, soa):
 
     
             ## split-half ##
-            t1 = split_in_half(epochs1[idx1[:num]])
-            t2 = split_in_half(epochs2[idx2[:num]])
+            t1 = split_in_half(epochs2[idx1[:num]])
+            #t2 = split_in_half(epochs2[idx2[:num]])
             
-            halves1_avg = (t1[0].average(), t1[1].average())
-            halves2_avg = (t2[0].average(), t2[1].average())
+            halves_avg = (t1[0].average(), t1[1].average())
+ 
 
-            half1_diff_wave = mne.combine_evoked([halves1_avg[0],halves1_avg[1]], weights=[1, -1])
-            half2_diff_wave = mne.combine_evoked([halves2_avg[0],halves2_avg[1]], weights=[1, -1])
-
-            ma_h1 = get_mean_amplitudes(half1_diff_wave, peakwindow, picks = ["FZ"]) 
-            ma_h2 = get_mean_amplitudes(half2_diff_wave, peakwindow, picks = ["FZ"]) 
+            ma_h1 = get_mean_amplitudes(halves_avg[0], peakwindow, picks = ["FZ"]) 
+            ma_h2 = get_mean_amplitudes(halves_avg[1], peakwindow, picks = ["FZ"]) 
 
             mean_amplitudes["id"].append(id) 
             mean_amplitudes["soa"].append(soa) 
