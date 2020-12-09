@@ -99,7 +99,7 @@ def analyis_subsample(id, config, soa):
                         baseline=None,
                         reject=config["diff_criterion"],
                         preload=True)
-     raw.pick(["FZ"])
+    raw.pick(["FZ"])
     # raw = raw.set_channel_types(
     #     {"vEOG": "eog", "hEOG": "eog"})
 
