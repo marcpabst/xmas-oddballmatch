@@ -115,12 +115,20 @@ for evokeds_list in all_evokeds_150:
 
 # %%
 # Find peak and find a window (±25ms) 
-diff = difference_wave(evokeds_list_as_dict["100"], ("random/deviant", "random/standard"), grandaverage=True)
-peak_latency = diff.pick(picks="FZ").get_peak(tmin = .1, tmax = .2,  return_amplitude = True)[1]
+diff = difference_wave(evokeds_list_as_dict["100"], ("random/5/deviant", "random/4/standard"), grandaverage=True)
+peak_latency = diff.pick(picks=["F3", "FZ", "F4", "FC1", "FC2"]).get_peak(tmin = .1, tmax = .170,  return_amplitude = True)[1]
 
-peakwindow = (peak_latency-0.025, peak_latency+0.025)
+peakwindow_100 = (peak_latency-0.025, peak_latency+0.025)
 
-print("Peak Latency is {} s.".format(peak_latency))
+print("100 ms: Peak Latency is {} s.".format(peakwindow_100))
+
+
+diff = difference_wave(evokeds_list_as_dict["150"], ("random/5/deviant", "random/4/standard"), grandaverage=True)
+peak_latency = diff.pick(picks=["F3", "FZ", "F4", "FC1", "FC2"]).get_peak(tmin = .1, tmax = .170,  return_amplitude = True)[1]
+
+peakwindow_150 = (peak_latency-0.025, peak_latency+0.025)
+
+print("150 ms: Peak Latency is {} s.".format(peakwindow_150))
 
 # %% [markdown]
 # ## Create DataFrame containing Mean Amplitudes
@@ -144,12 +152,38 @@ amplitudes = [{ "SOA":key[0], "Participant":key[0] + "_" + str(i),
                 "Electrode": electrode} 
                     for key,value in conditions.items() 
                     for electrode, pick in electrodes.items()
-                    for i, amplitude in enumerate(get_mean_amplitudes(evokeds_list_as_dict[key[0]][value], peakwindow, picks=pick)) ]
+                    for i, amplitude in enumerate(get_mean_amplitudes(evokeds_list_as_dict[key[0]][value], peakwindow_100, picks=pick)) ]
 amplitudes_df = pd.DataFrame(amplitudes)
 
 amplitudes_df.to_csv("../data/mean_amplitudes.csv", index=False)
 
 amplitudes_df
+
+# %%
+# %%
+conditions       = {("100", "random", "B"): "random/5/standard",
+                    ("100", "random", "A"): "random/4/standard",
+                    ("100", "predictable", "B"): "predictable/5/standard",
+                    ("100", "predictable", "A"): "predictable/4/standard",
+
+                    ("150", "random", "B"): "random/5/standard",
+                    ("150", "random", "A"): "random/4/standard",
+                    ("150", "predictable", "B"): "predictable/5/standard",
+                    ("150", "predictable", "A"): "predictable/4/standard"}
+
+electrodes = {"FZ":"FZ", "CZ":"CZ", "M1": "M1", "M2": "M2", "fronto_pooled": ["FZ", "F3", "F4", "FC1", "FC2"], "mastoids_pooled": ["M1", "M2"]}
+
+amplitudes = [{ "SOA":key[0], "Participant":key[0] + "_" + str(i), 
+                "Condition":key[1], "StimulusType":key[2], 
+                "MeanAmplitude": amplitude,
+                "Electrode": electrode} 
+                    for key,value in conditions.items() 
+                    for electrode, pick in electrodes.items()
+                    for i, amplitude in enumerate(get_mean_amplitudes(evokeds_list_as_dict[key[0]][value], peakwindow_100, picks=pick)) ]
+amplitudes_df = pd.DataFrame(amplitudes)
+
+amplitudes_df.to_csv("../data/mean_amplitudes2.csv", index=False)
+
 
 
 # %%
@@ -244,3 +278,4 @@ sequences_df = pd.DataFrame(sequences)
 sequences_df.to_csv("../data/sequences.csv", index=False)
 
 # %%
+

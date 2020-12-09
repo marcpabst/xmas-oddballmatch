@@ -46,21 +46,6 @@ def difference_wave(evokeds_as_dict, conditions, grandaverage=False):
     else:
         return out
 
-# %% [markdown]
-# ## Read averaged ERPs from disk
-
-# %%
-
-
-
-# %%
-
-
-
-# %%
-
-
-# %% [markdown]
 # Read averaged ERPs for each participant:
 
 ids_100 = get_entity_vals(join(bids_root_path_100, "derivatives"), "sub") 
@@ -92,9 +77,6 @@ for evokeds_list in all_evokeds_150:
         except KeyError:
             pass
             print("Missing condition in list.")
-# %% [markdown]
-# ## Find Preak Latency and Window
-# Following Sussmann (2005), peak laency is defined as the latency where the differnce wave between deviant and standard tones in the random condition reaches its maximum (within the `Fz` channel).
 
 # %%
 # Find peak and find a window (±25ms) 
@@ -457,8 +439,6 @@ legend = dax_bottom.legend(lines, ("5th B tone", "4th A tone", "Difference (A-B)
 fig.savefig("/media/marc/Medien/xmas-oddballmatch/ba-thesis/input/figures/fig_fronto.pdf", bbox_inches='tight')
 fig.savefig("/media/marc/Medien/xmas-oddballmatch/ba-thesis/input/figures/fig_fronto.png", dpi=270)
 
-fig
-
 
 # %%
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
@@ -505,7 +485,6 @@ fig.savefig("/media/marc/Medien/xmas-oddballmatch/ba-thesis/input/figures/fig_fr
 fig.savefig("/media/marc/Medien/xmas-oddballmatch/ba-thesis/input/figures/fig_fronto2.png", bbox_inches='tight', dpi=270)
 
 fig
-
 
 # %%
 fig = plt.figure(tight_layout=True, figsize = (6.25, 3), dpi=100, facecolor="white")
@@ -611,7 +590,7 @@ dax_top_right.set_title("150 ms", fontweight = "bold")
 
 dax_bototm_left = fig.add_subplot(gs[1,0])
 hide_axis_but_keep_labels(dax_bototm_left)
-dax_bototm_left.set_ylabel("random", fnontweight = "bold")
+dax_bototm_left.set_ylabel("random", fontweight = "bold")
 
 
 fig.savefig("/media/marc/Medien/xmas-oddballmatch/ba-thesis/input/figures/fig_mastoids.pdf", bbox_inches='tight')
@@ -862,6 +841,9 @@ fig
 
 
 # %%
+
+
+
 
 
 
