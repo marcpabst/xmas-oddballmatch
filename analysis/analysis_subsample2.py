@@ -18,8 +18,6 @@ config["150"] = {}
 config["150"]["bids_root_path"] = "/nfs/user/mo808sujo/machristine-bids"
 config["150"]["pipeline_name"] = "pipeline_christine"
 
-config["100"]["bids_root_path"] = "/media/marc/Medien/xmasoddballmatch-bids"
-config["150"]["bids_root_path"] = "/media/marc/Medien/machristine-bids"
 
 
 def analyis_subsample(id, config, soa):
