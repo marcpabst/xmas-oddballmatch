@@ -186,52 +186,6 @@ amplitudes_df.to_csv("../data/mean_amplitudes2.csv", index=False)
 
 
 
-# %%
-conditions       = {("100", "random", "A-1"): "random/1/standard",
-                    ("100", "random", "A-2"): "random/2/standard",
-                    ("100", "random", "A-3"): "random/3/standard",
-                    ("100", "random", "A-4"): "random/4/standard",
-                    ("100", "random", "A-5"): "random/5/standard",
-                    ("100", "random", "B-5"): "random/5/deviant",
-                    ("150", "random", "A-1"): "random/1/standard",
-                    ("150", "random", "A-2"): "random/2/standard",
-                    ("150", "random", "A-3"): "random/3/standard",
-                    ("150", "random", "A-4"): "random/4/standard",
-                    ("150", "random", "A-5"): "random/5/standard",
-                    ("150", "random", "B-5"): "random/5/deviant",
-
-                    ("100", "predictable", "A-1"): "predictable/1/standard",
-                    ("100", "predictable", "A-2"): "predictable/2/standard",
-                    ("100", "predictable", "A-3"): "predictable/3/standard",
-                    ("100", "predictable", "A-4"): "predictable/4/standard",
-                    ("100", "predictable", "A-5"): "predictable/5/standard",
-                    ("100", "predictable", "B-5"): "predictable/5/deviant",
-                    
-                    ("150", "predictable", "A-1"): "predictable/1/standard",
-                    ("150", "predictable", "A-2"): "predictable/2/standard",
-                    ("150", "predictable", "A-3"): "predictable/3/standard",
-                    ("150", "predictable", "A-4"): "predictable/4/standard",
-                    ("150", "predictable", "A-5"): "predictable/5/standard",
-                    ("150", "predictable", "B-5"): "predictable/5/deviant"}
-
-electrodes = {"FZ":"FZ", "CZ":"CZ", "M1": "M1", "M2": "M2", "fronto_pooled": ["FZ", "F3", "F4", "FC1", "FC2"], "mastoids_pooled": ["M1", "M2"]}
-
-n1_window = peakwindow
-
-amplitudes = [{ "SOA":key[0], "Participant":key[0] + "_" + str(i), 
-                "Condition":key[1], "StimulusType":key[2], 
-                "MeanAmplitude": amplitude,
-                "Electrode": electrode} 
-                    for key,value in conditions.items() 
-                    for electrode, pick in electrodes.items()
-                    for i, amplitude in enumerate(get_mean_amplitudes(evokeds_list_as_dict[key[0]][value], n1_window, picks=pick)) ]
-amplitudes_df = pd.DataFrame(amplitudes)
-
-
-amplitudes_df.to_csv("../data/n1_mean_amplitudes.csv", index=False)
-
-amplitudes_df
-
 #%%
 def get_sequence(data, soa, c, picks = "FZ"):
     evo1 = mne.grand_average(data[c+"/1/standard"]).copy()
@@ -278,4 +232,27 @@ sequences_df = pd.DataFrame(sequences)
 sequences_df.to_csv("../data/sequences.csv", index=False)
 
 # %%
+conditions       = {("100", "random", "B"): "random/deviant",
+                    ("100", "random", "A"): "random/4/standard",
 
+                    ("150", "random", "B"): "random/deviant",
+                    ("150", "random", "A"): "random/4/standard"}
+
+electrodes = {"FZ":"FZ", "CZ":"CZ", "M1": "M1", "M2": "M2", "fronto_pooled": ["FZ", "F3", "F4", "FC1", "FC2"], "mastoids_pooled": ["M1", "M2"]}
+
+amplitudes = [{ "SOA":key[0], "Participant":key[0] + "_" + str(i), 
+                "Condition":key[1], "StimulusType":key[2], 
+                "MeanAmplitude": amplitude,
+                "Electrode": electrode} 
+                    for key,value in conditions.items() 
+                    for electrode, pick in electrodes.items()
+                    for i, amplitude in enumerate(get_mean_amplitudes(evokeds_list_as_dict[key[0]][value], peakwindow_100, picks=pick)) ]
+amplitudes_df = pd.DataFrame(amplitudes)
+
+amplitudes_df.to_csv("../data/mean_amplitudes_random_alt.csv", index=False)
+
+amplitudes_df
+
+
+
+# %%

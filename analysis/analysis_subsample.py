@@ -68,7 +68,7 @@ def analyis_subsample(id, config, soa):
 
     #nums = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, ]
     nums = list(range(100, 3000, 100))
-    N = 200
+    N = 150
     cond1 = "random/standard"
     cond2 = "random/deviant"
     peak = 0.132
@@ -80,6 +80,7 @@ def analyis_subsample(id, config, soa):
     mean_amplitudes["num"] = [] 
     mean_amplitudes["run"] = [] 
     mean_amplitudes["type"] = [] 
+    mean_amplitudes["stimtype"] = [] 
     mean_amplitudes["amplitude_difference"] = [] 
 
 
@@ -129,8 +130,7 @@ def analyis_subsample(id, config, soa):
     
             ## split-half ##
             t1 = split_in_half(epochs2[idx2[:num]])
-            #t2 = split_in_half(epochs2[idx2[:num]])
-            
+
             halves_avg = (t1[0].average(), t1[1].average())
  
 
@@ -141,6 +141,7 @@ def analyis_subsample(id, config, soa):
             mean_amplitudes["soa"].append(soa) 
             mean_amplitudes["num"].append(num)
             mean_amplitudes["run"].append(n)
+            mean_amplitudes["stimtype"].append("B")
             mean_amplitudes["type"].append("half_1") 
             mean_amplitudes["amplitude_difference"].append(np.mean(ma_h1))
 
@@ -148,12 +149,34 @@ def analyis_subsample(id, config, soa):
             mean_amplitudes["soa"].append(soa) 
             mean_amplitudes["num"].append(num)
             mean_amplitudes["run"].append(n)
+            mean_amplitudes["stimtype"].append("B")
             mean_amplitudes["type"].append("half_2") 
             mean_amplitudes["amplitude_difference"].append(np.mean(ma_h2))
 
+            t1 = split_in_half(epochs1[idx1[:num]])
 
-            print("DIAGNOSTICS")
-            print(ma_h1, ma_h2)
+            halves_avg = (t1[0].average(), t1[1].average())
+ 
+
+            ma_h1 = get_mean_amplitudes(halves_avg[0], peakwindow, picks = ["FZ"]) 
+            ma_h2 = get_mean_amplitudes(halves_avg[1], peakwindow, picks = ["FZ"]) 
+
+            mean_amplitudes["id"].append(id) 
+            mean_amplitudes["soa"].append(soa) 
+            mean_amplitudes["num"].append(num)
+            mean_amplitudes["run"].append(n)
+            mean_amplitudes["stimtype"].append("A")
+            mean_amplitudes["type"].append("half_1") 
+            mean_amplitudes["amplitude_difference"].append(np.mean(ma_h1))
+
+            mean_amplitudes["id"].append(id) 
+            mean_amplitudes["soa"].append(soa) 
+            mean_amplitudes["num"].append(num)
+            mean_amplitudes["run"].append(n)
+            mean_amplitudes["stimtype"].append("A")
+            mean_amplitudes["type"].append("half_2") 
+            mean_amplitudes["amplitude_difference"].append(np.mean(ma_h2))
+
 
     return pd.DataFrame(mean_amplitudes)
    

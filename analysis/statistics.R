@@ -28,6 +28,11 @@ mean_amplitudes_df2 <- readr::read_csv("../data/mean_amplitudes2.csv")
 mean_amplitudes_df2 <- mean_amplitudes_df2 %>%
   mutate(Participant = factor(Participant), SOA = factor(SOA), Electrode = factor(Electrode), Condition = factor(Condition), StimulusType = factor(StimulusType))
 
+mean_amplitudes_df_random_alt <- readr::read_csv("../data/mean_amplitudes_random_alt.csv")
+mean_amplitudes_df_random_alt <- mean_amplitudes_df_random_alt %>%
+  mutate(Participant = factor(Participant), SOA = factor(SOA), Electrode = factor(Electrode), Condition = factor(Condition), StimulusType = factor(StimulusType))
+
+
 n1_mean_amplitudes_df <- readr::read_csv("../data/n1_mean_amplitudes.csv")
 n1_mean_amplitudes_df <- n1_mean_amplitudes_df %>% mutate(Participant = factor(Participant), SOA = factor(SOA), Electrode = factor(Electrode), Condition = factor(Condition), StimulusType = factor(StimulusType))
 n1_mean_amplitudes_df
@@ -382,7 +387,6 @@ posthoc_tests = posthoc_data %>%
                 group_by(SOA, Condition, Electrode) %>%
                 bayesian_t_test(data =., MeanAmplitude ~ StimulusType, paired=T, detailed=T) %>% # verry hacky !
                 rename(bf = statistic)
-print(posthoc_tests)
   
 posthoc_tests = posthoc_data %>% 
                 group_by(SOA, Condition, Electrode) %>%
@@ -440,24 +444,41 @@ plot_posthoc = ggplot(aes(y = MeanAmplitude, x = Electrode), data = posthoc_data
 ggsave("/media/marc/Medien/xmas-oddballmatch/ba-thesis/input/figures/fig_posthoc.pdf", plot_posthoc, width = plot_with, height = 4, units = "in")
 ggsave("/media/marc/Medien/xmas-oddballmatch/ba-thesis/input/figures/fig_posthoc.png", plot_posthoc, width = plot_with, height = 4, units = "in",  type="cairo")
 
-# Write Vars
-yaml::write_yaml(variables, "/media/marc/Medien/xmas-oddballmatch/ba-thesis/input/vars.yaml")
 
 
+#### COMPARE ALTERNATIVE RANDOM ####
 
+posthoc_data = mean_amplitudes_df_random_alt %>% 
+       filter(Condition == "random") %>%
+       filter(Electrode == "fronto_pooled") %>% droplevels() %>% 
+       mutate(MeanAmplitude = MeanAmplitude*10e5) %>%
+       mutate(SOA = fct_relabel(SOA, ~ paste(., "ms"))) %>%
+       mutate(StimulusType = fct_relabel(StimulusType, ~ paste(., "tone"))) %>% 
+       mutate(Electrode = fct_recode(Electrode, "Fronto-Central" = "fronto_pooled")) 
 
+posthoc_tests = posthoc_data %>%
+                group_by(SOA, Condition, Electrode) %>%
+                bayesian_t_test(data =., MeanAmplitude ~ StimulusType, paired=T, detailed=T) %>% # verry hacky !
+                rename(bf = statistic)
+  
+posthoc_tests = posthoc_data %>% 
+                group_by(SOA, Condition, Electrode) %>%
+                t_test(data =., MeanAmplitude ~ StimulusType, paired=T, detailed=T) %>%
+                left_join(posthoc_tests, by = c("SOA", "Condition", "Electrode", "group1", "group2"))  %>%
+                adjust_pvalue(method = "fdr") %>%
+                add_significance("p.adj") %>%
+                add_xy_position(x = "Electrode") %>%
+                mutate(p_full = fm_pvalue_full(p.adj)) %>%
+                mutate(bf_full = fm_bf10_full(bf)) %>%
+                mutate(y.position = 7.5)
 
-
-
-
-
-
-
+variables$random_alternative_contrast_100_a_b = posthoc_tests %>% filter(SOA=="100 ms") %>% report_ttest()
+print(posthoc_tests)
 
 
 #### Reliability Analysis #####
 
-df <- read.csv("out2.csv") 
+df <- read.csv("out.csv") 
 
 sb = function(n, rel, o_n) { 
   rel = (rel) / (rel * (-o_n) + rel + o_n)
@@ -470,6 +491,8 @@ sb2 = function(pxx) {
 
 # split-half
 gdf3 <- df %>% mutate(epochs = factor(num)) %>% mutate(soa = factor(paste(soa, "ms"))) %>% 
+    mutate(maxrow = ifelse(soa=="150 ms", 1250, 2500)) %>%
+    filter(num < maxrow) %>%
     #spread(type, amplitude_difference) %>%
     pivot_wider(id_cols = c(id,soa,num,run,epochs), names_from = type, values_from = amplitude_difference) %>%
     group_by(epochs, run, soa) %>% 
@@ -478,37 +501,38 @@ gdf3 <- df %>% mutate(epochs = factor(num)) %>% mutate(soa = factor(paste(soa, "
     mutate(rel = sb2(pxx)) %>%
     group_by(epochs, soa) %>%
     dplyr::summarize(sd = sd(rel), rel = mean(rel), pxx = mean(pxx)) %>% 
-    mutate(epochs = as.numeric(as.character(epochs)))
+    mutate(epochs = as.numeric(as.character(epochs))) %>%
+    group_by(soa) %>%
+    filter(row_number() %% 2 == 0) %>%
+    ungroup()
 
 
-# gdf3 = gdf3 %>% ungroup() %>%
-#   mutate(real = "yes") %>%
-#   #add_row(soa = "100 ms", epochs = seq(100,3000,100), rel = sb(seq(100,3000,100), 0.78610510, 3000), real = "no") %>%
-#   add_row(soa = "150 ms", epochs = seq(1500,3000,100), rel = sb(seq(1500,3000,100), 0.7862026, 1500), cor = 0, real = "no")
+gdf3_extrapolate = tibble(soa = "150 ms", epochs = seq(1200,2500,200), rel = sb(seq(1200,2500,200), 0.846, 1200), cor = 0, real = "no")
     
 
-plot_rel = ggplot(data=gdf3, aes(x = epochs, y = pxx, fill=soa)) + 
+
+plot_rel = ggplot(data=gdf3, aes(x = epochs, y = rel, fill=soa)) + 
     batheme +
-    annotate('segment', x=100,xend=2500,y=.2,yend=.2, size = .02, alpha = .6) +
-    annotate('segment', x=100,xend=2500,y=.4,yend=.4, size = .02, alpha = .6) +
-    annotate('segment', x=100,xend=3000,y=.6,yend=.6, size = .02, alpha = .6) +
-    annotate('segment', x=100,xend=3000,y=.8,yend=.8, size = .02, alpha = .6) +
+    annotate('segment', x=100,xend=2000,y=.2,yend=.2, size = .02, alpha = .6) +
+    annotate('segment', x=100,xend=2000,y=.4,yend=.4, size = .02, alpha = .6) +
+    annotate('segment', x=100,xend=2500,y=.6,yend=.6, size = .02, alpha = .6) +
+    annotate('segment', x=100,xend=2500,y=.8,yend=.8, size = .02, alpha = .6) +
     #scale_fill_brewer(palette="Set1") +
     #scale_color_brewer(palette="Set1") +
     #facet_grid(rows = vars(soa)) +
     geom_line(data = gdf3, aes(group=soa, color=soa), size=.75) +
-    #geom_line(data = filter(gdf3, real == "no"), aes(group=soa, color=soa), size=1, linetype = "dotted", show.legend = FALSE) +
+    geom_line(data = gdf3_extrapolate, aes(group=soa, color=soa), size=1, linetype = "dotted", show.legend = FALSE) +
     #geom_errorbar(aes(color=soa, ymin=rel-sd, ymax=rel+sd)) +
     geom_point(aes(color=soa), data = gdf3, show.legend = FALSE) +
     ylim(-.1,1) +
-    geom_rangeframe(data=data.frame(epochs = c(100,3000), soa = "150 ms", pxx = c(0,1))) + 
+    geom_rangeframe(data=data.frame(epochs = c(100,2500), soa = "150 ms", rel = c(0,1))) + 
     #ggtitle("Split-Half Reliability") + 
     ylab(expression("Mean Split-Half Reliability")) +
     xlab(expression(N[Epochs])) + 
     labs(shape = "19")  +
-    scale_x_continuous(breaks=c(100, 500, 1000, 1500, 2000, 2500, 3000)) +
+    scale_x_continuous(breaks=c(100, 500, 1000, 1500, 2000, 2500)) +
     scale_y_continuous(breaks=c(0, .2, .4, .6, .8, 1)) +
-    theme(legend.position = c(.875, 0.325)) + 
+    theme(legend.position = c(.850, 0.325)) + 
     scale_colour_grey(start = .5, end = .2)
 
 ggsave("/media/marc/Medien/xmas-oddballmatch/ba-thesis/input/figures/fig_subsample_rel.pdf", plot_rel, width = plot_with, height = 1.8, units = "in",  device=cairo_pdf)
@@ -517,3 +541,5 @@ ggsave("/media/marc/Medien/xmas-oddballmatch/ba-thesis/input/figures/fig_subsamp
 
 
 
+# Write Vars
+yaml::write_yaml(variables, "/media/marc/Medien/xmas-oddballmatch/ba-thesis/input/vars.yaml")

@@ -1,4 +1,4 @@
-
+# %%
 bids_root_path_100 = "/media/marc/Medien/xmasoddballmatch-bids"
 pipeline_name_100 = "pipeline01"        
     
@@ -840,10 +840,27 @@ fig.savefig("/media/marc/Medien/xmas-oddballmatch/ba-thesis/input/figures/fig_se
 fig
 
 
+# %% ALL DEVIANT vs 4th STANDARDS
+fig = plt.figure(constrained_layout=True, figsize = (6, 3), dpi=100, facecolor="white")
+
+gs = gridspec.GridSpec(ncols=1, nrows=1, figure=fig, hspace=.1, wspace=.1, left=0, right=1, top=1, bottom=0)
+
+plot_panel(fig, gs[0, 0], evokeds_list_as_dict_100, "random/deviant", "random/4/standard",  peakwindow)
+
+#lines = plot_panel(fig, gs[1, 1], evokeds_list_as_dict_150, "random/5/deviant", "random/4/standard", peakwindow)
+
+fig.show()
+
+#legend = dax_bottom.legend(lines, ("5th B tone", "4th A tone", "Difference (A-B)"), loc='upper center', bbox_to_anchor=(0.5, -0.05), frameon=False, ncol=3)
+
+fig.savefig("/media/marc/Medien/xmas-oddballmatch/ba-thesis/input/figures/fig_random_alt.pdf", bbox_inches='tight')
+fig.savefig("/media/marc/Medien/xmas-oddballmatch/ba-thesis/input/figures/fig_random_alt.png", dpi=270)
+
+
+
+
+
+
+
+
 # %%
-
-
-
-
-
-

@@ -11,7 +11,6 @@ def render(text, variables):
         result_text = pystache.render(text, variables, escape = ec, string_encoding = "utf8")
         if result_text.count("{{"):
             raise ConfigurationException("Unresolved variable")
-        print(result_text)
         return result_text 
 
 def replace_png_width_pdf(text):
