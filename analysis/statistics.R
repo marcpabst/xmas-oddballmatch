@@ -78,7 +78,7 @@ desc_table_intern1 = mean_amplitudes_df %>% filter(Electrode == "fronto_pooled")
     group_by(SOA, Condition) %>%
     summarise(delta_mean = Mean[[2]] - Mean[[1]])  %>% ungroup()
 
-# TODO: Redo to use reporting function
+# TODO: Re-do to use reporting function
 delta_mean_template = "$\\Delta M = %.3f \\: \\mu V$"
 variables$desc_pred_a_b_100 = sprintf(delta_mean_template, desc_table_intern1 %>% filter(SOA==100 & Condition=="predictable") %>% pull(delta_mean))
 variables$desc_rand_a_b_100 = sprintf(delta_mean_template, desc_table_intern1 %>% filter(SOA==100 & Condition=="random") %>% pull(delta_mean))
@@ -384,11 +384,14 @@ posthoc_data = mean_amplitudes_df %>% filter(Electrode == "fronto_pooled" | Elec
        mutate(Electrode = fct_recode(Electrode, "Fronto-Central" = "fronto_pooled", "Mastoids" = "mastoids_pooled" )) 
 
 posthoc_tests = posthoc_data %>%
+                filter(Electrode == "Fronto-Central" & SOA == "100 ms") %>%
                 group_by(SOA, Condition, Electrode) %>%
                 bayesian_t_test(data =., MeanAmplitude ~ StimulusType, paired=T, detailed=T) %>% # verry hacky !
                 rename(bf = statistic)
   
+  
 posthoc_tests = posthoc_data %>% 
+                filter(Electrode == "Fronto-Central" & SOA == "100 ms") %>%
                 group_by(SOA, Condition, Electrode) %>%
                 t_test(data =., MeanAmplitude ~ StimulusType, paired=T, detailed=T) %>%
                 left_join(posthoc_tests, by = c("SOA", "Condition", "Electrode", "group1", "group2"))  %>%
@@ -492,25 +495,27 @@ sb2 = function(pxx) {
 # split-half
 gdf3 <- df %>% mutate(epochs = factor(num)) %>% mutate(soa = factor(paste(soa, "ms"))) %>% 
     mutate(maxrow = ifelse(soa=="150 ms", 1250, 2500)) %>%
-    filter(num < maxrow) %>%
+    mutate(minrow = ifelse(soa=="150 ms", 100, 100)) %>%
+    filter(num <= maxrow & num >= minrow) %>%
     #spread(type, amplitude_difference) %>%
-    pivot_wider(id_cols = c(id,soa,num,run,epochs), names_from = type, values_from = amplitude_difference) %>%
-    group_by(epochs, run, soa) %>% 
+    pivot_wider(id_cols = c(id,soa,num,run,epochs,stimtype), names_from = type, values_from = amplitude_difference) %>%
+    group_by(epochs, run, soa, stimtype) %>% 
     summarize(pxx = cor(half_1, half_2)) %>% 
     ungroup() %>%
     mutate(rel = sb2(pxx)) %>%
-    group_by(epochs, soa) %>%
+    group_by(epochs, soa, stimtype) %>%
     dplyr::summarize(sd = sd(rel), rel = mean(rel), pxx = mean(pxx)) %>% 
     mutate(epochs = as.numeric(as.character(epochs))) %>%
-    group_by(soa) %>%
-    filter(row_number() %% 2 == 0) %>%
+    group_by(soa, stimtype) %>%
+    #filter(row_number() %% 2 == 0) %>%
     ungroup()
 
 
-gdf3_extrapolate = tibble(soa = "150 ms", epochs = seq(1200,2500,200), rel = sb(seq(1200,2500,200), 0.846, 1200), cor = 0, real = "no")
-    
+gdf3_extrapolate = tibble(soa = "150 ms", epochs = seq(1100,2500,100), rel = sb(seq(1100,2500,100), 0.846, 1200), cor = 0, real = "no", stimtype = "B") %>%
+                  add_row(soa = "150 ms", epochs = seq(1100,2500,100), rel = sb(seq(1100,2500,100), 0.794, 1100), cor = 0, real = "no", stimtype = "A")
 
 
+ 
 plot_rel = ggplot(data=gdf3, aes(x = epochs, y = rel, fill=soa)) + 
     batheme +
     annotate('segment', x=100,xend=2000,y=.2,yend=.2, size = .02, alpha = .6) +
@@ -520,12 +525,12 @@ plot_rel = ggplot(data=gdf3, aes(x = epochs, y = rel, fill=soa)) +
     #scale_fill_brewer(palette="Set1") +
     #scale_color_brewer(palette="Set1") +
     #facet_grid(rows = vars(soa)) +
-    geom_line(data = gdf3, aes(group=soa, color=soa), size=.75) +
-    geom_line(data = gdf3_extrapolate, aes(group=soa, color=soa), size=1, linetype = "dotted", show.legend = FALSE) +
+    geom_line(data = gdf3, aes(group=interaction(soa,stimtype), color=soa, linetype=stimtype), size=.75) +
+    geom_line(data = gdf3_extrapolate, aes(group=interaction(soa,stimtype), color=soa, linetype=stimtype), size=.35, show.legend = FALSE) +
     #geom_errorbar(aes(color=soa, ymin=rel-sd, ymax=rel+sd)) +
     geom_point(aes(color=soa), data = gdf3, show.legend = FALSE) +
     ylim(-.1,1) +
-    geom_rangeframe(data=data.frame(epochs = c(100,2500), soa = "150 ms", rel = c(0,1))) + 
+    geom_rangeframe(data=data.frame(epochs = c(100,2500), soa = "150 ms", pxx = c(0,1), rel = c(0,1))) + 
     #ggtitle("Split-Half Reliability") + 
     ylab(expression("Mean Split-Half Reliability")) +
     xlab(expression(N[Epochs])) + 
@@ -535,8 +540,8 @@ plot_rel = ggplot(data=gdf3, aes(x = epochs, y = rel, fill=soa)) +
     theme(legend.position = c(.850, 0.325)) + 
     scale_colour_grey(start = .5, end = .2)
 
-ggsave("/media/marc/Medien/xmas-oddballmatch/ba-thesis/input/figures/fig_subsample_rel.pdf", plot_rel, width = plot_with, height = 1.8, units = "in",  device=cairo_pdf)
-ggsave("/media/marc/Medien/xmas-oddballmatch/ba-thesis/input/figures/fig_subsample_rel.png", plot_rel, width = plot_with, height = 1.8, units = "in")
+ggsave("/media/marc/Medien/xmas-oddballmatch/ba-thesis/input/figures/fig_subsample_rel.pdf", plot_rel, width = plot_with, height = 2, units = "in",  device=cairo_pdf)
+ggsave("/media/marc/Medien/xmas-oddballmatch/ba-thesis/input/figures/fig_subsample_rel.png", plot_rel, width = plot_with, height = 2, units = "in")
 
 
 
