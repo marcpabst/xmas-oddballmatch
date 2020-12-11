@@ -1,23 +1,21 @@
+\newpage
 # Discussion
 
-For the 150 presentation, extreme evidence for an MMN and very strong evidence for an accopying polarity reversal at the mastoids was found in the *predcitable* condition, that is, when tones were presented in a repeated five-tone pattern. When tones were presented in random order, strong evidence was foun[[anova_02_100_posthoc]] anova_02_100_posthoc.texd for an MMN but Bayes factors suggested inconclusive evidence for mastoids. In light of the resuts by @sussmanOrganizationSequentialSounds2005, we would
+#### Support of Original Hypothesis
+The aim of this thesis was to conceptually replicate the findings reported by @sussmanPredictabilityStimulusDeviance1998 and @sussmanOrganizationSequentialSounds2005 at two different tone presentation rates. Statistical analysis provided support 
+
+#### Simmiliarity of Results
+
+#### Inteprretation
+
+
+#### Generability
+
+#### Implications
+
+
 
 ```{=latex}
 \input{tables/hypotheses.tex}
 ```
 
-We found strong evidence for an MMN in the 150 ms delivery rate condition when comparing standards and deviants, regardless of the type of presentation (predictable vs. random). This finding is incompatible with the results and intepretation by [@sussmanOrganizationSequentialSounds2005] but suggests that *pattern regularities* do not inform prediction. Furthermore, no convincing evidence for an MMN was found when comparing the 4th standard to the 5th standard in predictable condition.
-
-For the 150 ms , significant MMN componets were found regardless of presentation 
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec id cursus velit, non egestas quam. Aliquam rutrum eget sem ut aliquet. Etiam euismod purus et gravida volutpat. Suspendisse consequat ipsum nibh, vitae convallis dolor efficitur a. Suspendisse vehicula erat posuere velit fermentum viverra. Proin sapien urna, iaculis ut ultricies ac, auctor eu est. Nunc ornare pharetra finibus. Morbi finibus, ipsum non accumsan cursus, metus nisl egestas leo, et aliquam nisi leo quis diam. Quisque id diam non risus elementum convallis. Duis non nisl at nisl imperdiet vestibulum. Suspendisse efficitur porttitor nulla a vehicula. Interdum et malesuada fames ac ante ipsum primis in faucibus. Praesent tempor urna in orci congue, non euismod eros volutpat. Integer ullamcorper auctor libero, in laoreet nulla hendrerit ultrices.
-
-Proin malesuada nisi et luctus volutpat. Nam ac posuere enim. Proin nec augue tincidunt felis ullamcorper luctus ac sit amet mi. Maecenas aliquam leo quis enim gravida maximus. Sed nec pellentesque magna. Vivamus et purus lacus. Donec maximus purus at fermentum efficitur. Phasellus auctor orci sem, eu sollicitudin eros pretium a.
-
-In maximus libero at purus lobortis efficitur. Aliquam nec sapien consequat, lobortis lorem id, luctus velit. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum dictum ipsum eu nunc maximus, quis ornare augue tincidunt. Nam leo purus, mollis quis nunc sed, sagittis tempus orci. In condimentum et neque ut laoreet. Curabitur accumsan ligula eu libero iaculis ullamcorper. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nullam iaculis tellus risus, vitae dapibus augue commodo a. Sed ante dolor, fermentum at lectus id, pulvinar viverra elit. Aenean tincidunt mollis imperdiet.
-
-Nulla id molestie neque, vitae vulputate velit. Fusce a velit imperdiet felis porttitor scelerisque. Nam tempus tincidunt elit, id finibus tortor tristique non. Ut imperdiet finibus mauris, in fringilla mauris blandit auctor. Etiam volutpat quam et feugiat elementum. Duis finibus fermentum condimentum. Donec sollicitudin molestie dolor. Cras convallis lorem orci, ut sagittis risus rutrum eget. Donec vel lobortis justo.
-
-Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin non leo vehicula, congue elit faucibus, tincidunt diam. Sed euismod vulputate mauris. Duis dapibus faucibus arcu, ut vehicula tellus blandit eu. Duis erat magna, cursus quis urna nec, placerat blandit lectus. Maecenas dolor quam, pharetra a urna eu, mollis iaculis dolor. Aliquam maximus ante eget felis faucibus porta. Cras semper felis non tellus rutrum tempus. Morbi quam metus, volutpat nec aliquam at, interdum a nibh. Sed hendrerit purus tempor ex placerat, ut fringilla nulla molestie. Nullam vitae sem non purus lobortis fermentum. Quisque ligula tellus, ullamcorper sit amet consectetur quis, fermentum ac mi. Nunc pretium mollis dictum.
-
-In the context of classcial test theory, this method relates the length of a test (or *experiment*) to the number of items (or *trials*). The first derivitve of the Spearman-Brown function is monotonically decreasing, leading to two different observation: i) Adding additional epochs (extending the test length by an absolute value in classcial test theory terms) has a large effect when the number of already present epochs is low, but has only little effect when already dealing with large numbers of epochs and ii) SOA and thus effect sized have a larger impact when epoch numbers are small compared to high epoch numbers. Graphed values also show that reliabilities for the 100 ms stimulation rate are considerably lower than for an SOA of 150 ms and that reliabilities are very low when using a relatively small number of epochs. There is no generally accepted rule as to the level above which the coefficient can be considered acceptable. Rather, reliabiliy should be evaluated based on the purpose of a study considering the cost-benefit trade-off [@nunnallyPsychometricTheory1994]. As laid out, inreased realibility comes at overproportionate cost, in that collecting more samples will not increase ralibility by the same factor. That said, many published articles deem reliability coefficients above .7 or .8 "acceptable" [@lanceSourcesFourCommonly2006].

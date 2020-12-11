@@ -4,7 +4,7 @@
 
 
 %
-\documentclass[stu,a4paper,12pt, nofontenc, babel, american]{apa7}
+\documentclass[twoside, man, a4paper,12pt, nofontenc]{apa7}
 
 % deps for huxtable
 \usepackage{array}
@@ -19,15 +19,16 @@
 \usepackage{wrapfig}
 \usepackage{adjustbox}
 \usepackage{hyperref}
+\usepackage{fontenc}
+\usepackage{polyglossia}
 
 \usepackage{tabulary}
 \usepackage{booktabs}
-\usepackage{csquotes}
+\usepackage[style=english]{csquotes}
 \usepackage{hyperref}
 \usepackage{xcolor}
 \usepackage{sectsty}
 \usepackage{tikz}
-\usepackage{csquotes}
 \usepackage{lineno}
 \usepackage[section]{placeins}
 \usepackage{caption}
@@ -35,41 +36,15 @@
 %\usepackage[document]{ragged2e}
 %\RaggedRightRightskip 0pt plus 4em
 
+\usepackage{titlesec}
+
+
 \setcounter{totalnumber}{1}
 
 \floatsetup[figure]{capposition=top}
 \floatsetup[table]{capposition=top}
 
-\DeclareCaptionFormat{myformat}{#1#2\\#3}
-\captionsetup[figure]{skip=5pt, font=small, labelsep=period, position=top, format=myformat}
-
 %\linenumbers
-% Polar Night
-\definecolor{NordDarkBlack}{HTML}{2E3440}     % nord0
-\definecolor{NordBlack}{HTML}{3B4252}         % nord1
-\definecolor{NordMediumBlack}{HTML}{434C5e}   % nord2
-\definecolor{NordBrightBlack}{HTML}{4C566A}   % nord3
-% Snow Storm
-\definecolor{NordWhite}{HTML}{D8DEE9}         % nord4
-\definecolor{NordBrighterWhite}{HTML}{E5E9F0}         % nord5
-\definecolor{NordBrightestWhite}{HTML}{ECEFF4}   % nord6
-% Frost
-\definecolor{NordCyan}{HTML}{8FBCBB}          % nord7
-\definecolor{NordBrightCyan}{HTML}{88C0D0}    % nord8
-\definecolor{NordBlue}{HTML}{81A1C1}          % nord9
-\definecolor{NordBrightBlue}{HTML}{5E81AC}    % nord10
-% Aurora
-\definecolor{NordRed}{HTML}{BF616A}           % nord11
-\definecolor{NordOrange}{HTML}{D08770}        % nord12
-\definecolor{NordYellow}{HTML}{EBCB8B}        % nord13
-\definecolor{NordGreen}{HTML}{A3BE8C}         % nord14
-\definecolor{NordMagenta}{HTML}{B48EAD}       % nord15
-
-
-
-\sectionfont{\color{NordBlack}}  % sets colour of sections
-\subsectionfont{\color{NordBlack}}  % sets colour of sections
-
 
 \usepackage{amsmath}
 \usepackage{unicode-math}
@@ -86,10 +61,22 @@
 \setmathfont[range=\mathup/{num},Numbers=Lining]{Cochineal-Roman}
 \setmathfont[range=it/{latin,Latin},Ligatures={NoCommon, NoDiscretionary, NoHistoric, NoRequired, NoContextual}]{Cochineal-Italic}
 
+\newfontfamily\sansfont[Numbers=Lining]{Gill Sans}
 
 
-\shorttitle{Revisiting the Pattern Mismatch Negativity}
+\DeclareCaptionFormat{myformat}{#1#2\\\sansfont#3}
+\DeclareCaptionFont{quack}{\sansfont}
+\captionsetup[figure]{skip=5pt, font={up,small,quack}, labelsep=period, position=top, format=myformat, justification=justified, labelfont=sc}
 
+
+\titleformat{\chapter}[display]
+  {\huge\sansfont}{\chaptertitlename\ \thechapter}{20pt}{\Huge}
+\titleformat*{\section}{\LARGE\sansfont}
+\titleformat*{\subsection}{\Large\sansfont}
+
+\shorttitle{Short Title Here}
+
+\usepackage{amsfonts}
 
 \newenvironment{cslreferences}%
   {}%
@@ -112,6 +99,12 @@
 }{% if KOMA class
   \KOMAoptions{parskip=half}}
 \makeatother
+\usepackage{newunicodechar}
+\newunicodechar{✓}{\(\checkmark\)}
+\newunicodechar{×}{\(×\)}
+
+
+
 \usepackage{xcolor}
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
@@ -232,179 +225,345 @@ represented at the level of auditory cortices.}
 \hypertarget{introduction}{%
 \section{Introduction}\label{introduction}}
 
--- Introducing oddball paradigm -- The auditory oddball paradigm is a
-well-established type of experimental design extensivly used in event
-related potential (ERP) studies. In its basic form, subjects are
-presented with a series of similar tones or sounds (so-called
-\emph{standards}), interrupted by rare tones or sounds that differ in at
-least one feature (\emph{deviants}) from the more frequent ones. Since
-it is assumed that the brain constantly makes predictions about future
-sensory impressions and deviating auditory events must violate these
-predictions, these rare sounds play an important role in understanding
-prediction and expectation in the human brain. Different measures have
-been used to quantify differenced in processing between \emph{standard}
-and \emph{deviant} events,\\
--- introducing MMN -- One of the best-studied approaches to measure
-these differences in processing is known as the missmatch negativity
-(MMN) component, obtained by subtracting the reponse to deviant events
-from the resposne to standard events. Negativity is strongest in the
-fronto-temporal area of the scalp with a peak latency ranging from 100
-to 250 ms after stimulus onset. The eliction of MMN is not restricted to
-the reptition of physically identical stimuli but can also be observed
-when deviant events are of complex nature, e.g.~when abstract auditory
-regularities are violated (Paavilainen, 2013). The regularities can come
-in the form of relationships between two Saarinen et al. (1992) or
-multiple tones (Alain et al., 1994; Nordby et al., 1988; Schröger et
-al., 1996) a
+Unraveling the mysteries of human perception might be one of the most
+fascinating and difficult challenges in cognitive sciences. We usually
+have little regard for this, but at every single moment, we achieve
+something outstanding: By forming a coherent representation from the
+tangled mess of external stimuli that reach our sensory organs, we make
+sense of the outside world. In doing so and seemingly effortlessly, we
+overcome complicated mathematical and philosophical problems. Recent
+advances in emerging fields like computer vision and machine hearing
+have provided a sense of how daunting these tasks can be---requiring
+complex models that consume vast amounts of computational resources and
+energy. What enables the brain to fulfill these functions with such ease
+while consuming no more than the power equivalent of a lightbulb?
 
--- introducing sussmans study -- E. Sussman et al. (1998) presented
-participants with a sequency of frequent pure tones and rare pitch
-deviants. Tones were arranged in a predictable five-tone pattern
-consisting of four standard tones and one deviant
-(i.e.~A-A-A-A-B-A-A-A-A-B, '\enquote*{-}' indicating silence between the
-tones). ERPs to A and B tones were compared for rapid (SOA of 100 ms)
-and slow (SOA of 1200 ms) stimulation rates. For the 100 ms SOA, they
-also included a control condition in which tone order was pseudo-random
-(e.g.~A-A-A-B-A-B-A-A-A) without altering deviant probability
-(\(p_B = 20\%\)). MMNs were only elicted if tone presentation was slow
-and predcitable or fast and random. In a subsquent study, E. S. Sussman
-\& Gumenyuk (2005) used the same pattern at different SOAs (200 ms, 400
-ms, and 800 ms). Simmilarly to their prevous study, grouped presentation
-at 400 ms and 800 ms SOA elicted a MMN, while at a stimulution rate of
-200 ms such evidence was absent. Sussman et al.~attributed this
-observation to sensory memory limitations. Only when auditory memory
-accommodates enough repetitions of the five-tone pattern, tones could be
-integrated into a coherent representation allowing for accurate
-predictions of deviant tones (explaing the absence of MMNs. They further
-argued that while this must be the case for fast presentation rates with
-SOAs up to 200 ms, for longer SOAs pattern durations would be too long
-ans thus eceed sensory memory capacity. The main weakness in their study
-is that they ma
+Over the centuries, many theories have been broad forward in an attempt
+to answer these questions. While early philosophers like Aristotle
+believed in the idea of direct or naïve realism (the idea that the
+outside world is perceived directly), early modern scholars like John
+Locke promoted the concept of indirect realism, which is highly
+compatible with the assumption of representationalism in cognitive
+science (perceptual experiences result from an internal representation
+rather than directly from external objects). Among the first who
+developed a consistent theory defining the rules followed by indirect
+perception were the Gestalt psychologists of the early 20th century.
+Wertheimer, Koffka, and Köhler hypothesized that Gestalt principles,
+self-organizing rules on how individual elements should be grouped or
+separated, guide perception. They based their principle on the
+observation that humans perceive a global whole instead of just
+collections of individual parts.
 
--- scharf muller -- In a recent in-class replication study,
-(\textbf{scharfPredictableChangesFastpacedinprep?}). found that
-simplified experimental setup
+Much later, auditory scientists faced the same challenges described in
+the first paragraph, but now in a very particular context: They were
+puzzled by the brain's ability to convert small air pressure
+fluctuations into actual auditory percepts. Somehow, the brain forms
+meaningful perceptual experiences from what can only be described as a
+busy mess of sound waves that originate from a plethora of different
+sources differing in pitch, loudness, and spatial position. Known as the
+\emph{cocktail party effect}
+(\textbf{cherryExperimentsRecognitionSpeech1953?}), this problem was
+compared to inferring the positions, shapes, and movements of motorboats
+on a lake---just by observing how two nearby objects move up and down
+the waves. Attempts to find answers to this perplexing question lead to
+the development of auditory scene analysis (ASA). Not unlike the
+concepts proposed by the Gestalt theorists six decades earlier,
+(\textbf{bregman1990auditory?}) suggested that the brain uses so-called
+\emph{streaming} and \emph{segregation} to form auditory objects from
+rich spectro-temporal information. At its core, ASA relies on two
+different categories of grouping, namely \emph{sequential} and
+\emph{simultaneous} integration: Simultaneous integration (or vertical
+integration) refers to the grouping of concurrent properties into one or
+more separable auditory objects, a process informed by temporal cues
+like common onset and offset, spectral and spatial characteristics.
+Sequential integration (or horizontal integration), on the other hand,
+describes how temporally distinct sounds are merged into one or multiple
+coherently perceived streams (contrary to auditory objects in
+simultaneous grouping, only one such stream can be actively perceived at
+any time). While vertical and horizontal grouping can come to different
+and therefore competing results, sequential grouping often takes
+precedence over cues for simulations integration
+(\textbf{bendixenPredictabilityEffectsAuditory2014?})
+
+Often, the key to understanding such complex phenomena seems to lie in
+learning about the most basic processing steps. In auditory research,
+these steps usually come in the shape of very simple stimuli, often
+consisting of nothing more than pure tones. Such stimuli were also the
+first to be used in the auditory oddball paradigm, a now
+well-established and robust paradigm extensively used in event-related
+potential (ERP) studies (\textbf{squiresTwoVarietiesLonglatency1975?}).
+In its basic form, participants are presented with a series of similar
+tones or sounds (so-called \emph{standard} events), interrupted by rare
+tones or sounds that differ in at least one feature (\emph{deviant}
+events) from the more frequent ones. Strikingly, deviant events elicit
+more extensive neural activity over sensory areas. This finding is known
+as the mismatch negativity (MMN) component because when measured using
+electroencephalography (EEG), a robust negative deflection can be
+observed in the difference wave obtained by subtracting the response to
+standard events from the response to deviant events. Negativity is
+strongest in the frontotemporal area of the scalp, with a peak latency
+ranging from 100 to 250 ms after stimulus onset. The elicitation of an
+MMN is not restricted to the repetition of physically identical stimuli
+but can also be observed when deviant events are complex, e.g., when
+abstract auditory regularities are violated (Paavilainen, 2013). The
+regularities can come in the form of relationships between two (Saarinen
+et al., 1992) or multiple tones (Alain et al., 1994; Nordby et al.,
+1988; Schröger et al., 1996).
+
+Interestingly, implications from MMN components are highly compatible
+with another prevalent theory of perception, namely the idea that
+perception is not (only) a stimulus-driven bottom-up process, but is
+informed by internal predicitons of some kind. In spite of their recent
+popularity, ideas of this nature have been around a long time and
+famously trace back to the physiologist Hermann von Helmholtz. Gregory's
+\enquote{perceptions as hypotheses}-sentiment is simmilarly well-known.
+Most recently, this notion has been introduced in a theory knows as
+(hierarchical) predictive coding. Predictive coding specifically
+suggests that at every processing state, predictions from so-called
+\emph{probabilistic generative models} and sensory input are compared
+continuously, and only their difference, termed \emph{prediction error},
+is propagated. MMN responses have been proposed as an index of
+prediction error (\textbf{wacongneEvidenceHierarchyPredictions2011?}).
+Although other interpretations exist (e.g.,
+\textbf{mayMismatchNegativityMMN2010?}), the MMN is frequently
+interpreted as a marker of expectation violations---a notion
+particularly emphasising the role that predicitons plays in perception
+(e.g., István Winkler, 2007).
+
+An interesting situation arises when concurrent predictive clues exist.
+Following this idea, E. Sussman et al. (1998) presented participants
+with a sequence of frequent pure tones and rare pitch deviants while
+reading a book of their choice. Tones were arranged in a predictable
+five-tone pattern consisting of four standard tones and one deviant
+(i.e., A-A-A-A-B-A-A-A-A-B, '\enquote*{-}' indicating silence between
+the tones). ERPs to A and B tones were compared for rapid (SOA of 100
+ms) and slow (SOA of 1300 ms) stimulation rates. The 100 ms SOA
+condition also included a control condition in which tone order was
+pseudo-randomized (e.g., A-A-A-B-A-B-A-A-A) without altering deviant
+probability (\(p_B = .20\)). When tones are presented randomly, only
+their relative frequency of occurrence carries value for predicting the
+pitch of the next tone. This, we refer to as \emph{proportional
+regularity}. However, in an ordered presentation, a sequence of four
+standard tones is always followed by one deviant tone. Thus,
+understanding this relationship should allow for \emph{perfect
+prediction} in which all deviant tones are expected with near-absolute
+certainty. We call this regularity a \emph{pattern regularity}. Provided
+the underlying mechanism can incorporate such information, the
+processing of the pitch deviants should correspond with that of standard
+tones, and therefore no MMN would be elicited. Interestingly, in the
+case of Sussman et al., MMNs were only elicited if tone presentation was
+slow and predictable or fast and random, but not when predictable tones
+were presented rapidly. In a subsequent study, E. S. Sussman \& Gumenyuk
+(2005) used the same pattern at different SOAs (200 ms, 400 ms, and 800
+ms). Similar to their previous study, grouped presentation at 400 ms and
+800 ms SOA elicited an MMN response, while at a stimulation rate of 200
+ms, evidence for such a deflection was absent. Sussman et al.~attributed
+this observation to sensory memory limitations. That is, only when
+auditory memory can accommodate enough repetitions of the five-tone
+pattern; the brain can integrate tones into a coherent representation
+allowing for accurate predictions of deviant tones. This, in turn, would
+explain the absence of MMNs in the fast presentation condition. Based on
+this, they argued that while true for fast presentation rates with SOAs
+up to 200 ms, for longer SOAs, pattern durations would be too long, and
+thus representations would exceed sensory memory capacity.
+
+In a recent in-class replication study,
+(\textbf{scharfPredictableChangesFastpacedinprep?}) presented
+participants with the same stimuli as Sussmann in a very similar
+experimental setting. Their study only differed in that participants
+were given a simple task in which they had to count visual targets
+instead of reading a book of their choice. Surprisingly, while
+descriptive results were compatible with those of Sussmann et al.,
+pairwise comparisons revealed no significant effect when comparing
+deviant and standard tones for both the \emph{random} and the
+\emph{predictable} condition. Further Bayesian analysis remained largely
+inconclusive, providing only \emph{anecdotal} evidence in favor of such
+an effect for \emph{random} presentation and \emph{moderate} evidence
+for its absence in the \emph{predictable} condition. In the face of the
+replication crisis, many scientists have become painfully aware of the
+importance of replicability (\textbf{ioannidisWhyMostPublished2005?}).
+Exact or quasi-exact replication studies that try to match the original
+study's experimental conditions as closely as possible are regarded as
+the gold standard of science (\textbf{popperLogikForschungZur1935?};
+\textbf{jasnyAgainAgainAgain2011?}). However, replications that extend,
+change, or optimize materials or methods of the original work also offer
+valuable insight. This kind of replication is known as conceptual
+(\textbf{schmidtShallWeReally2009?}) and refers to using of different
+methods to repeat the test of a hypothesis or experimental result.
+
+This thesis seeks to replicate the findings by Sussman et al.~It largely
+follows the procure laid out by E. S. Sussman \& Gumenyuk (2005).
+However, it deviates from the original design in some critical
+aspects.First, the aforementioned five-tone patterns are presented in
+both the~\emph{predictable}~condition and in the~\emph{random}~context.
+That is, pseudo-random order will be deliberately broken by occasionally
+presenting B-A-A-A-A-B-patterns. In particular, this will ensure that
+the local history of B-tones in the \emph{random} condition is
+comparable to that in the \emph{predictable} condition. Secondly, B
+tones are compared exclusively with their preceding A tones. Lastly, a
+small number of A-A-A-A-B will be replaced by A-A-A-A-A sequences in
+both conditions, allowing the comparison of physically identical tones
+in different contexts. The advantages of this design are discussed in
+more detail in the following paragraphs. A pre-registration covering
+data collection, processing, and analysis is available at
+https://osf.io/cg2zd/. Deviations from this pre-specified plan and
+further exploratory analyses are explicitly reported.
+
+E. S. Sussman \& Gumenyuk (2005) interpretation of the original results
+suggests that at fast stimulation rates (200 ms and faster),
+pattern-based regularities take precedence over proportion-based
+regularities. If this is indeed true, B-tones in the \emph{predictable}
+condition should not be considered a \emph{mismatch} and thus should not
+elict an MMN response. In contrast, since there is no way to reliably
+predict B-tones in the~\emph{random}~condition, these tones would still
+be considered~\emph{deviant}~events and are therefore expected to
+generate an MMN. On the other hand, when an A tone replaces a
+predictable B tone, one would expect an MMN, despite tones are
+physically identical. Specifically, hypotheses are formulated in regards
+to the ERPs elicited by the 5th tone in the five-tone sequence
+(A-A-A-A-\textbf{B} or A-A-A-A-\textbf{A}; boldface marks tone of
+interest) compared to the 4th tone in that sequence (A-A-A-\textbf{A}-X,
+\enquote{X} marking either an A or an B tone). Hypotheses can be
+summarized as follows:
+
+\hypertarget{pattern-regularities}{%
+\paragraph{Pattern regularities}\label{pattern-regularities}}
+
+If Sussman's intepreation holds, one expects i) negativity in the N1/MMN
+time domain (about 100-200 ms after tone onset) for deviations in the
+BAAAA\emph{B} sequence in the \emph{random} condition, since B tones
+violate the \emph{proportional regularity}, ii) one expects no evidence
+for such an effect (or evidence favoring \(\mathcal{H_0}\) i.e., that
+there is no effect) in the \emph{predictable} context since more
+informative higher-order predictions based on \emph{pattern regularity}
+are not violated, and iii) the difference waves should differ
+significantly. Also, the comparison between the 5th A tone and the
+proceeding A tone (A-A-A-\textbf{A}-X vs.~A-A-A-A-\textbf{A}) should be
+consiered a \emph{mismatch} and is therefore expected to elicit a
+significant MMN response.
+
+\hypertarget{proportional-regularities}{%
+\paragraph{Proportional regularities}\label{proportional-regularities}}
+
+If, however, no \emph{pattern regularity} is extracted,~B-tones should
+continuously result in an MMN regardless of presentation context since
+the predictive value of the~\emph{proportional regularity}~does not
+differ between conditions. When prsenting A tones at the 5th position,
+no MMN should occur. Also, difference waves should not differ.
+
+\hypertarget{pattern-regularities-and-proportional-regularities}{%
+\paragraph{Pattern regularities and proportional
+regularities}\label{pattern-regularities-and-proportional-regularities}}
+
+As a third possibility, the brain might use \emph{proportional
+regularities} and \emph{pattern regularities} concurrently, resulting in
+negativity following B-tones in either condition. Fifth-posiiton A tones
+should consitute an expectation violation and should therefore results
+in a negative deflection.
 
 \newpage
 
 \hypertarget{methods-and-materials}{%
 \section{Methods and Materials}\label{methods-and-materials}}
 
-\hypertarget{data-acquisition}{%
-\subsection{Data Acquisition}\label{data-acquisition}}
-
 \hypertarget{participants}{%
 \subsubsection{Participants}\label{participants}}
 
-\hypertarget{ms-presentation-rate}{%
-\paragraph{100 ms Presentation Rate}\label{ms-presentation-rate}}
+All participants were recruited at the Institute of Psychology at the
+University of Leipzig and reported good general health, normal hearing,
+and normal or corrected-to-normal vision. Written informed consent was
+obtained before the experiment. Participants were blinded to the purpose
+of the experiment and received compensation in course credit or money.
 
-Twenty-three psychology undergraduate students (2 males, average age
-22.6 yrs., \(SD=5.57\), range 18 - 42 yrs.) were recruited at the
-Institute of Psychology at the University of Leipzig. All participants
-reported good general health, normal hearing and had normal or
-corrected-to-normal vision. Written informed consent was obtained before
-the experiment. One-third (34.8\%) of participants spent time enaging in
-musical activities at time of survey, while 8.7\% had no prior
-experience in music training. Handedness was asseced using a modified
-version of the Edinburgh Handedness Inventory (Oldfield, 1971, see
-appendix). A majoritiy (00\%) of parcicipants favored the right hand.
-Particpants were blinded in respect to the purpose of the experiment and
-received course credit in compensation.
+For the 100 ms presentation rate, data were collected from twenty
+participants (2 males, average age 22.3 yrs., \(SD=6.46\), range 18 - 41
+yrs.). The sample for the 150 ms presentation rate consisted of
+twenty-three psychology undergraduate students (2 males, average age
+22.6 yrs., \(SD=5.57\), range 18 - 42). Here, participants were also
+asked to provide information regarding their prior musical training: at
+the time of the survey, approximately one-third (34.8\%) of participants
+engaged in musical activities, while 8.7\% had no prior musical
+experience.
 
-\hypertarget{ms-presentation-rate-1}{%
-\paragraph{150 ms Presentation Rate}\label{ms-presentation-rate-1}}
-
-Twenty healthy participants (0 males, average age 00.0 yrs.,
-\(SD=0.00\), range 00 - 00 yrs.) were recruited. Particpants gave
-informed consent and reported normal hearing and corrected or
-corrected-to-normal vision. All participants were naive regarding the
-purpose of the experiment and were compensated in cource credit or
-money. 00 participants (00\%) had received musical training in the last
-5 years before the experiment while 00 (00\%) reported no musical
-experiance. In addition, participants reported if streaming occured
-during the presentation of the tones.
-
-\hypertarget{stimuli-and-stimulis-delivery}{%
-\subsubsection{Stimuli and Stimulis
-Delivery}\label{stimuli-and-stimulis-delivery}}
+\hypertarget{procedure-and-stimuli}{%
+\subsubsection{Procedure and Stimuli}\label{procedure-and-stimuli}}
 
 \begin{figure}
 \centering
 \includegraphics{figures/fig_tones.pdf}
-\caption{Tones of two different frequencies (A=440 Hz, B=449 Hz) were
-presented in two blocked conditions: In the \enquote{predictable}
-condition (top half), tones followed a simple pattern in which a single
-B-tone followed four A-tones. Some designated B-tones were replaced by
-A-tones (\enquote{pattern deviants}). In the \enquote{random} condition
-(lower half), tones were presented in a pseudo-random fashion ()}
+\caption{Caption}
 \end{figure}
 
-Participants where seated in a comfortable chair in a sound-insulated
-cabin. The experimental setup was practically the same as the one used
-ny Sussman, but instead of reading a book, subjects were asked to focus
-their attention on a previously selected movie. Movies were presented
-with subtitles but without sound. Commercially available software
-(MATLAB R2014a; The MathWorks Inc, Natick, MA) in conjunction with the
+Participants sat in a comfortable chair in a sound-insulated chamber.
+The experimental setup was practically identical to that of Sussman et
+al.; however, instead of reading a book, subjects were asked to direct
+their attention to a self-selected movie. Movies were presented with
+subtitles but without sound. Commercially available software (MATLAB
+R2014a; The MathWorks Inc, Natick, MA) in conjunction with the
 Psychophysics Toolbox extension (version 3.0.12,
 \textbf{brainardPsychophysicsToolbox1997?};
 \textbf{kleinerWhatNewPsychtoolbox32007?}) was used to control stimulus
 presentation. Stimuli consisted of pure sinusoidal tones with a duration
 of 50 ms (including a 10 ms cosine on/off ramp), presented isochronously
-at a stimulation onsets asynchrony (SOA) of 100 ms for study 1 and 150
-ms for study 2. Overall, a total of 40 blocks containing a mixture of
-frequent 440 Hz tones (\enquote{A} tones) and infrequent 449 Hz tones
-(\enquote{B} tones) were delivered binaurally using Sennheiser HD-25-1
-II headphones. In one half of the blocks, tones were presented in
-pseudo-random order (e.g.~A-A-A-B-A-B-A\}, \enquote{random} condition),
-while in the remaining block tone presentation followed a simple pattern
-in which a five-tone-sequence of four frequent tones and one infrequent
-tone (i.e.~A-A-A-A-B) was repeated cyclically (\enquote{predictable}
-condition). Block order was counterbalanced accross participants. The
-ratio of frequent and infrequent tones was 10\% for both conditions.
-Within the predictable condition, 10\% of designated (infrequent) B
-tones were replaced by A tones, resulting in sporadic five-tone
-sequences consisting solely of A tones (i.e.~A-A-A-A-A), thus violating
-the predictability rule. To assure comparability of local histories
-between tones in both conditions, randomly arranged tones were
-interspersed with sequences mimicking aforementioned patterns from the
-predictable condition (B-A-A-A-A-B and B-A-A-A-A-A) in the random
-condition. A grand total of 2000 tones in study 1 and 4000 tones in
-study 2 were delivered to each participant.
+at a stimulation onsets asynchrony (SOA) of 100 ms or 150 ms,
+respectively. Tone presentation was blocked and participants had the
+option to take a break after each block. Blocks contained 820 frequent
+440 Hz tones (\enquote{A} tones) and 180 infrequent 449 Hz tones
+(\enquote{B} tones), delivered binaurally using Sennheiser HD-25-1 II
+headphones at 70 dB. For the 100 ms condition, participants were
+presented with 40 blocks, while 20 blocks were presented in the 150 ms
+condition. In one-half of the blocks, tones occurred in pseudo-random
+order (e.g., A-A-A-B-A-B-A\}, \emph{random} condition) while in the
+other half, tone presentation followed a simple pattern in which a
+five-tone-sequence of four frequent tones and one infrequent tone (i.e.,
+A-A-A-A-B) was repeated cyclically (\emph{predictable} condition). Block
+order was counterbalanced across participants. Additionally, A tones
+replaced 10\% of designated (infrequent) B tones, resulting in sporadic
+five-tone sequences consisting solely of A tones (i.e., A-A-A-A-A), thus
+violating the \emph{pattern regularity}. To assure comparability of
+local histories between tones of interest in both conditions,
+pseudo-randomly arranged tones were interspersed with sequences matching
+those from the predictable condition (i.e., B-A-A-A-A-B and
+B-A-A-A-A-A). Care was taken that sequences in the \emph{random
+condition} were always sepearated by at least five pseudo-random tones
+and that A-A-A-A-A-patterns were always seperated by at least two
+A-A-A-A-B-patterns. A total of 2000 tones at 150 ms SOA or 4000 tones at
+100 ms SOA were delivered to each participant resulting in a total
+duration (exluding potential breaks) of 1 hour and 20 minutes (100 ms
+SOA) and 50 minutes (150 ms SOA), respectively.
 
-\hypertarget{data-acquisition-1}{%
-\subsubsection{Data Acquisition}\label{data-acquisition-1}}
+\hypertarget{data-acquisition}{%
+\subsubsection{Data Acquisition}\label{data-acquisition}}
 
-Electrophysiological data was recorded from active
+Electrophysiological data were recorded from active
 silver-silver-chloride (\emph{Ag}-\emph{AgCl}) electrodes using an
-ActiveTwo amplifier system (BioSemi B.V., Amsterdam, The Netherlands).
-Acquisition was monitored online to ensure optimal data quality. A total
-of 39 channels were obtained using a 32-electrode-cap and 7 external
-electrodes. Scalp electrode locations conformed to the international
-10--20 system. Horizontal and vertical eye movement was obtained using
-two bipolar configurations with electrodes placed around the lateral
-canthi of the eyes and above and below the right eye. Additionally,
-electrodes were placed on the tip of the nose and at the left and right
-mastoid sites. Data was sampled at 512 Hz and on-line filtered at 1000
-Hz.
+ActiveTwo amplifier system (BioSemi B.V., Amsterdam, The Netherlands). A
+total of 39 channels were obtained using a 32-electrode-cap and seven
+external electrodes. Scalp electrode locations conformed to the
+international 10--20 system. Horizontal and vertical eye movement was
+obtained using two bipolar configurations with electrodes placed around
+the lateral canthi of the eyes as well as above and below the right eye.
+Additionally, three electrodes were placed on the tip of the nose and at
+the left and right mastoid sites. Data were sampled at 512 Hz and
+on-line low-pass filtered at 1000 Hz.
 
 \hypertarget{analysis-pipeline}{%
-\subsection{Analysis Pipeline}\label{analysis-pipeline}}
+\subsubsection{Analysis Pipeline}\label{analysis-pipeline}}
 
 Data prepossessing was implemented using a custom pipeline based on the
 \emph{MNE Python} software package (Gramfort, 2013) using \emph{Python
-3.7}. All computations were carried out on a cluster operated by the
+3.7}. Ccomputations were partly carried out on a cluster operated by the
 University Computation Center of the University of Leipzig. Code used in
-thesis is publicly available at
+this thesis is publicly available at
 \url{https://github.com/marcpabst/xmas-oddballmatch}.
 
-First, EEG data was subjected to the ZapLine procedure (de Cheveigné,
-2020) to remove line noise contamination. A fivefold detection procedure
-as described by Bigdely-Shamlo et al. (2015) was then used to detect and
-subsequently interpolate bad channels. This specifically included the
-detection of channels thain contain prolonged segments with verry small
-values (i.e.~flat channels), the exclusion of channels based on robust
-standard deviation (deviation criterion), unusualy pronounced
+First, EEG data were subjected to the ZapLine procedure (de Cheveigné,
+2020) to remove line noise contamination. A fivefold detection
+procedure, as described by Bigdely-Shamlo et al. (2015) was then used to
+detect and subsequently interpolate bad channels. Namely, this included
+detecting channels that contained prolonged segments with very small
+values (i.e., flat channels), the exclusion of channels based on robust
+standard deviation (deviation criterion), unusually pronounced
 high-frequency noise (noisiness criterion), and the removal of channels
 that were poorly predicted by nearby channels (correlation criterion and
 predictability criterion). Channels considered bad by one or more of
@@ -412,77 +571,122 @@ these methods were removed and interpolated using spherical splines
 (Perrin et al., 1989). Electrode locations for interpolations were
 informed by the BESA Spherical Head Model.
 
-For independant component anaylsis (ICA), a 1-Hz-high-pass filter (134th
-order hamming-windowed FIR) was applied prior to ICA (Winkler et al.,
-2015). To further reduce artifacts, Artifact Subspace Reconstruction
-(ASR, Mullen et al., 2015) was used to identify and remove parts of the
-data with unusual characteristics (bursts). ICA was then carried out
-using the \emph{Picard} algorithm (Ablin et al., 2018, 2017) on
-PCA-whitened data. To avoid rank-deficiency when extracting components
-from data with one or more interpolated channels, PCA was also used for
-dimensionality reduction. The EEGLAB (version 2020.0, Delorme \& Makeig,
+For independent component analysis (ICA), a 1-Hz-high-pass filter (134th
+order hamming-windowed FIR) was applied (Irene Winkler et al., 2015).
+Artifact Subspace Reconstruction (ASR, Mullen et al., 2015) was used to
+identify and remove parts of the data with unusual noise characteristics
+(bursts). ICA was then carried out using the \emph{Picard} algorithm
+(Ablin et al., 2018, 2017) on principal-component-analysis--whitened
+(PCA) data. PCA was also used for dimensionality reduction to avoid
+rank-deficiency when extracting components from data with one or more
+interpolated channels. The EEGLAB (version 2020.0, Delorme \& Makeig,
 2004) software package and the IClabel plugin (version 1.2.6,
-Pion-Tonachini et al., 2019) were used to automatically classify
-estimated components. Only components clearly classified
-(i.e.~confidence above 50\%) as resulting from either eye movement,
-muscular, or heartbeat activity were zeroed-out before applying the
-mixing matrix to unfiltered data.
+Pion-Tonachini et al., 2019) were used to classify estimated components
+automatically. Only components clearly classified (i.e., confidence
+above 50\%) resulting from either eye movement, muscular, or heartbeat
+activity were zeroed-out before applying the mixing matrix to unfiltered
+data.\footnote{Pre-registration states that ICA components should be
+  reviewed by two experianced analysts. It should be noted that this
+  procedure deviated from the pre-registration in that it was fully
+  automated.}
 
 In line with recommendations from Widmann et al. (2015) and de Cheveigné
-\& Nelken (2019), a ORDER finite impulse response (FIR) bandpass filter
-from 0.1 Hz to 40 Hz (Hamming window, 0.1 Hz lower bandwith, 4 Hz upper
-bandwidth, 0.0194 passband ripple, and 53 dB stopband attenuation).
-Continuous data was epoched into 400 ms long segments around stimulus
-onsets. Epochs included a 100 ms pre-stimulus interval. No baseline
-correction was applied. Segments exeeding a peak-to-peak voltage
-difference of 100 µV were removed. On average, NN epochs No data set
-meet the pre-registrated exclusion criterion stated of less than 100
-trials per condition, thus data from all participants (20 for 100 ms
-presentation rate and 23 for 150 ms presentation rate) was analysed.
+\& Nelken (2019), a finite impulse response (FIR) bandpass filter from
+0.1 Hz to 40 Hz (Hamming window, 0.1 Hz lower bandwidth, 5 Hz upper
+bandwidth, 0.0194 passband ripple, and 53 dB stopband attenuation) was
+applied. Continuous data were epoched into 400 ms long segments around
+stimulus onsets, including a 100 ms pre-stimulus interval. No baseline
+correction was applied, and segments exceeding a peak-to-peak voltage
+difference of 100 µV were removed. On average, (TODO) epochs were
+dopped. No dataset met the pre-registered exclusion criterion of less
+than 100 valid trials per condition; thus, data from all participants
+(20 for 100 ms presentation rate and 23 for 150 ms presentation rate)
+were included in the analysis.
 
 \hypertarget{statistical-analysis}{%
-\subsection{Statistical Analysis}\label{statistical-analysis}}
+\subsubsection{Statistical Analysis}\label{statistical-analysis}}
 
-The dependent variable for analysing missmatch response was calculated
-by averaging amplitudes in a time window extedning ±25 ms around the
-maximum negativity obtained by subtracting the mean ERP timecourse
-following the (expected) deviant event from the ERP following the
-(expected) standard event. To obtain mean amplitudes, ERPs to 4th
+Statistical analysis was carried out using the \emph{R} programming
+language (version 3.2, The R Core Team) using the \emph{rstatix} package
+(version 2.0, \textbf{kassambaraRstatixPipefriendlyFramework2020?}).
+
+Calculation of the dependant variable followed the original study's
+procedure in averaging amplitudes in a time window extending ±25 ms
+around the expected peak of negativity. Specifically, this peak was
+obtained by subtracting the average ERP following the A tones from the
+average ERP following B tones in the \emph{random condition} for both
+presentation rates separately. To compute mean amplitudes, ERPs to 4th
 position A tones (A-A-A-\textbf{A}-X, \textbf{boldface} indicates the
 tone of interest) and B tones (A-A-A-A-\textbf{B}) were averaged
-seperatly for both the \emph{random} and the \emph{predictable}
-\emph{condition}. For the \emph{random condition}, only tones that were
-part of a sequence matching the patterns in the \emph{predictable}
-condition were included.
+separately for both the \emph{random} and the \emph{predictable}
+\emph{condition}. For the \emph{random condition}, only tones presented
+as part of a sequence matching the patterns from the \emph{predictable}
+condition were included in the analysis.
 
 In accordance with the original analysis by E. S. Sussman \& Gumenyuk
-(2005), mean amplitudes for frontocentral electrodes (FZ, F3, F4, FC1,
-and FC2) and the two mastoid positions (M1 and M2) were averaged
-separately. Then, for both SOAs, independant three-way repeated measures
-analyses of variance with factors \emph{condition} (factors
-\emph{predcitable} and \emph{random}), \emph{stimulus type} (factors
-\emph{A tone} and \emph{B tone}), \emph{electrode locations} (levels
-\emph{fronto-central} and \emph{mastoids}), and all possible
-interactions were calculated. Following this, significant interactions
+(2005), mean amplitudes for frontocentral electrodes (pooled FZ, F3, F4,
+FC1, and FC2) and the two mastoid positions (pooled M1 and M2) were
+averaged separately. Then, for both SOAs, independent two-way
+repeated-measures analyses of variance (ANOVA) with factors
+\emph{condition} (levels \emph{predictable} and \emph{random}),
+\emph{stimulus type} (levels \emph{A tone} and \emph{B tone}), and their
+interaction were calculated. Following this, significant interaction
 effects were further investigated using post-hoc \emph{t}-tests.
 
-Finally, the relationship between epoch number and the reliability
-analysis was analyzed by drawing random subsamples of different sizes
-from both our data sets and calculating split-half reliability employing
-the Spearman-Brown approach. For this, single trial responses for all A
-and B tones in the predictable condition were randomly shuffled. Then,
-\(100, 200, ..., N_{max}\)
-(\(N_{max, 100ms} = 3000, N_{max, 150ms}=1500\)) epoches were drawn,
-randomly assigned to one of two halfes, and afterwards averaged
-seperatly for bothtone types. Then, split-half realibility was
-calculated using the differences between A and B tones in the MMN
-latency window using the Sprearman-Brown prophecy formula\footnote{as
-  given by \({\rho}_{xx'} = \frac{2{\rho}_{12}}{1+{\rho}_{12}}\), where
+Going beyond the original study and extending the pre-registered
+procedure, Bayesian analysis was conducted for ANOVA posthoc
+comparisons. As mentioned above, traditional null hypothesis testing has
+some limitations that are often overlooked, leading to incorrect
+conclusions drawn from results. For example, failure to reject the null
+hypothesis can usually not be interpreted as evidence in favor of
+\(\mathcal{H_0}\) (e.g., \textbf{aczelQuantifyingSupportNull2018?};
+\textbf{meehlTheoreticalRisksTabular1978?};
+\textbf{kirkPracticalSignificanceConcept1996?};
+\textbf{goodmanDirtyDozenTwelve2008?}). Similarly, p-values might
+exaggerate evidence against \(\mathcal{H_0}\) (that is, observed data
+might be more likely under \(\mathcal{H_0}\) than under
+\(\mathcal{H_1}\) even tough \(\mathcal{H_0}\) is rejected, e.g.,
+\textbf{hubbardWhyValuesAre2008?};
+\textbf{rouderBayesianTestsAccepting2009?};
+\textbf{wagenmakersBayesianInferencePsychology2018?};
+\textbf{sellkeCalibrationValuesTesting2001?}). Conversely, Bayesian
+hypothesis testing using Bayes factors can provide an intuitive way to
+compare observed data's likelihood under the null hypothesis versus the
+alternative hypothesis
+(\textbf{wagenmakersPracticalSolutionPervasive2007?}), thereby making it
+possible to evaluate the null hypothesis:
+\(BF_{10} = \frac{Pr(data|\mathcal{H}_0)}{Pr(data|\mathcal{H}_1)}\).
+Here, this approach was applied in agreement with the concept described
+by (\textbf{rouderBayesianTestsAccepting2009?}) as an alternative to
+classical frequentist paired \emph{t}-tests. Following their sentiment,
+Bayes factors for within-participant differences \(y_i\) were computed
+assuming \(\mathcal{H_0}: y_i \sim Normal(0, \sigma^2)\) and
+\(\mathcal{H_1}: y_i \sim Normal(\delta, \sigma^2)\);
+\(\delta \sim Cauchy(0, 1/\sqrt{2})\). A Jeffreys prior was used for the
+variance \(\sigma^2\) in both models:
+\(p(\sigma^2) \propto 1/\sigma^2\). Calculations were performed using
+the Hamiltonian Monte Carlo method implemented in \emph{Stan} (version
+2.25, \textbf{carpenterStanProbabilisticProgramming2017?}) and
+\emph{RStan} (\textbf{standevelopmentteamRStanInterfaceStan2020?}).
+
+Finally, the relationship between epoch number and the reliability of
+the estimate was analyzed by drawing random subsamples of different
+sizes from both data sets and calculating split-half reliability
+employing the Spearman--Brown approach. Thus, single-trial responses for
+all A and B tones in the predictable condition were randomly shuffled.
+Then, \(100, 200, ..., N_{max}\)
+(\(N_{max, 100ms} = 2500, N_{max, 150ms}=1300\)) epochs were drawn,
+randomly assigned to one of two halves, and averaged separately for A
+and B tones. Then, split-half reliability was calculated based on the
+mean amplitude in the MMN latency window as defined above. The
+Spearman--Brown prophecy formula\footnote{as given by
+  \({\rho}_{xx'} = \frac{2{\rho}_{12}}{1+{\rho}_{12}}\), where
   \({\rho_{12}}\) is the Pearson correlation coefficient between the two
   halfes.} (\textbf{brownEXPERIMENTALRESULTSCORRELATION1910?};
-\textbf{spearmanCorrelationCalculatedFaulty1910?}). This procedure was
-repeated 100 times for each \(N\) and split-half-relaibilites thus
-obtained were subsequently averaged.
+\textbf{spearmanCorrelationCalculatedFaulty1910?}) was used to obtain
+corrected reliability. This procedure was repeated 100 times for each
+\(N\), and split-half-reliabilities obtained as such were subsequently
+averaged.
 
 \newpage
 
@@ -507,21 +711,18 @@ interval (right of each panel).}\label{fig:fronto}
 }
 \end{figure}
 
-Grand averages of event-related potentials (ERP) at pooled FZ, F3, F4,
-FC1, and FC2 electrode locations to A tones (A-A-A-\textbf{A}-X), B
-tones (A-A-A-A-\textbf{B}), and their difference (\textbf{B} tone minus
-\textbf{A} tone) are displayed in fig.~\ref{fig:fronto} for both 100 ms
-(left panel) and 150 ms (right panel) stimulus onset asynchronies. The
-top half of each panel shows ERPs in the \emph{predictable condition}
-while the lower half depicts ERPs in the \emph{random condition}. For
-both presentation rates, clear rhythms matching the presentation
-frequency of 10 Hz (100 ms) and respectively 6.667 Hz (150 ms) are seen
-as a result of substantial overlap of neighbouring tones. Panels also
-show the distribution of mean amplitude differences in the MMN latency
-window (as defined above, 110 ms to 160 ms after stimulus onset) across
-participants and the difference of scalp topographies averaged over the
-same interval. Similarly, waveforms and mean amplitude difference
-distributions at pooled mastoid sites are shown in
+Fig.~\ref{fig:fronto} displays grand averages of event-related
+potentials (ERP) at pooled FZ, F3, F4, FC1, and FC2 electrode locations
+to A tones (A-A-A-\textbf{A}-X), B tones (A-A-A-A-\textbf{B}), and their
+difference (B tone minus A tone) for both 100 ms (left panel) and 150 ms
+(right panel) SOAs. The top half of each panel shows ERPs in the
+\emph{predictable condition} while the lower half depicts ERPs in the
+\emph{random condition}. Clearly visible rhythms result from fast
+presentation frequencies and illustrate the considerable overlap between
+neighboring tones. Panels also show the distribution of mean amplitude
+differences in the MMN latency window across participants and the
+difference of scalp topographies. Similarly, waveforms and mean
+amplitude difference distributions at pooled mastoid sites are shown in
 fig.~\ref{fig:mastoids}.
 
 \begin{figure}
@@ -541,139 +742,131 @@ particpants.}\label{fig:mastoids}
 }
 \end{figure}
 
-Evoked responses to A and B tones were compared by calculating mean
-amplitudes in the MMN latency window. Mean amplitudes in the MMN latency
-window and their standard deviations (SD) for all conditions are shown
-in Table X. Descriptively, mean amplitudes at pooled fronto-central
-electrode locations were more negative for randomly presented B tones
-than for randomly presented A tones, regardless of tone presentation
-rate (100 ms: \(\Delta M = -0.358 \: \mu V\); 150 ms:
-\(\Delta M = -0.555 \: \mu V\)) This also held for tones presented
-predictably, but for the slower of the two presentation rates only
-(\(\Delta M = -0.582 \: \mu V\))). In contrast, when predictable tone
-patterns occurred at a faster 100 ms rate, B tones elicited
-descriptively more positive responses than A tones
-(\(\Delta M = 0.383 \: \mu V\)). Descriptive comparison of evoked
-responses from pooled left and right mastoids revealed that
-pseudo-randomly presented B tones were more positive in the MMN latency
-window than A tones (100-ms-SOA: \(\Delta M = 0.746 \: \mu V\),
-150-ms-SOA: \(\Delta M = 0.510 \: \mu V\)). A similar observation could
-be made for predictable B tones compared to the preceding A tones at an
-SOA of 150 ms (\(\Delta M = 0.399 \: \mu V\))) but not for the faster
-presentation rate (\(\Delta M = -0.132 \: \mu V\)).
+The MMN latency window was determined to range from 108 ms to 158 ms
+ofter stimilus onset for 100 ms SOA and from 104 ms to 154 ms after
+stimulus onset for 150 ms SOA. Mean amplitudes from the so-defined
+interval are shown in Table 1. Descriptively, mean amplitudes at pooled
+frontocentral electrode locations were more negative for randomly
+presented B tones than for randomly presented A tones, regardless of
+presentation rate (100 ms: \(\Delta M = -0.361 \: \mu V\); 150 ms:
+\(\Delta M = -0.518 \: \mu V\)). A simmilar observation could be made
+for predictable tones presented at 150 ms SOA
+(\(\Delta M = -0.588 \: \mu V\)), Strikingly however, B tones presented
+at an SOA of 100 ms seemed to elicit more positive responses than
+associated A tones (\(\Delta M = 0.379 \: \mu V\)).
 
-\input{tables/desc_table.tex}
-
-Inference statistics provided support for these findings. For the 100 ms
-stimulation rate, the three-way ANOVA yielded a significant three-way
-interaction effect (\emph{condition} x \emph{stimulus type} x
-\emph{electrode locations}; \(F(1,19) = 7.53\), \(p = .013\)) but failed
-to reveal main effects for factors \emph{stimulus type}
-(\(F(1,19) = 1.05\), \(p = .318\)), \emph{condition}
-(\(F(1,19) = 0.83\), \(p = .373\)), and \emph{electrode locations}
-(\(F(1,19) = 0.04\), \(p = .852\)). In contrast, for tones presented at
-a SOA of 150 ms only the two-way interaction term \emph{stimulus type} x
-\emph{electrode locations} had a significant effect
-(\(F(1,22) = 20.76\), \(p = 0.0002\)). Mean amplitudes in the MMN
-latency window however did not differ for factors \emph{stimulus type}
-(\(F(1,22) = 0.32\), \(p = 0.5790\)), \emph{electrode locations}
-(\(F(1,22) = 0.04\), \(p = 0.8540\)) or \emph{condition}
-(\(F(1,22) = 0.08\), \(p = 0.7800\)).
-
-\input{tables/anova_02_full.tex}
-
-Two-way ANOVAs (\emph{condition} x \emph{stimulus type}) were carried
-out separately for pooled fronto-central and mastoid electrode
-locations. For 100 ms tone presentation rate, the \emph{condition} x
-\emph{stimulus type} interaction only resulted in a significant effect
-for the fronto-central electrode cluster (\(F(1,19) = 16.75\),
-\(p = 0.0006\)) but not for pooled mastoid sites (\(F(1,19) = 2.37\),
-\(p = 0.1410\)) indicating that the three-way interaction effect
-\emph{condition} x \emph{stimulus type} x \emph{electrode} is indeed
-driven by the amplitude differences in the fronto-central electrode
-locations . Contrary to this, for the 150 ms presentation rate, main
-effects for \emph{stimulus type} were significant for both
-fronto-central and mastoid sites, suggesting that there was both an MMN
-at fronto-central locations as well as a polarity-reversal at the
-mastoid electrodes.
+Statistical analysis was carried out by separate two-way
+repeated-measures analyses of variance (ANOVA, Table 2). For the 100 ms
+SOA presentation, ANOVA results for the frontocentral electrode cluster
+revealed a significant effect of the interaction term (\emph{condition}
+x \emph{stimulus type}; \(F(1,19) = 17.00\), \(p = 0.0006\)). For slower
+tone presentation (150 ms SOA), ANOVA results suggested a main effect of
+factor \emph{stimulus type} for both frontocentral (\(F(1,22) = 21.62\),
+\(p < .001\)) and mastoid electrodes (\(F(1,22) = 6.26\),
+\(p = 0.0200\)). ANOVAs for the comparison between the 4th A tone and
+the 5th A tone (A-A-A-\textbf{A}-X versus A-A-A-A-\textbf{A}; Table 2)
+did not result in any significant effects.
 
 \input{tables/anova_03_full.tex}
 
-Post-hoc tests between ERPs to A and B tones were carried out using
-two-tailed Student's \emph{t}-tests over the differnce. P-values were
-corrected for multiple comparisons using the Benjamini--Hochberg step-up
-procedure. For the 100 ms SOA, results indicated a significant effect
-only for predictable tones at fronto-central electrodes
-(\(t(19) = -2.77\), \(p = .025\), \(CI_{.95} = [-0.67,-0.09]\)). For the
-150 ms SOA, B tones elicited significantly more negative ERPs than B
-tones at fronto-central electrode locations in both predictable
-(\(t(22) = 5.20\), \(p < .001\), \(CI_{.95} = [0.35,0.81]\)) and random
-(\(t(22) = 3.28\), \(p = .009\), \(CI_{.95} = [0.20,0.91]\)) conditions.
-Significant polarity reversal effects at mastoid sites were only present
-for predictable (\(t(22) = -3.95\), \(p = .003\),
-\(CI_{.95} = [-0.61,-0.19]\)) tones but not for randomly presented
-(\(t(22) = -1.59\), \(p = .169\), \(CI_{.95} = [-1.18,0.16]\)) tones.
+Here, a significant interaction term indicated that difference waves for
+A and B tones differed between conditions. Two-tailed Student's
+\emph{t}-tests and complementary Bayesian analysis were used to test
+pairwise MMN responses for significance from zero. The
+Benjamini--Hochberg step-up procedure was employed to correct p-values
+for multiple comparisons. Results indicated that B tones eclicted more
+positive responses compared to A tones when presented in a predictable
+context (\(t(19) = -2.81\), \(p = .022\),
+\(CI_{.95} = [-0.66,-0.10], BF_{10} = 4.65\)). Although descriptive
+statistics suggested a contrary effect for randomly presented tones,
+results remained inconclusive (\(t(19) = 1.69\), \(p = .173\),
+\(CI_{.95} = [-0.09,0.81], BF_{10} = 0.77\)).
 
 \begin{figure}
 \centering
 \includegraphics{figures/fig_posthoc.pdf}
 \caption{Averaged voltages in the MMN latency window for pooled
-fronto-central and mastoid electrodes. Colored areas show sample
+frontocentral and mastoid electrodes. Colored areas show sample
 probability density function for A tones (green) and B tones (red).
 White diamonds indicate estimated population mean, vertical bars
 represent 95\%-conficence interval. Only Benjamini-Hochberg-corrected
 p-values \(< 0.05\) are shown.}
 \end{figure}
 
-Fig.~\ref{fig:sequences} shows EEG waveform averages for five-tone
-sequences (A-A-A-A-B) presented in a \emph{predictable} (top panel) and
-\emph{random} contexts (lower panel).
+\begin{figure}
+\hypertarget{fig:fronto2}{%
+\centering
+\includegraphics{figures/fig_fronto2.pdf}
+\caption{ERP grand averages (pooled FZ, F3, F4, FC1, and FC2 electrode
+locations) for an SOA of 100 ms (left) and 150 ms (right), for 4th A
+tones (A-A-A-\textbf{A}-X, blue dashed lines) and 5th A tones
+(A-A-A-A-\textbf{A}, orange dashed line) and their difference (B - A,
+green solid line). Upper panels show ERPs for tones presented in a
+predcitable pattern (\emph{predcitable condition}) while lower panels
+show ERPs for tones presented in pseudo-random order (\emph{random
+condition}). Shaded area marks MMN latency window (110 ms to 160 ms)
+used to calculate the distribution of amplitude differences across
+particpants (middle of each panel) and the difference of topographic
+maps averaged over the same interval (right of each
+panel).}\label{fig:fronto2}
+}
+\end{figure}
+
+\input{tables/anova2_03_full.tex}
 
 \begin{figure}
 \hypertarget{fig:rel}{%
 \centering
 \includegraphics{figures/fig_subsample_rel.pdf}
-\caption{EEG waveforms for five-tone sequences presented in an
-predictable context (dotted line) and pseudo-random condition (dashed
-line) for 100 ms presentation rate (top panel) and 150 ms presentation
-rate (lower pabel). Vertical lines indicate tone onset.}\label{fig:rel}
+\caption{Average split-half reliabilities for A and B tones in random
+and predictable contexts.. Negative values might be interpreted as low
+or no reliability (\textbf{cronbachNoteNegativeReliabilities1954?}).
+Thin lines in the 150 ms condition indicate extrapolation using the
+Spearman-Brown formula.}\label{fig:rel}
 }
 \end{figure}
 
-Split-half reliabilities are displayed in fig.~\ref{fig:rel}. Simulated
-values match the curve expected from the Spearman-Brown formula. In the
-context of classcial test theory, this method relates the length of a
-test (or \emph{experiment}) to the number of items (or \emph{trials}).
-The first derivitve of the Spearman-Brown function is monotonically
-decreasing, leading to two different observation: i) Adding additional
-epochs (extending the test length by an absolute value in classcial test
-theory terms) has a large effect when the number of already present
-epochs is low, but has only little effect when already dealing with
-large numbers of epochs and ii) SOA and thus effect sized have a larger
-impact when epoch numbers are small compared to high epoch numbers.
-Graphed values also show that reliabilities for the 100 ms stimulation
-rate are considerably lower than for an SOA of 150 ms and that
-reliabilities are very low when using a relatively small number of
-epochs. There is no generally accepted rule as to the level above which
-the coefficient can be considered acceptable. Rather, reliabiliy should
-be evaluated based on the purpose of a study considering the
-cost-benefit trade-off (\textbf{nunnallyPsychometricTheory1994?}). As
-laid out, inreased realibility comes at overproportionate cost, in that
-collecting more samples will not increase ralibility by the same factor.
-That said, many published articles deem reliability coefficients above
-.7 or .8 \enquote{acceptable} (\textbf{lanceSourcesFourCommonly2006?}).
+Average split-half reliabilities (Fig.~\ref{fig:rel}) demonstrate that
+reliability can be characterized as a function of epoch number. Whereas
+a high number of epochs provided reasonable reliability, particularly
+small samples resulted in highly unreliable estimates. This observation
+might serve as a plausible explanation for aforementioned inconclusive
+result insofar as epoch numbers for B tones (\(N_{avg} = 364.4\)) could
+be inadequately low to obtain a reliable estimate. In comparison,
+including all B tones (instead of only tones that were part of a
+five-tone pattern and akin to E. S. Sussman \& Gumenyuk (2005)), on
+average led to an eightfold increase in epoch numbers
+(\(N_{avg} = 2919.8\)). Interestingly, statistical comparison for such
+an extended sample was no longer inconclusive but indicated strong
+evidence in favor of an effect (\(t(19) = 3.31\), \(p = .004\),
+\(CI_{.95} = [0.20,0.88], BF_{10} = 11.92\)).
 
-\begin{figure}
-\hypertarget{fig:sequences}{%
-\centering
-\includegraphics{figures/fig_sequences.pdf}
-\caption{EEG waveforms for five-tone sequences presented in an
-predictable context (dotted line) and pseudo-random condition (dashed
-line) for 100 ms presentation rate (top panel) and 150 ms presentation
-rate (lower pabel). Vertical lines indicate tone
-onset.}\label{fig:sequences}
-}
-\end{figure}
+\newpage
+
+\hypertarget{discussion}{%
+\section{Discussion}\label{discussion}}
+
+For the 150 presentation, extreme evidence for an MMN and very strong
+evidence for an accopying polarity reversal at the mastoids was found in
+the \emph{predcitable} condition, that is, when tones were presented in
+a repeated five-tone pattern. When tones were presented in random order,
+strong evidence was foun{[}{[}anova\_02\_100\_posthoc{]}{]}
+anova\_02\_100\_posthoc.texd for an MMN but Bayes factors suggested
+inconclusive evidence for mastoids. In light of the resuts by E. S.
+Sussman \& Gumenyuk (2005), we would
+
+\input{tables/hypotheses.tex}
+
+We found strong evidence for an MMN in the 150 ms delivery rate
+condition when comparing standards and deviants, regardless of the type
+of presentation (predictable vs.~random). This finding is incompatible
+with the results and intepretation by (E. S. Sussman \& Gumenyuk, 2005)
+but suggests that \emph{pattern regularities} do not inform prediction.
+Furthermore, no convincing evidence for an MMN was found when comparing
+the 4th standard to the 5th standard in predictable condition.
+
+For the 150 ms , significant MMN componets were found regardless of
+presentation
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec id cursus
 velit, non egestas quam. Aliquam rutrum eget sem ut aliquet. Etiam
@@ -724,11 +917,27 @@ ut fringilla nulla molestie. Nullam vitae sem non purus lobortis
 fermentum. Quisque ligula tellus, ullamcorper sit amet consectetur quis,
 fermentum ac mi. Nunc pretium mollis dictum.
 
-\newpage
-
-\hypertarget{references}{%
-\section*{References}\label{references}}
-\addcontentsline{toc}{section}{References}
+In the context of classcial test theory, this method relates the length
+of a test (or \emph{experiment}) to the number of items (or
+\emph{trials}). The first derivitve of the Spearman-Brown function is
+monotonically decreasing, leading to two different observation: i)
+Adding additional epochs (extending the test length by an absolute value
+in classcial test theory terms) has a large effect when the number of
+already present epochs is low, but has only little effect when already
+dealing with large numbers of epochs and ii) SOA and thus effect sized
+have a larger impact when epoch numbers are small compared to high epoch
+numbers. Graphed values also show that reliabilities for the 100 ms
+stimulation rate are considerably lower than for an SOA of 150 ms and
+that reliabilities are very low when using a relatively small number of
+epochs. There is no generally accepted rule as to the level above which
+the coefficient can be considered acceptable. Rather, reliabiliy should
+be evaluated based on the purpose of a study considering the
+cost-benefit trade-off (\textbf{nunnallyPsychometricTheory1994?}). As
+laid out, inreased realibility comes at overproportionate cost, in that
+collecting more samples will not increase ralibility by the same factor.
+That said, many published articles deem reliability coefficients above
+.7 or .8 \enquote{acceptable} (\textbf{lanceSourcesFourCommonly2006?}).
+\newpage \# References
 
 \hypertarget{refs}{}
 \begin{CSLReferences}{1}{0}
@@ -788,12 +997,7 @@ Potentials to Breaks in Sequences of Alternating Pitches or
 Interstimulus Intervals. \emph{Psychophysiology}, \emph{25}(3),
 262--268. \url{https://doi.org/10.1111/j.1469-8986.1988.tb01239.x}
 
-\leavevmode\hypertarget{ref-oldfieldAssessmentAnalysisHandedness1971}{}%
-Oldfield, R. C. (1971). The assessment and analysis of handedness: the
-Edinburgh inventory. \emph{Neuropsychologia}, \emph{9}(1), 97--113.
-\url{https://doi.org/10.1016/0028-3932(71)90067-4}
-
-\leavevmode\hypertarget{ref-paavilainenMismatchnegativityMMNComponent2013a}{}%
+\leavevmode\hypertarget{ref-paavilainenMismatchnegativityMMNComponent2013}{}%
 Paavilainen, P. (2013). The mismatch-negativity (MMN) component of the
 auditory event-related potential to violations of abstract regularities:
 A review. \emph{International Journal of Psychophysiology},
@@ -843,8 +1047,13 @@ for electrophysiological data -- a practical approach. \emph{Journal of
 Neuroscience Methods}, \emph{250}, 34--46.
 \url{https://doi.org/10.1016/j.jneumeth.2014.08.002}
 
+\leavevmode\hypertarget{ref-winklerInterpretingMismatchNegativity2007}{}%
+Winkler, István. (2007). Interpreting the Mismatch Negativity.
+\emph{Journal of Psychophysiology}, \emph{21}(3-4), 147--163.
+\url{https://doi.org/10.1027/0269-8803.21.34.147}
+
 \leavevmode\hypertarget{ref-winklerInfluenceHighpassFiltering2015}{}%
-Winkler, I., Debener, S., Müller, K.-R., \& Tangermann, M. (2015). On
+Winkler, Irene, Debener, S., Müller, K.-R., \& Tangermann, M. (2015). On
 the influence of high-pass filtering on ICA-based artifact reduction in
 EEG-ERP. \emph{2015 37th Annual International Conference of the IEEE
 Engineering in Medicine and Biology Society (EMBC)}, 4101--4105.

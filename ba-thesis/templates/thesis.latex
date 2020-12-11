@@ -33,12 +33,11 @@ $endif$
 
 \usepackage{tabulary}
 \usepackage{booktabs}
-\usepackage{csquotes}
+\usepackage[style=english]{csquotes}
 \usepackage{hyperref}
 \usepackage{xcolor}
 \usepackage{sectsty}
 \usepackage{tikz}
-\usepackage{csquotes}
 \usepackage{lineno}
 \usepackage[section]{placeins}
 \usepackage{caption}
@@ -77,6 +76,14 @@ $endif$
 \DeclareCaptionFormat{myformat}{#1#2\\\sansfont#3}
 \DeclareCaptionFont{quack}{\sansfont}
 \captionsetup[figure]{skip=5pt, font={up,small,quack}, labelsep=period, position=top, format=myformat, justification=justified, labelfont=sc}
+\captionsetup[table]{skip=5pt, font={up,small,quack}, labelsep=period, position=top, format=myformat, justification=justified, labelfont=sc}
+
+\usepackage{xparse}
+
+
+\RenewDocumentCommand{\captionsetup}{som}{%
+}
+
 
 
 \titleformat{\chapter}[display]
