@@ -2,26 +2,32 @@
 
 
 \begin{table}
-\caption{This tables gives an overview of the statistical hypotheses tested and the expected outcomes (upper half). The lower half shoes results from the 100 ms SOA condition and the 150 ms SOA condition.}
+\caption{Summary of statistical hypotheses tested and their expected and actual outcomes.}
 \centering
-\begin{tabular*}{\textwidth}{lcllc} 
+ \begin{threeparttable}
+\begin{tabular*}{\textwidth}{lccc} 
+
+
 \toprule
-                                                                                                                & \multicolumn{2}{c}{Predictable Context}               & Difference Wave                                                \\ 
+                                                                                                                & \multicolumn{2}{c}{Predictable Presentation}               & Difference Wave                                                \\ 
 \cmidrule(lr){2-3}\cmidrule(lr){4-4}
-\multicolumn{1}{c}{}                                                                         & $\mathcal{H_1}: B_{5th}<A_{4th}$     & $\mathcal{H_1}: A_{5th}<A_{4th}$     & \multicolumn{1}{c}{$\mathcal{H_1}: \Lambda_{rand} \neq \Lambda_{pred}$ }  \\ 
+\multicolumn{1}{c}{}                                                                         & $\mathcal{H_0}: B_{5th}=A_{4th}$     & $\mathcal{H_0}: A_{5th}=A_{4th}$     & \multicolumn{1}{c}{$\mathcal{H_0}: \Lambda_{rand} = \Lambda_{pred}$ }  \\ 
 %\cmidrule(lr){2-2}\cmidrule(lr){3-3}\cmidrule(lr){4-4}\cmidrule(lr){5-5}
 \midrule
-\multicolumn{5}{l}{\textbf{\textit{Expected Pattern Secondary Hypotheses}}}  \\
-\hspace{3mm}\textit{Only pattern regularities used}                                                                                         & \multicolumn{1}{c}{×} & \multicolumn{1}{c}{✓} & \multicolumn{1}{c}{✓}\\
-\hspace{3mm}\textit{Only Proportional regularities used}                                                                                    & \multicolumn{1}{c}{✓} & \multicolumn{1}{c}{×} & \multicolumn{1}{c}{×}\\
-\hspace{3mm}\textit{Concurrent usage}                                								         & \multicolumn{1}{c}{✓} & \multicolumn{1}{c}{✓} & \multicolumn{1}{c}{}\\
-\multicolumn{5}{l}{\textbf{\textit{Results}}}  \\
-\hspace{3mm}100 ms SOA                                                                                                                      & \multicolumn{1}{c}{×*}                 & \multicolumn{1}{c}{n.s.}                    & \multicolumn{1}{c}{✓}                                      \\
-\hspace{3mm}150 ms SOA                                                                                                                      & \multicolumn{1}{c}{✓}                      & \multicolumn{1}{c}{n.s.}                    & \multicolumn{1}{c}{n.s.}                                    \\
+\multicolumn{4}{l}{\textbf{\textit{Expected Outcomes if ...}}}  \\
+\hspace{3mm}\textit{only pattern regularities used}                                                                                         & \multicolumn{1}{c}{×} & \multicolumn{1}{c}{✓} & \multicolumn{1}{c}{✓}\\
+\hspace{3mm}\textit{only proportional regularities used}                                                                                    & \multicolumn{1}{c}{✓} & \multicolumn{1}{c}{×} & \multicolumn{1}{c}{×}\\
+\hspace{3mm}\textit{both regularities used}                                								         & \multicolumn{1}{c}{✓} & \multicolumn{1}{c}{✓} & \multicolumn{1}{c}{}\\
+\multicolumn{4}{l}{\textbf{\textit{Actual Outcomes}}}  \\
+\hspace{3mm}Results for 100 ms SOA                                                                                                                      & \multicolumn{1}{c}{✓¹}                 & \multicolumn{1}{c}{n.s.}                    & \multicolumn{1}{c}{✓²}                                      \\
+\hspace{3mm}Results for 150 ms SOA                                                                                                                      & \multicolumn{1}{c}{✓}                      & \multicolumn{1}{c}{n.s.}                    & \multicolumn{1}{c}{n.s.}                                    \\
 \bottomrule
 \end{tabular*}
- \begin{tablenotes}
+ \begin{tablenotes}[flushleft]
       \small
-      \item ✓: $\mathcal{H_1}$ is true / $\mathcal{H_0}$ rejected, ×: $\mathcal{H_0}$ is true, \textit{inc}: inconclusive results \~{}: no explicit expectation
+      \item ✓: $\mathcal{H_1}$ is expected to be true / $\mathcal{H_0}$ is rejected, ×: $\mathcal{H_0}$ is true, \textit{n.s.}: inconclusive results 
+      \item ¹ The sign of the effect was different than expected. 
+      \item ² Effect might be driven by aforementioned positive effect.
     \end{tablenotes}
+ \end{threeparttable}
 \end{table}

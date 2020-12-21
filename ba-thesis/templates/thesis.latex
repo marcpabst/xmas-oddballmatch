@@ -27,6 +27,7 @@ $endif$
 \usepackage{threeparttable}
 \usepackage{wrapfig}
 \usepackage{adjustbox}
+\usepackage[titletoc]{appendix}
 \usepackage{hyperref}
 \usepackage{fontenc}
 \usepackage{polyglossia}
@@ -72,6 +73,7 @@ $endif$
 
 \newfontfamily\sansfont[Numbers=Lining]{Gill Sans}
 
+\newenvironment{sans}{\sansfont}{\par}
 
 \DeclareCaptionFormat{myformat}{#1#2\\\sansfont#3}
 \DeclareCaptionFont{quack}{\sansfont}
@@ -328,7 +330,39 @@ $if(has-frontmatter)$
 \frontmatter
 $endif$
 
-\maketitle
+\begin{sans}
+\begin{center}
+\thispagestyle{empty}
+
+\LARGE{University of Leipzig}\\[-0.9ex]
+\LARGE{Faculty of Life Sciences}\\[2ex]
+\large{Institute of Psychology}\\
+\vspace{0.3cm}
+\begin{center}
+\includegraphics[width=6cm]{logo.png}\\
+\vspace{0.4cm}
+\LARGE{\textbf{Encoding of Predictable Tone Deviance \\ in Recurrent Patterns}}\\[-0.5ex]
+\vspace{0.4cm}
+\textbf{\Large{Thesis}}
+\medskip\par
+\textbf{\normalsize{submitted for the degree of}} \\[2ex]
+\textbf{\Large{Bachelor of Science (B.Sc.)}}\\
+\vspace{0.5cm}
+
+\bigskip\par
+\large{by} \par
+\large{Marc Pabst}\\[-1ex]
+\large{born on June 28 1996 in Hamburg}\\[-1ex]
+\vspace{1.5cm}
+\end{center}
+\medskip
+\end{center}
+\begin{tabular}{ll}
+  Submission Date:  & December 19, 2020 \\
+  Supervisors: & Dr. Dagmar Müller \\[-1ex]
+    	   	& Prof. Dr. Erich Schröger \\
+\end{tabular}
+\end{sans}
 
 
 \renewcommand*\contentsname{$toc-title$}

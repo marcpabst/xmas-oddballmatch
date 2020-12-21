@@ -16,9 +16,9 @@ anova_02_100_condition_stimulustype_electrode: $F(1,19) = 7.21$, $p = .015$
 anova_01_100_condition: $F(1,19) = 0.14$, $p = .715$
 anova_01_100_stimulustype: $F(1,19) = 0.00$, $p = .953$
 anova_01_100_condition_stimulustype: $F(1,19) = 17.00$, $p < .001$
-anova_03_100_fronto_condition: $F(1,19) = 0.14$, $p = 0.7150$
-anova_03_100_fronto_stimulustype: $F(1,19) = 0.00$, $p = 0.9530$
-anova_03_100_fronto_condition_stimulustype: $F(1,19) = 17.00$, $p = 0.0006$
+anova_03_100_fronto_condition: $F(1,19) = 0.14$, $p = .715$
+anova_03_100_fronto_stimulustype: $F(1,19) = 0.00$, $p = .953$
+anova_03_100_fronto_condition_stimulustype: $F(1,19) = 17.00$, $p < .001$
 anova_03_100_mastoids_condition: $F(1,19) = 1.39$, $p = 0.2530$
 anova_03_100_mastoids_stimulustype: $F(1,19) = 0.95$, $p = 0.3430$
 anova_03_100_mastoids_condition_stimulustype: $F(1,19) = 2.20$, $p = 0.1540$
@@ -51,7 +51,7 @@ anova2_03_150_mastoids_stimulustype: $F(1,22) = 2.80$, $p = 0.1090$
 anova2_03_150_mastoids_condition_stimulustype: $F(1,22) = 0.93$, $p = 0.3450$
 posthoc_pred_a_b_fronto_100: $t(19) = -2.81$, $p = .022$, $CI_{.95} = [-0.66,-0.10],
   BF_{10} = 4.65$
-posthoc_rand_a_b_fronto_100: $t(19) = 1.69$, $p = .173$, $CI_{.95} = [-0.09,0.81],
+posthoc_rand_a_b_fronto_100: $t(19) = 1.69$, $p = .108$, $CI_{.95} = [-0.09,0.81],
   BF_{10} = 0.77$
 random_alternative_contrast_100_a_b: $t(19) = 3.31$, $p = .004$, $CI_{.95} = [0.20,0.88],
   BF_{10} = 11.92$
