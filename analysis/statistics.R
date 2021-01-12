@@ -53,6 +53,7 @@ desc_table_frontocentral = mean_amplitudes_df %>% filter(Electrode == "fronto_po
     group_by(SOA, Condition, StimulusType) %>%
     summarise(Mean = mean(MeanAmplitude)*10e5, SD = sd(MeanAmplitude)*10e5) %>%
     hux() %>%
+    set_number_format("%5.2f") %>%
     merge_repeated_rows(col=c(1,2)) %>%
     theme_article()
 
@@ -62,6 +63,7 @@ desc_table_mastoids = mean_amplitudes_df %>% filter(Electrode == "mastoids_poole
     summarise(Mean = mean(MeanAmplitude)*10e5, SD = sd(MeanAmplitude)*10e5) %>% ungroup() %>%
     select(Mean, SD) %>%
     hux() %>%
+    set_number_format("%5.2f") %>%
     merge_repeated_rows(col=c(1,2)) %>%
     theme_article()
 
@@ -164,9 +166,16 @@ anova_03_100_table$Effect = str_replace_all(anova_03_100_table$Effect, ":", " x 
 caption  = "Results from two-way ANOVA for 100 ms (only fronto)"
 print(xtable(anova_03_100_table, caption=caption), include.rownames = F, tabular.environment = "tabulary", booktabs = TRUE, width = "\\textwidth", file = paste(tables_path, "anova_03_100.tex", sep="/"))
 
-variables$anova_03_100_fronto_condition = sprintf(anova_template, anova_03_100_table$DFn[[1]], anova_03_100_table$DFd[[1]], anova_03_100_table$F[[1]], anova_03_100_table$p[[1]])
-variables$anova_03_100_fronto_stimulustype = sprintf(anova_template, anova_03_100_table$DFn[[2]], anova_03_100_table$DFd[[2]], anova_03_100_table$F[[2]], anova_03_100_table$p[[2]])
-variables$anova_03_100_fronto_condition_stimulustype = sprintf(anova_template, anova_03_100_table$DFn[[3]], anova_03_100_table$DFd[[3]], anova_03_100_table$F[[3]], anova_03_100_table$p[[3]])
+class(anova_03_100_table) = "data.frame" # fix tidýverse problem
+
+
+variables$anova_03_100_fronto_condition = anova_03_100_table %>% 
+                                   filter(Effect == "Condition") %>% report_anova()
+variables$anova_03_100_fronto_stimulustype = anova_03_100_table %>% 
+                                   filter(Effect == "StimulusType") %>% report_anova()
+variables$anova_03_100_fronto_condition_stimulustype = anova_03_100_table %>% 
+                                   filter(Effect == "Condition x StimulusType") %>% report_anova()
+
 
 #* ANOVA for 100 ms + mastoid electrodes, Condition x StimulusType
 anova_04_100_data =  mean_amplitudes_df %>% filter(SOA == "100" & Electrode == "mastoids_pooled") %>% droplevels() 
@@ -227,19 +236,23 @@ variables$anova_03_150_mastoids_condition_stimulustype = sprintf(anova_template,
 
 #* Create More Complex Tables
 
-anova_03_full_caption  = "Results of the 2-way ANOVA (condition x stimulus type) for repeated measures. Only fronto included."
+anova_03_full_caption  = "Results of the 2-way ANOVA (condition x stimulus type) for B and A tones.."
 
 anova_03_full_table_1 = rbind(anova_03_100_table %>% add_column(Electrodes = "Frontal", .before = 1), anova_04_100_table %>% add_column(Electrodes = "Mastoids", .before =1)) 
 anova_03_full_table_2 = rbind(anova_03_150_table %>% add_column(Electrodes = "Frontal", .before = 1), anova_04_150_table %>% add_column(Electrodes = "Mastoids", .before =1)) 
 
 anova_03_full_table = rbind(anova_03_full_table_1 %>% add_column(SOA = "100 ms", .before = 1), anova_03_full_table_2 %>% add_column(SOA = "150 ms", .before =1)) %>%  hux() %>%
-                        set_number_format(col=7, value=list(fm_pvalue)) %>%
                         merge_repeated_rows(col=c(1,2)) %>%
                         set_rotation(col=c(1,2), value=90) %>%
                         set_valign(col=c(1,2), value="middle") %>%
                         set_header_rows(1, TRUE) %>%
                         set_contents(1,1, value = "") %>%
                         set_contents(1,2, value = "") %>%
+                        set_number_format("%5.3f") %>%
+                        set_number_format(col=1,value="%g") %>%
+                        set_number_format(col=7, value=list(fm_pvalue)) %>%
+                        set_number_format(value = "%5.1f", col=c(4,5)) %>%
+                        select(-8) %>%
 
                         set_caption(anova_03_full_caption) %>%
 
@@ -341,19 +354,24 @@ variables$anova2_03_150_mastoids_condition_stimulustype = sprintf(anova_template
 
 #* Create More Complex Tables
 
-anova2_03_full_caption  = "Results of the 2-way ANOVA (condition x stimulus type) for repeated measures. Only fronto included."
+anova2_03_full_caption  = "Results of the 2-way ANOVA (condition x stimulus type) for fifth-place (A-A-A-A-\\textbf{A}) and fourth-place A (A-A-A-\\textbf{A}-X) tones."
 
 anova2_03_full_table_1 = rbind(anova2_03_100_table %>% add_column(Electrodes = "Frontal", .before = 1), anova2_04_100_table %>% add_column(Electrodes = "Mastoids", .before =1)) 
 anova2_03_full_table_2 = rbind(anova2_03_150_table %>% add_column(Electrodes = "Frontal", .before = 1), anova2_04_150_table %>% add_column(Electrodes = "Mastoids", .before =1)) 
 
 anova2_03_full_table = rbind(anova2_03_full_table_1 %>% add_column(SOA = "100 ms", .before = 1), anova2_03_full_table_2 %>% add_column(SOA = "150 ms", .before =1)) %>%  hux() %>%
-                        set_number_format(col=7, value=list(fm_pvalue)) %>%
                         merge_repeated_rows(col=c(1,2)) %>%
                         set_rotation(col=c(1,2), value=90) %>%
                         set_valign(col=c(1,2), value="middle") %>%
                         set_header_rows(1, TRUE) %>%
                         set_contents(1,1, value = "") %>%
                         set_contents(1,2, value = "") %>%
+
+                        set_number_format("%5.3f") %>%
+                        set_number_format(col=1,value="%g") %>%
+                        set_number_format(col=7, value=list(fm_pvalue)) %>%
+                        set_number_format(value = "%5.1f", col=c(4,5)) %>%
+                        select(-8) %>%
 
                         set_caption(anova2_03_full_caption) %>%
 
@@ -518,10 +536,11 @@ gdf3_extrapolate = tibble(soa = "150 ms", epochs = seq(1100,2500,100), rel = sb(
  
 plot_rel = ggplot(data=gdf3, aes(x = epochs, y = rel, fill=soa)) + 
     batheme +
+    annotate('segment', x=100,xend=2000,y=.0,yend=.0, size = .02, alpha = .6) +
     annotate('segment', x=100,xend=2000,y=.2,yend=.2, size = .02, alpha = .6) +
     annotate('segment', x=100,xend=2000,y=.4,yend=.4, size = .02, alpha = .6) +
-    annotate('segment', x=100,xend=2500,y=.6,yend=.6, size = .02, alpha = .6) +
-    annotate('segment', x=100,xend=2500,y=.8,yend=.8, size = .02, alpha = .6) +
+    annotate('segment', x=100,xend=2000,y=.6,yend=.6, size = .02, alpha = .6) +
+    annotate('segment', x=100,xend=2000,y=.8,yend=.8, size = .02, alpha = .6) +
     #scale_fill_brewer(palette="Set1") +
     #scale_color_brewer(palette="Set1") +
     #facet_grid(rows = vars(soa)) +
@@ -538,7 +557,9 @@ plot_rel = ggplot(data=gdf3, aes(x = epochs, y = rel, fill=soa)) +
     scale_x_continuous(breaks=c(100, 500, 1000, 1500, 2000, 2500)) +
     scale_y_continuous(breaks=c(0, .2, .4, .6, .8, 1)) +
     theme(legend.position = c(.850, 0.325)) + 
-    scale_colour_grey(start = .5, end = .2)
+    scale_colour_grey(start = .5, end = .2) +
+    theme(axis.ticks = element_line(size = 0)) +
+    theme(legend.text = element_text(margin = margin(r = 0, unit = "pt")))
 
 ggsave("/media/marc/Medien/xmas-oddballmatch/ba-thesis/input/figures/fig_subsample_rel.pdf", plot_rel, width = plot_with, height = 2, units = "in",  device=cairo_pdf)
 ggsave("/media/marc/Medien/xmas-oddballmatch/ba-thesis/input/figures/fig_subsample_rel.png", plot_rel, width = plot_with, height = 2, units = "in")

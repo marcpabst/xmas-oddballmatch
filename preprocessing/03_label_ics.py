@@ -1,8 +1,11 @@
+
 ###########################################
 ###### Label Independant Components #######
 ###########################################
 
-from configuration import load_configuration
+if __name__ == '__main__': sys.path.insert(0,'..')
+
+from preprocessing.configuration import load_configuration
 import mne
 
 from mne_bids import make_bids_basename, read_raw_bids
@@ -15,13 +18,13 @@ import os
 
 from autoreject import Ransac, AutoReject
 
-import utils
+import preprocessing.utils
 
 import numpy as np
 from numpy.core.records import fromarrays
 from scipy.io import savemat
 
-from interop2 import EEG, EEGlab
+from preprocessing.interop2 import EEG, EEGlab
 
 import subprocess
 

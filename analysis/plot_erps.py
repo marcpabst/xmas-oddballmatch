@@ -10,7 +10,7 @@ pipeline_name_150 = "pipeline_christine"
 # Load MNE and read configuration file.
 
 # %%
-from configuration import load_configuration
+from preprocessing.configuration import load_configuration
 
 import utils
 
@@ -452,9 +452,9 @@ matplotlib.rcParams['font.size'] = 6
 
 matplotlib.rcParams['axes.labelsize'] = "medium"
 
-fig = plt.figure(constrained_layout=True, figsize = (6.25, 3), dpi=100, facecolor="white")
+fig = plt.figure(constrained_layout=True, figsize = (6, 3), dpi=100, facecolor="white")
 
-gs = gridspec.GridSpec(ncols=2, nrows=2, figure=fig, hspace=.1, wspace=.1)
+gs = gridspec.GridSpec(ncols=2, nrows=2, figure=fig, hspace=.1, wspace=.1, left=0, right=1, top=1, bottom=0)
 
 plot_panel(fig, gs[0, 0], evokeds_list_as_dict_100, "predictable/5/standard", "predictable/4/standard",  peakwindow)
 plot_panel(fig, gs[0, 1], evokeds_list_as_dict_150, "predictable/5/standard", "predictable/4/standard", peakwindow)
@@ -613,72 +613,72 @@ matplotlib.rcParams['axes.labelsize'] = "medium"
 
 
 
-def plot_panel(fig, subplot_spec, data, c1, c2, title = None):
+# def plot_panel(fig, subplot_spec, data, c1, c2, title = None):
 
-    dummy_axs = plt.figure().add_subplot()
-    gs2 = gridspec.GridSpecFromSubplotSpec(ncols=4, nrows=3, height_ratios=[.1,1,.15], width_ratios=[.3, 15, 3, 3], wspace=.25, subplot_spec=subplot_spec)
-    gs22 = gridspec.GridSpecFromSubplotSpec(ncols=1, nrows=2, height_ratios=[1,.1], subplot_spec=gs2[1, 3])
-    axs2 = (fig.add_subplot(gs2[1, 1]), fig.add_subplot(gs2[1, 2]), fig.add_subplot(gs22[0, 0]), dummy_axs)
+#     dummy_axs = plt.figure().add_subplot()
+#     gs2 = gridspec.GridSpecFromSubplotSpec(ncols=4, nrows=3, height_ratios=[.1,1,.15], width_ratios=[.3, 15, 3, 3], wspace=.25, subplot_spec=subplot_spec)
+#     gs22 = gridspec.GridSpecFromSubplotSpec(ncols=1, nrows=2, height_ratios=[1,.1], subplot_spec=gs2[1, 3])
+#     axs2 = (fig.add_subplot(gs2[1, 1]), fig.add_subplot(gs2[1, 2]), fig.add_subplot(gs22[0, 0]), dummy_axs)
    
-    # Add colorbar
-    cb_wrapper = fig.add_subplot(gs22[1, 0])
-    cb_wrapper.axis(False)
-    cbar_ax = inset_axes(cb_wrapper, width="75%", height="85%", loc='center')
+#     # Add colorbar
+#     cb_wrapper = fig.add_subplot(gs22[1, 0])
+#     cb_wrapper.axis(False)
+#     cbar_ax = inset_axes(cb_wrapper, width="75%", height="85%", loc='center')
 
    
 
-    norm = matplotlib.colors.Normalize(vmin=-1, vmax=1)
-    cmap = matplotlib.cm.get_cmap('RdYlBu_r')
-    cb = matplotlib.colorbar.ColorbarBase(cbar_ax, cmap=cmap,
-                                    norm=norm,
-                                    ticks = [-1,1],
-                                    orientation='horizontal')
-    cb.set_ticklabels(["-1 µV", "+1 µV"])
+#     norm = matplotlib.colors.Normalize(vmin=-1, vmax=1)
+#     cmap = matplotlib.cm.get_cmap('RdYlBu_r')
+#     cb = matplotlib.colorbar.ColorbarBase(cbar_ax, cmap=cmap,
+#                                     norm=norm,
+#                                     ticks = [-1,1],
+#                                     orientation='horizontal')
+#     cb.set_ticklabels(["-1 µV", "+1 µV"])
 
-    # for l in cb.ax.xaxis.get_ticklabels():
-    #     l.set_fontproperties(prop)
+#     # for l in cb.ax.xaxis.get_ticklabels():
+#     #     l.set_fontproperties(prop)
                             
 
-    axs2[0].spines['top'].set_visible(False)
-    axs2[0].spines['right'].set_visible(False)
-    axs2[0].spines['bottom'].set_visible(True)
+#     axs2[0].spines['top'].set_visible(False)
+#     axs2[0].spines['right'].set_visible(False)
+#     axs2[0].spines['bottom'].set_visible(True)
 
 
-    #axs2[0].get_shared_y_axes().join(axs2[0], axs2[1])
+#     #axs2[0].get_shared_y_axes().join(axs2[0], axs2[1])
 
 
-    axs2[0].set_xticks([0,.3])
-    axs2[0].set_xticklabels(["0 ms", "300 ms"])
+#     axs2[0].set_xticks([0,.3])
+#     axs2[0].set_xticklabels(["0 ms", "300 ms"])
 
-    axs2[2].set_title("")
-    axs2[1].get_xaxis().set_visible(False)
+#     axs2[2].set_title("")
+#     axs2[1].get_xaxis().set_visible(False)
 
-    plot_conditions(data, c1, c2, title=title, axs=axs2, pick=["FZ"], peak = 0.135, erp_lims=(-1.5,1.5), mmn_lims=(-1.5, 1.5))
-    #axs2[0].get_legend().remove()
+#     plot_conditions(data, c1, c2, title=title, axs=axs2, pick=["FZ"], peak = 0.135, erp_lims=(-1.5,1.5), mmn_lims=(-1.5, 1.5))
+#     #axs2[0].get_legend().remove()
 
-    #if title is not None:
-     #   axs2[0].set_title(title.format(N1="($#N_{{{{avg}}}} = {}$)".format(N1_avg), 
-     #                                  N2="($N_{{{{avg}}}} = {}$)").format(N2_avg))
+#     #if title is not None:
+#      #   axs2[0].set_title(title.format(N1="($#N_{{{{avg}}}} = {}$)".format(N1_avg), 
+#      #                                  N2="($N_{{{{avg}}}} = {}$)").format(N2_avg))
 
-compare = { "rand-aaaaB {N1} - rand-aaaAx {N2}":("random/5/deviant", "random/4/standard"),
-            "pred-aaaaB {N1} - pred-aaaAx {N2}":("predictable/5/deviant", "predictable/4/standard"),
-            "pred-aaaaA {N1} - pred-aaaAx {N2}":("predictable/5/standard", "predictable/4/standard"),
-            "rand-B {N1} - rand-A {N2}":("random/deviant", "random/standard"),
-            #"pred-B {N1} vs. pred-A {N2}":("predictable/deviant", "predictable/standard"),
-            "rand-aaaaB {N1} - rand-aaaaA {N2}":("random/5/deviant", "random/5/standard"),
-            "pred-aaaaB {N1} - rand-aaaaA {N2}":("predictable/5/deviant", "random/5/standard"),
-            "pred-aaaaA {N1} - rand-aaaaA {N2}":("predictable/5/standard", "random/5/standard")}
+# compare = { "rand-aaaaB {N1} - rand-aaaAx {N2}":("random/5/deviant", "random/4/standard"),
+#             "pred-aaaaB {N1} - pred-aaaAx {N2}":("predictable/5/deviant", "predictable/4/standard"),
+#             "pred-aaaaA {N1} - pred-aaaAx {N2}":("predictable/5/standard", "predictable/4/standard"),
+#             "rand-B {N1} - rand-A {N2}":("random/deviant", "random/standard"),
+#             #"pred-B {N1} vs. pred-A {N2}":("predictable/deviant", "predictable/standard"),
+#             "rand-aaaaB {N1} - rand-aaaaA {N2}":("random/5/deviant", "random/5/standard"),
+#             "pred-aaaaB {N1} - rand-aaaaA {N2}":("predictable/5/deviant", "random/5/standard"),
+#             "pred-aaaaA {N1} - rand-aaaaA {N2}":("predictable/5/standard", "random/5/standard")}
 
-fig = plt.figure(tight_layout=True, figsize = (10, 2* len(compare)), facecolor="white");
-gs = gridspec.GridSpec(ncols=2, nrows=len(compare), figure=fig, hspace=.5)
+# fig = plt.figure(tight_layout=True, figsize = (10, 2* len(compare)), facecolor="white");
+# gs = gridspec.GridSpec(ncols=2, nrows=len(compare), figure=fig, hspace=.5)
 
-pick=["FZ", "F3", "F4", "FC1", "FC2"]
+# pick=["FZ", "F3", "F4", "FC1", "FC2"]
 
-for i, (l, c) in enumerate(compare.items()):
-    plot_panel(fig, gs[i, 0], evokeds_list_as_dict_100, c[0], c[1], l)
-    plot_panel(fig, gs[i, 1], evokeds_list_as_dict_150, c[0], c[1], l)
+# for i, (l, c) in enumerate(compare.items()):
+#     plot_panel(fig, gs[i, 0], evokeds_list_as_dict_100, c[0], c[1], l)
+#     plot_panel(fig, gs[i, 1], evokeds_list_as_dict_150, c[0], c[1], l)
 
-fig
+# fig
 
 
 # %%
@@ -745,7 +745,7 @@ class AnchoredHScaleBar(matplotlib.offsetbox.AnchoredOffsetbox):
 
 
 def plot_sequence_panel(ax, data, c, soa, **kwargs):
-    if c is "predictable":
+    if c == "predictable":
         evo0 = mne.grand_average(data[c+"/5/deviant"]).copy()
     else:
         evo0 = mne.grand_average(data[c+"/0/deviant"]).copy()

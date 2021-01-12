@@ -9,7 +9,6 @@ report_anova = function(test_row) {
                 ))
 }
 
-
 anova_template = "$F(%.0f,%.0f) = %.2f$, $p = %.4f$"
 
 report_ttest = function(test_row) {

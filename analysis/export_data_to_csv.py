@@ -8,7 +8,7 @@ pipeline_name_150 = "pipeline_christine"
 
 
 # %%
-from configuration import load_configuration
+from preprocessing.configuration import load_configuration
 
 import utils
 

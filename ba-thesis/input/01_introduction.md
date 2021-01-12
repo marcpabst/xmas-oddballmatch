@@ -1,4 +1,5 @@
 \newpage
+
 # Introduction
 
 Unraveling the mysteries of human perception might be one of the most fascinating and difficult challenges in cognitive science. We usually have little regard for this, but at every single moment, we achieve something outstanding: By forming a coherent representation from the tangled mess of external stimuli that reach our sensory organs, we make sense of the outside world. In doing so and seemingly effortlessly, we overcome complicated mathematical and philosophical problems. Recent advances in emerging fields like computer vision and machine hearing have provided a sense of how daunting these tasks can be—requiring complex models that consume vast amounts of computational resources and energy. What enables the brain to fulfill these functions with such ease while consuming no more than the power equivalent of a lightbulb?  

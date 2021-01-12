@@ -35,7 +35,7 @@
     "\n",
     "%matplotlib inline\n",
     "\n",
-    "from configuration import load_configuration\n",
+    "from preprocessing.configuration import load_configuration\n",
     "\n",
     "import utils\n",
     "\n",

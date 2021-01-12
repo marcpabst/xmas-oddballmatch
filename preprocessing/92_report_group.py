@@ -1,4 +1,4 @@
-from configuration import load_configuration
+from preprocessing.configuration import load_configuration
 
 import utils
 

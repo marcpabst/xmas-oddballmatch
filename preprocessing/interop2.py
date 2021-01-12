@@ -75,6 +75,9 @@ class EEGlab():
             command += "save('{}', 'RES');".format(fpath)
             command += "exit();\""
 
+            print(command)
+
+
             process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
             while process.poll() is None:
                 output = process.stdout.readline()

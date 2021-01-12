@@ -1,18 +1,8 @@
-from configuration import load_configuration
-from mne_bids.utils import get_entity_vals
-
-import argparse
-
-import time
-
-import parsl
 from parsl.app.app import python_app
-from parsl_config import pconfig
 
-config = None
 
 @python_app
-def perform_ica(id, config):
+def perform_ica(id, config, inputs=[]):
     import mne
     from mne_bids import make_bids_basename, read_raw_bids
     from mne_bids.utils import get_entity_vals
@@ -32,25 +22,36 @@ def perform_ica(id, config):
         config["bids_root_path"], id, config["pipeline_name"], ".txt", suffix="log")
     sys.stdout = open(log_filename, 'w', buffering = 1)
 
-    # Read file from disk
+
+    # Read File from Disk
+    input_pipeline_name = config.get("input_pipeline_name", config["pipeline_name"])
     logging.getLogger('mne').info("Reading data from disk.")
     raw_filename = utils.get_derivative_file_name(
-        config["bids_root_path"], id, config["pipeline_name"], ".fif", suffix="raw", processing="prepared")
-    events_filename = utils.get_derivative_file_name(
-        config["bids_root_path"], id, config["pipeline_name"], ".txt", suffix="eve", processing="prepared")
+        config["bids_root_path"], id, input_pipeline_name, ".fif", suffix="raw", processing="prepared")
     raw = mne.io.read_raw_fif(raw_filename, preload=True)
+    events_filename = utils.get_derivative_file_name(
+        config["bids_root_path"], id, input_pipeline_name, ".txt", suffix="eve", processing="prepared")
     events = mne.read_events(events_filename)
 
+    # Write files to new ppeline folder
+    raw_filename = utils.get_derivative_file_name(
+        config["bids_root_path"], id, config["pipeline_name"], ".fif", suffix="raw", processing="prepared")
+    raw.save(raw_filename, overwrite=True)
+    events_filename = utils.get_derivative_file_name(
+        config["bids_root_path"], id, config["pipeline_name"], ".txt", suffix="eve", processing="prepared")
+    mne.write_events(events_filename, events)
+
+    # Check if ICA is to be Used
+    if not config["use_ica"]:
+        logging.getLogger('mne').info("ICA Artefact Rejection not used.")
+        return
+
     # Downsample
-    logging.getLogger('mne').info("Downsampling.")
+    logging.getLogger('mne').info("Downsampling for ICA.")
     raw = raw.resample(config["ica_downsample_freq"])
 
-    # Cut non-block data
-    # raw = utils.cut_raw_blocks(
-    #    raw, events, config["events_dict"], "begin", "end")
-
-    # Filter
-    logging.getLogger('mne').info("Filtering.")
+    # Filter for ICA
+    logging.getLogger('mne').info("Filtering for ICA.")
     raw = raw.filter(
         l_freq=config["ica_l_freq"], h_freq=config["ica_h_freq"], fir_window=config["ica_fir_window"])
 
@@ -60,7 +61,7 @@ def perform_ica(id, config):
     raw.pick(["eeg", "eog"])
 
     # ICA using EEEGLAB
-    with EEGlab("./eeglab", config["tmp_dir"]) as eeglab, EEG(inst=raw) as eeg:
+    with EEGlab("preprocessing/eeglab", config["tmp_dir"]) as eeglab, EEG(inst=raw) as eeg:
         eeg = eeglab.perform_ica(eeg, csv_filename, eeglab.tmp_dir.name)
         savemat("tmp.mat", {"EEG": eeg.to_dict()})
         ica = eeg.get_ica()
@@ -72,29 +73,3 @@ def perform_ica(id, config):
         config["bids_root_path"], id, config["pipeline_name"], ".fif", suffix="ica")
 
     ica.save(ica_filename)
-
-def main():
-    parser = argparse.ArgumentParser(description='Epoch data.')
-    parser.add_argument('-s', '--subjects', nargs='+', type=str,
-                        help='IDs of subjects to process.', required=False)
-    parser.add_argument('-c', '--config', type=str,
-                        help='Config file', required=True)
-
-    args = parser.parse_args()
-    config = load_configuration(args.config)
-    
-    parsl.load(pconfig)
-    parsl.set_stream_logger()
-
-    if args.subjects:
-        tasks = [perform_ica(id, config) for id in args.subjects]
-    else:
-        ids = get_entity_vals(config["bids_root_path"], "sub")
-        tasks = [perform_ica(id, config) for id in ids]
-
-    [i.result() for i in tasks]
-
-
-if __name__ == '__main__':
-    main()
-

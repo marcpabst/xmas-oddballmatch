@@ -1,4 +1,4 @@
-from configuration import load_configuration
+from preprocessing.configuration import load_configuration
 from mne_bids.utils import get_entity_vals
 
 import argparse
@@ -7,7 +7,7 @@ import time
 import pandas as pd
 import parsl
 from parsl.app.app import python_app
-from parsl_config import pconfig
+from preprocessing.parsl_config import pconfig
 
 import matplotlib.pyplot as plt
 import ptitprince as pt

@@ -2,21 +2,12 @@
 ########## Filter and clean data ##########
 ###########################################
 
-from configuration import load_configuration
-from mne_bids.utils import get_entity_vals
-
-import argparse
-
-import time
-
-import parsl
 from parsl.app.app import python_app
-from parsl_config import pconfig
 
-config = None
 
 @python_app
-def filter_and_clean(id, config):
+def filter_and_clean(id, config, inputs=[]):
+
     import mne
     from autoreject import Ransac, AutoReject, get_rejection_threshold
     import utils
@@ -34,10 +25,11 @@ def filter_and_clean(id, config):
     sys.stdout = open(log_filename, 'w', buffering = 1)
 
     # Read file from disk
+    input_pipeline_name = config.get("input_pipeline_name", config["pipeline_name"])
     raw_filename = utils.get_derivative_file_name(
-        config["bids_root_path"], id, config["pipeline_name"], ".fif", suffix="raw", processing="prepared")
+        config["bids_root_path"], id, input_pipeline_name, ".fif", suffix="raw", processing="prepared")
     events_filename = utils.get_derivative_file_name(
-        config["bids_root_path"], id, config["pipeline_name"], ".txt", suffix="eve", processing="prepared")
+        config["bids_root_path"], id, input_pipeline_name, ".txt", suffix="eve", processing="prepared")
     raw = mne.io.read_raw_fif(raw_filename, preload = True)
     events = mne.read_events(events_filename)
 
@@ -48,10 +40,10 @@ def filter_and_clean(id, config):
     # Read ICA and labels from disk
     if config["use_ica"]:
         ica_filename = utils.get_derivative_file_name(
-            config["bids_root_path"], id, config["pipeline_name"], ".fif", suffix="ica")
+            config["bids_root_path"], id, input_pipeline_name, ".fif", suffix="ica")
         ica = mne.preprocessing.read_ica(ica_filename)
         csv_filename = utils.get_derivative_file_name(
-            config["bids_root_path"], id, config["pipeline_name"], ".csv", suffix="ica-matlab")
+            config["bids_root_path"], id, input_pipeline_name, ".csv", suffix="ica-matlab")
         labels = pd.read_csv(csv_filename)
 
         labels_names = labels.idxmax(axis=1).tolist()
@@ -83,36 +75,14 @@ def filter_and_clean(id, config):
     #raw = raw.set_eeg_reference(["Nose"])
 
     # Filter data
-    raw = raw.filter(l_freq = config["l_freq"], h_freq = config["h_freq"], fir_window = config["fir_window"])
+    if config["filter"] is not None:
+        raw = raw.filter(l_freq = config["filter"]["l_freq"], h_freq = config["filter"]["h_freq"], fir_window = config["filter"]["fir_window"])
             
     # Write to file
     raw_filename = utils.get_derivative_file_name(
         config["bids_root_path"], id, config["pipeline_name"], ".fif", suffix="raw", processing="cleaned")
     raw.save(raw_filename, overwrite = True)
-
-    
-def main():
-    parser = argparse.ArgumentParser(description='Epoch data.')
-    parser.add_argument('-s', '--subjects', nargs='+', type=str,
-                        help='IDs of subjects to process.', required=False)
-    parser.add_argument('-c', '--config', type=str,
-                        help='Config file', required=True)
-
-    args = parser.parse_args()
-    config = load_configuration(args.config)
-    
-    parsl.load(pconfig)
-    parsl.set_stream_logger()
-
-    if args.subjects:
-        tasks = [filter_and_clean(id, config) for id in args.subjects]
-    else:
-        ids = get_entity_vals(config["bids_root_path"], "sub")
-        tasks = [filter_and_clean(id, config) for id in ids]
-
-    [i.result() for i in tasks]
-
-
-if __name__ == '__main__':
-    main()
+    events_filename = utils.get_derivative_file_name(
+        config["bids_root_path"], id, config["pipeline_name"], ".txt", suffix="eve", processing="prepared")
+    mne.write_events(events_filename, events)
 
